@@ -1,9 +1,13 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import nextTypeScript from "eslint-config-next/typescript";
+import { FlatCompat } from "@eslint/eslintrc";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-export default defineConfig([
-  ...nextCoreWebVitals,
-  ...nextTypeScript,
-  globalIgnores([".next/**", "drizzle/**", "next-env.d.ts"]),
-]);
+const currentDirectory = dirname(fileURLToPath(import.meta.url));
+const compatibilityConfig = new FlatCompat({ baseDirectory: currentDirectory });
+
+export default [
+  ...compatibilityConfig.extends("next/core-web-vitals", "next/typescript"),
+  {
+    ignores: [".next/**", "drizzle/**", "next-env.d.ts"],
+  },
+];
