@@ -81,6 +81,8 @@ O estudante só pode solicitar ficha para trabalho já apresentado/defendido e a
 
 - Herda 100% das funções do Catalogador.
 - Cria contas, redefine senhas, bloqueia/desativa usuários e altera perfis.
+- Contas de Catalogador e de Administrador somente podem ser criadas por um Administrador; não são obtidas pelo cadastro público nem por autoelevação de perfil.
+- A primeira conta de Administrador deve ser provisionada internamente para permitir o primeiro acesso ao painel, sem depender da existência prévia de outro Administrador.
 - Reatribui atendimentos, devolve chamados à fila e resolve travas.
 - Cadastra curso/programa e e-mail da coordenação; ativa/desativa Magic Link.
 - Gerencia mural/status, estatísticas, exportações JSON/CSV e vocabulário controlado.
@@ -300,6 +302,8 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 ## 19. Segurança e LGPD
 
 - HTTPS obrigatório; Supabase Auth com hash seguro; cookies seguros quando aplicável; controle por perfil.
+- A política de senha do Pronto! é a política segura configurada no Supabase Auth, sem uma segunda política própria da aplicação.
+- A recuperação de senha oferece autoatendimento por link enviado ao e-mail `@ufba.br` e assistência administrativa para casos excepcionais.
 - ORM/prepared statements contra SQL injection; sanitização/escape contra XSS; proteção CSRF em rotas sensíveis quando aplicável.
 - Validar uploads permitidos e registrar ações administrativas/operacionais relevantes.
 - Coletar o mínimo, expurgar temporários e excluir Nada Consta 60 dias após encerramento.
