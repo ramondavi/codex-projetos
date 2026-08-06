@@ -81,6 +81,7 @@ O estudante só pode solicitar ficha para trabalho já apresentado/defendido e a
 
 - Herda 100% das funções do Catalogador.
 - Cria contas, redefine senhas, bloqueia/desativa usuários e altera perfis.
+- Na assistência excepcional à recuperação de senha, pode conferir a situação da conta, orientar o usuário e reenviar o fluxo oficial. Nunca pode visualizar, solicitar ou definir uma senha conhecida por ele, nem dispensar a confirmação do novo e-mail; as ações administrativas relevantes devem ser registradas em log.
 - Contas de Catalogador e de Administrador somente podem ser criadas por um Administrador; não são obtidas pelo cadastro público nem por autoelevação de perfil.
 - A primeira conta de Administrador deve ser provisionada internamente para permitir o primeiro acesso ao painel, sem depender da existência prévia de outro Administrador.
 - O provisionamento inicial ocorre em duas etapas: criação confirmada do usuário interno no Dashboard do Supabase e associação transacional dos perfis `administrator` e `staff_profiles` pelo SQL Editor, sem armazenar senha no repositório.

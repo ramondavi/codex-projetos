@@ -4,7 +4,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Autenticação e contas
 
-- Definir os limites da assistência do Administrador em casos excepcionais de recuperação de senha.
 - Elaborar uma proposta de aviso de privacidade para posterior validação institucional e, depois da aprovação, definir sua forma de aceite no cadastro.
 
 ## Catalogação e ficha
