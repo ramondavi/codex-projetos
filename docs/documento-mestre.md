@@ -290,6 +290,7 @@ Os TCCs de graduação da Faculdade de Arquitetura são TFG — Trabalho Final d
 - Next.js, React, TypeScript, Node.js 22, Drizzle e GitHub Actions.
 - Supabase Auth, PostgreSQL e Storage; hospedagem Vercel Free ou equivalente gratuito.
 - O projeto Supabase Free usa a organização `BIB/FAUFBA`, o nome `Pronto!` e a região `South America (São Paulo)` (`sa-east-1`).
+- O projeto usa o Postgres padrão estável, com Data API habilitada, exposição automática de novas tabelas desabilitada e RLS automático habilitado.
 - Storage somente para Nada Consta e arquivos leves permitidos; fontes personalizadas são selecionadas localmente.
 - E-mail por SMTP institucional, se viável, ou serviço externo gratuito.
 - PDF com `pdf-lib` ou equivalente no navegador; UI com Tailwind CSS e componentes leves.
