@@ -1,10 +1,14 @@
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
-export default function StudentDashboardPage() {
+export default async function StudentDashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = user ? await supabase.from("profiles").select("full_name").eq("id", user.id).single() : { data: null };
+  const firstName = profile?.full_name.split(/\s+/)[0] ?? "estudante";
   return (
     <main className="dashboard-main">
       <div className="page-heading">
-        <div><p className="eyebrow">Visão geral</p><h1>Olá, estudante.</h1></div>
+        <div><p className="eyebrow">Visão geral</p><h1>Olá, {firstName}.</h1></div>
         <span className="sla-card"><strong>3</strong> dias úteis<br />prazo médio atual</span>
       </div>
 
