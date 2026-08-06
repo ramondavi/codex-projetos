@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "@/domain/auth/account";
+import { canChangeAuthenticatedEmail, isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "@/domain/auth/account";
 import { createClient } from "@/lib/supabase/server";
 
 function destination(path: string, kind: "error" | "message", text: string) {
@@ -83,6 +83,12 @@ export async function requestEmailChange(formData: FormData) {
   const supabase = await createClient();
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user?.email) redirect(destination("/entrar", "error", "Sua sessão expirou. Entre novamente para alterar o e-mail."));
+
+  const { data: profile } = await supabase.from("profiles").select("status").eq("id", user.id).single();
+  if (!canChangeAuthenticatedEmail(profile?.status)) {
+    await supabase.auth.signOut();
+    redirect(destination("/entrar", "error", "Não foi possível continuar. Entre novamente ou procure a biblioteca."));
+  }
 
   const validationError = validateEmailChange(newEmail, user.email);
   if (validationError) redirect(destination("/painel/conta", "error", validationError));

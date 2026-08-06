@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "../src/domain/auth/account.ts";
+import { canChangeAuthenticatedEmail, isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "../src/domain/auth/account.ts";
 
 test("accepts only the exact UFBA email domain", () => {
   assert.equal(isUfbaEmail(" pessoa@ufba.br "), true);
@@ -16,6 +16,14 @@ test("validates an institutional email change", () => {
   assert.equal(validateEmailChange("nova.pessoa@ufba.br", "pessoa@ufba.br"), null);
   assert.equal(validateEmailChange("pessoa@ufba.br", " Pessoa@UFBA.BR "), "O novo e-mail deve ser diferente do endereço atual.");
   assert.equal(validateEmailChange("pessoa@gmail.com", "pessoa@ufba.br"), "Use um novo endereço institucional @ufba.br.");
+});
+
+test("allows authenticated email changes only for active accounts", () => {
+  assert.equal(canChangeAuthenticatedEmail("active"), true);
+  assert.equal(canChangeAuthenticatedEmail("blocked"), false);
+  assert.equal(canChangeAuthenticatedEmail("inactive"), false);
+  assert.equal(canChangeAuthenticatedEmail(null), false);
+  assert.equal(canChangeAuthenticatedEmail(undefined), false);
 });
 
 test("validates all signup decisions together", () => {

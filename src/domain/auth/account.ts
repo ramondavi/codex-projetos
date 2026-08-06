@@ -18,6 +18,10 @@ export function validateEmailChange(newEmail: string, currentEmail: string) {
   return null;
 }
 
+export function canChangeAuthenticatedEmail(status: string | null | undefined) {
+  return status === "active";
+}
+
 export type SignupInput = {
   fullName: string;
   cpf: string;
