@@ -56,6 +56,9 @@ O estudante só pode solicitar ficha para trabalho já apresentado/defendido e a
 ### 4.1. Estudante
 
 - Conta única vinculada a CPF e e-mail, reutilizável em ciclos acadêmicos futuros.
+- O cadastro é permitido somente com endereço de e-mail do domínio `@ufba.br`.
+- A confirmação do e-mail é obrigatória antes do primeiro acesso.
+- O CPF é único e fica associado a um único e-mail. O mesmo usuário pode alterar seu endereço `@ufba.br` quando necessário, inclusive em situações institucionais como a adoção de nome social, mas o novo endereço precisa ser confirmado.
 - A matrícula pertence ao vínculo acadêmico ou à solicitação, não permanentemente à conta. Em novo grau, pode cadastrar nova matrícula sem perder o histórico.
 - Pode abrir solicitação se não houver protocolo ativo.
 - Tem salvamento automático local durante o preenchimento.

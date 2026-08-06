@@ -4,13 +4,10 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Autenticação e contas
 
-- Definir se o cadastro de estudantes será aberto a qualquer pessoa ou terá algum critério de elegibilidade.
-- Definir se o e-mail precisa ser confirmado antes do primeiro acesso e o comportamento do fluxo enquanto estiver pendente.
 - Definir a política de senha aplicável além dos controles oferecidos pelo Supabase Auth.
 - Definir o fluxo de recuperação de senha e os limites da redefinição de senha pelo Administrador.
 - Definir como será criada a primeira conta de Administrador e como contas de Catalogador serão provisionadas, sem promover perfis por dados controlados pelo cliente.
 - Especificar o efeito de `active`, `blocked` e `inactive` sobre sessão existente, novos acessos e recuperação de conta.
-- Esclarecer se CPF e e-mail são, individualmente, chaves únicas ou se “CPF/e-mail” representa alguma regra combinada, inclusive para alteração de e-mail.
 - Definir proteção, acesso, exibição e eventual mascaramento do CPF persistido, além do princípio já consolidado de coleta mínima.
 - Definir o conteúdo e a forma de aceite do aviso de privacidade apresentado no cadastro.
 
