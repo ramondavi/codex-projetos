@@ -39,6 +39,8 @@ npm run typecheck
 npm run build
 ```
 
+O GitHub Actions repete automaticamente testes, verificação de tipos, lint e build em cada pull request. Assim, falhas que não puderem ser verificadas no ambiente do Codex Cloud ficam visíveis na aba **Checks** do pull request antes da incorporação à branch principal.
+
 ## Banco de dados
 
 Preencha `DATABASE_URL` e execute:
