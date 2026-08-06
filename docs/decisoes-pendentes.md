@@ -4,7 +4,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Autenticação e contas
 
-- Definir o procedimento técnico seguro para provisionar internamente a primeira conta de Administrador, incluindo o endereço autorizado e a criação da senha sem registrar ou compartilhar credenciais no repositório.
 - Definir os limites da assistência do Administrador em casos excepcionais de recuperação de senha.
 - Elaborar uma proposta de aviso de privacidade para posterior validação institucional e, depois da aprovação, definir sua forma de aceite no cadastro.
 

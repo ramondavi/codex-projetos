@@ -83,6 +83,7 @@ O estudante só pode solicitar ficha para trabalho já apresentado/defendido e a
 - Cria contas, redefine senhas, bloqueia/desativa usuários e altera perfis.
 - Contas de Catalogador e de Administrador somente podem ser criadas por um Administrador; não são obtidas pelo cadastro público nem por autoelevação de perfil.
 - A primeira conta de Administrador deve ser provisionada internamente para permitir o primeiro acesso ao painel, sem depender da existência prévia de outro Administrador.
+- O provisionamento inicial ocorre em duas etapas: criação confirmada do usuário interno no Dashboard do Supabase e associação transacional dos perfis `administrator` e `staff_profiles` pelo SQL Editor, sem armazenar senha no repositório.
 - Contas ativas têm acesso normal. Contas bloqueadas não podem iniciar ou manter sessões, preservam o histórico e podem ser desbloqueadas pelo Administrador. Contas inativas não podem acessar, preservam o histórico e podem ser reativadas pelo Administrador.
 - Reatribui atendimentos, devolve chamados à fila e resolve travas.
 - Cadastra curso/programa e e-mail da coordenação; ativa/desativa Magic Link.

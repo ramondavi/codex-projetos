@@ -24,4 +24,4 @@ No Dashboard, abra **SQL Editor**, crie uma nova consulta, cole todo o primeiro 
 
 ## Primeira conta administrativa
 
-O procedimento será realizado depois das migrações. A pessoa será convidada pelo Dashboard e seu perfil será provisionado separadamente como `administrator`, sem aceitar papel enviado pelo navegador e sem armazenar senha no repositório.
+Depois das migrações, o usuário interno é criado e confirmado em **Authentication → Users**, com senha guardada fora do repositório. Em seguida, uma operação transacional no SQL Editor cria `profiles` com papel `administrator` e o respectivo `staff_profiles`. O papel nunca é aceito dos metadados enviados pelo navegador. O primeiro Administrador foi provisionado com sucesso por esse procedimento.
