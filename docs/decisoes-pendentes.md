@@ -6,9 +6,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 - Definir o procedimento técnico seguro para provisionar internamente a primeira conta de Administrador, incluindo o endereço autorizado e a criação da senha sem registrar ou compartilhar credenciais no repositório.
 - Definir os limites da assistência do Administrador em casos excepcionais de recuperação de senha.
-- Especificar o efeito de `active`, `blocked` e `inactive` sobre sessão existente, novos acessos e recuperação de conta.
-- Definir proteção, acesso, exibição e eventual mascaramento do CPF persistido, além do princípio já consolidado de coleta mínima.
-- Definir o conteúdo e a forma de aceite do aviso de privacidade apresentado no cadastro.
+- Elaborar uma proposta de aviso de privacidade para posterior validação institucional e, depois da aprovação, definir sua forma de aceite no cadastro.
 
 ## Catalogação e ficha
 

@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Brand } from "./brand";
 import { ThemeSwitcher } from "./theme-switcher";
+import { logout } from "@/app/auth-actions";
 
-export function DashboardShell({ children }: { children: React.ReactNode }) {
+const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
+
+export function DashboardShell({ children, fullName, role }: { children: React.ReactNode; fullName: string; role: string }) {
   return (
     <div className="dashboard-shell">
       <aside className="dashboard-nav">
@@ -18,7 +21,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="dashboard-content">
         <header className="dashboard-header">
           <div><span className="status-dot" /> Atendimento normal</div>
-          <div className="dashboard-header__actions"><ThemeSwitcher /><span className="user-chip">Estudante</span></div>
+          <div className="dashboard-header__actions">
+            <ThemeSwitcher />
+            <span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span>
+            <form action={logout}><button className="text-button" type="submit">Sair</button></form>
+          </div>
         </header>
         {children}
       </div>

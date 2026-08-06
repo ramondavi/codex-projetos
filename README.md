@@ -51,4 +51,6 @@ npm run db:migrate
 npm run db:seed
 ```
 
+Para criar o banco diretamente em um projeto Supabase vazio e provisionar a autenticação, siga `docs/configuracao-supabase.md`. As migrações SQL versionadas ficam em `supabase/migrations`.
+
 O PDF completo do trabalho acadêmico nunca será armazenado pelo Pronto!. O Supabase Storage será reservado ao Nada Consta temporário em incremento posterior.
