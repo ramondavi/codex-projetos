@@ -13,7 +13,7 @@
 - matriz de permissões para estudante, catalogador e administrador;
 - clientes Supabase separados para navegador e servidor.
 
-Os formulários exibidos nesta etapa são a fundação visual. A integração efetiva com o Supabase Auth será concluída após a criação e configuração do projeto Supabase.
+Os formulários de autenticação estão integrados ao Supabase Auth. O cadastro público cria somente estudantes, exige e-mail institucional confirmado e associa automaticamente CPF e perfil; contas internas seguem o provisionamento administrativo descrito em `docs/configuracao-supabase.md`.
 
 ## Requisitos
 
@@ -22,6 +22,8 @@ Os formulários exibidos nesta etapa são a fundação visual. A integração ef
 - projeto Supabase para autenticação e banco de dados.
 
 ## Configuração local
+
+Para migrar do Codex Cloud e preparar um computador Windows sem experiência técnica, siga primeiro `docs/migracao-codex-desktop.md`.
 
 ```bash
 cp .env.example .env.local

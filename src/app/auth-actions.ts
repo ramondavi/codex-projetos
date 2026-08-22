@@ -2,7 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateSignup } from "@/domain/auth/account";
+import { canChangeAuthenticatedEmail, isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "@/domain/auth/account";
 import { createClient } from "@/lib/supabase/server";
 
 function destination(path: string, kind: "error" | "message", text: string) {
@@ -76,6 +76,29 @@ export async function updatePassword(formData: FormData) {
   const { error } = await supabase.auth.updateUser({ password });
   if (error) redirect(destination("/redefinir-senha", "error", "O link expirou ou não foi possível atualizar a senha."));
   redirect(destination("/entrar", "message", "Senha atualizada. Você já pode entrar."));
+}
+
+export async function requestEmailChange(formData: FormData) {
+  const newEmail = normalizeEmail(String(formData.get("email") ?? ""));
+  const supabase = await createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user?.email) redirect(destination("/entrar", "error", "Sua sessão expirou. Entre novamente para alterar o e-mail."));
+
+  const { data: profile } = await supabase.from("profiles").select("status").eq("id", user.id).single();
+  if (!canChangeAuthenticatedEmail(profile?.status)) {
+    await supabase.auth.signOut();
+    redirect(destination("/entrar", "error", "Não foi possível continuar. Entre novamente ou procure a biblioteca."));
+  }
+
+  const validationError = validateEmailChange(newEmail, user.email);
+  if (validationError) redirect(destination("/painel/conta", "error", validationError));
+
+  const { error } = await supabase.auth.updateUser(
+    { email: newEmail },
+    { emailRedirectTo: `${await siteOrigin()}/auth/callback?next=/painel/conta` },
+  );
+  if (error) redirect(destination("/painel/conta", "error", "Não foi possível solicitar a alteração do e-mail. Confira o endereço ou tente novamente."));
+  redirect(destination("/painel/conta", "message", "Solicitação enviada. Conclua as confirmações de segurança enviadas pelo Supabase para alterar o e-mail."));
 }
 
 export async function logout() {

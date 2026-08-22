@@ -12,6 +12,16 @@ export function isUfbaEmail(value: string) {
   return Boolean(localPart && domain === UFBA_EMAIL_DOMAIN && extra.length === 0);
 }
 
+export function validateEmailChange(newEmail: string, currentEmail: string) {
+  if (!isUfbaEmail(newEmail)) return "Use um novo endereço institucional @ufba.br.";
+  if (normalizeEmail(newEmail) === normalizeEmail(currentEmail)) return "O novo e-mail deve ser diferente do endereço atual.";
+  return null;
+}
+
+export function canChangeAuthenticatedEmail(status: string | null | undefined) {
+  return status === "active";
+}
+
 export type SignupInput = {
   fullName: string;
   cpf: string;
