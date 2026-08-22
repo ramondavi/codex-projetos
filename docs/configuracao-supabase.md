@@ -18,10 +18,17 @@ Copie `.env.example` para `.env.local` e preencha os valores diretamente no ambi
 Em um projeto vazio, execute uma única vez e nesta ordem:
 
 1. `supabase/migrations/202608060000_foundation.sql`;
-2. `supabase/migrations/202608060001_auth_accounts.sql`.
+2. `supabase/migrations/202608060001_auth_accounts.sql`;
+3. `supabase/migrations/202608220000_auth_authorization_hardening.sql`.
 
-No Dashboard, abra **SQL Editor**, crie uma nova consulta, cole todo o primeiro arquivo e execute. Somente depois de sucesso repita com o segundo arquivo. Não execute parcialmente, não altere o SQL durante a cópia e interrompa se houver erro.
+No Dashboard, abra **SQL Editor**, crie uma nova consulta, cole todo o primeiro arquivo e execute. Somente depois de sucesso repita, na ordem, com cada arquivo seguinte. Não execute parcialmente, não altere o SQL durante a cópia e interrompa se houver erro.
 
 ## Primeira conta administrativa
 
-Depois das migrações, o usuário interno é criado e confirmado em **Authentication → Users**, com senha guardada fora do repositório. Em seguida, uma operação transacional no SQL Editor cria `profiles` com papel `administrator` e o respectivo `staff_profiles`. O papel nunca é aceito dos metadados enviados pelo navegador. O primeiro Administrador foi provisionado com sucesso por esse procedimento.
+Depois das migrações, o usuário interno é criado e confirmado em **Authentication → Users**, com senha guardada fora do repositório. Em seguida, o primeiro Administrador é associado transacionalmente a `profiles` e `staff_profiles` pelo SQL Editor; esse provisionamento inicial é a única exceção, porque ainda não existe um Administrador autenticado para autorizar a operação. O papel nunca é aceito dos metadados enviados pelo navegador. O primeiro Administrador foi provisionado com sucesso por esse procedimento.
+
+As contas internas seguintes também devem ser previamente criadas e confirmadas em **Authentication → Users**, sempre com e-mail `@ufba.br`. Um Administrador ativo conclui a associação chamando a função versionada `public.provision_staff_account`, que aceita somente os papéis `cataloger` e `administrator`, cria os dois perfis na mesma transação e registra a ação em `audit_logs`. A função recusa chamadas de estudantes, Catalogadores e contas administrativas bloqueadas ou inativas. Uma interface administrativa para essa chamada pode ser adicionada em incremento próprio; até lá, não conceder papéis por edição de metadados do usuário.
+
+## Verificação de segurança
+
+Após aplicar as migrações, confirme no **Database → Tables** que RLS está habilitado em todas as tabelas do esquema `public`. Teste com contas separadas que estudantes enxergam somente seus próprios perfis, equipe ativa acessa apenas os dados operacionais previstos e contas `blocked` ou `inactive` não obtêm linhas pela Data API. Essas verificações integradas complementam os testes estáticos do repositório.
