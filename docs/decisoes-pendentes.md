@@ -30,7 +30,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Coordenação, Magic Link e comunicações
 
-- Definir os dados exatos exibidos na página da coordenação, além das restrições já consolidadas.
+- Avaliar após o piloto se a página da coordenação precisa de outros dados além da identificação básica do trabalho, status, SLA e timeline operacional já implementados.
 - Redigir em conjunto os textos dos e-mails transacionais.
 - Definir o tratamento/configuração do e-mail de pendência para a coordenação no MVP.
 - Cadastrar os e-mails oficiais das coordenações por curso/programa.
