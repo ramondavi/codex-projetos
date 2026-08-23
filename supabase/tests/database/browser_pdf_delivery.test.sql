@@ -1,0 +1,34 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(6);
+
+insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
+ ('97000000-0000-4000-8000-000000000001','pdf.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante PDF","cpf":"52998224725"}'),
+ ('97000000-0000-4000-8000-000000000002','pdf.outro@ufba.br',now(),'{"registration_source":"student","full_name":"Outro PDF","cpf":"11144477735"}'),
+ ('97000000-0000-4000-8000-000000000003','pdf.catalogador@ufba.br',now(),'{}');
+insert into public.profiles(id,full_name,email,role,status) values('97000000-0000-4000-8000-000000000003','Catalogador PDF','pdf.catalogador@ufba.br','cataloger','active');
+insert into public.staff_profiles(profile_id,professional_name,crb) values('97000000-0000-4000-8000-000000000003','Catalogador PDF','CRB-5/3333');
+
+set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
+select lives_ok($$select * from public.open_student_request(jsonb_build_object('academicProgramId',(select id from public.academic_programs limit 1),'registrationNumber','PDF2026','title','Trabalho PDF','publicWorkUrl','https://example.org/work.pdf','people',jsonb_build_object('author','Ana','advisor','Bia'),'keywordsPt',jsonb_build_array('Arquitetura'),'keywordsEn',jsonb_build_array('Architecture'),'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
+reset role;
+update public.cataloging_requests set status='approved',assigned_to='97000000-0000-4000-8000-000000000003';
+insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot) select id,'{}','97000000-0000-4000-8000-000000000003','Catalogador PDF','CRB-5/3333' from public.cataloging_requests;
+
+set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
+select is((select count(*)::integer from public.cataloging_card_homologations),0,'ficha fica bloqueada antes do Nada Consta');
+reset role;
+insert into public.nada_consta_documents(request_id,object_path,original_name,size_bytes,mime_type,sha256,status,uploaded_by,validated_by,validated_at,released_at) select id,id::text||'/nada-consta.pdf','nada.pdf',100,'application/pdf',repeat('a',64),'approved','97000000-0000-4000-8000-000000000001','97000000-0000-4000-8000-000000000003',now(),now() from public.cataloging_requests;
+set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
+select is((select count(*)::integer from public.cataloging_card_homologations),1,'estudante liberado lê sua ficha homologada');
+set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000002';
+select is((select count(*)::integer from public.cataloging_card_homologations),0,'outro estudante não lê a ficha');
+reset role; update public.nada_consta_documents set status='rejected',released_at=null;
+set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
+select is((select count(*)::integer from public.cataloging_card_homologations),0,'revogação do Nada Consta bloqueia novamente');
+reset role; update public.nada_consta_documents set status='approved',released_at=now(); update public.cataloging_requests set status='completed';
+set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
+select is((select count(*)::integer from public.cataloging_card_homologations),0,'status encerrado não amplia a regra sem decisão específica');
+
+select * from finish();
+rollback;

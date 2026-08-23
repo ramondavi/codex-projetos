@@ -257,7 +257,7 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 - Mesclar no navegador, sem upload do trabalho, usando `pdf-lib` ou equivalente leve.
 - Inserir a ficha depois da folha de rosto; bibliotecário pode informar/confirmar sua página.
 - Antes, mostrar nome/tamanho e exigir confirmação do arquivo pelo estudante.
-- Não prometer PDF/A garantido em JavaScript; orientar conferência/conversão final conforme exigência do repositório.
+- Não prometer PDF/A garantido em JavaScript. Informar que o navegador gera um PDF comum, não certifica conformidade PDF/A e que o estudante deve conferir ou converter o arquivo final conforme a exigência do Repositório Institucional.
 
 ## 12. Autodepósito e DSpace/RI-UFBA
 

@@ -10,7 +10,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 - **Ano de nascimento:** decidir obrigatoriedade e regra de exibição do ano do autor.
 - **Ficha:** validar o layout provisório `provisional-v1` com exemplos institucionais reais e então refinar largura, métricas e espaçamentos, preservando as regras já consolidadas.
-- **PDF/A:** definir a orientação final ao estudante, sem prometer validação automática.
 
 ## Vocabulário, CDU, Cutter e MARC 21
 
