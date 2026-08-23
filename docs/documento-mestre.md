@@ -424,3 +424,11 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 6. detalhar a stack gratuita;
 7. preparar plano de desenvolvimento por etapas;
 8. só depois escrever o prompt técnico final para desenvolvimento.
+
+## 25. Encerramento e acesso da coordenação — decisão implementada
+
+- O encerramento exige ficha homologada, Nada Consta aprovado, início registrado do autodepósito e URL permanente HTTPS verificada pelo bibliotecário no RI/UFBA.
+- O encerramento registra a publicação, conclui o protocolo, enfileira as comunicações finais ao estudante e aos contatos ativos da coordenação e inicia a retenção de 60 dias do Nada Consta.
+- O Magic Link é configurável por programa, usa token imprevisível armazenado somente como hash e apresenta identificação básica do trabalho, status, SLA e marcos operacionais da timeline.
+- A página da coordenação é somente leitura e não expõe CPF, documentos, arquivo do Nada Consta nem comentários internos.
+- O link é inutilizado após a conclusão e a entrega das comunicações finais. Os textos atuais dos e-mails são provisórios até validação institucional.

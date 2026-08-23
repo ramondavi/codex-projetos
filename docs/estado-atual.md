@@ -30,6 +30,8 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Incremento 8 implementado localmente: Nada Consta em bucket privado, validações de extensão, MIME, assinatura PDF e limite inicial de 5 MB, aprovação ou devolução pelo responsável, liberação condicionada e expurgo programado para 60 dias após o encerramento.
 - Incremento 9 implementado localmente: ficha isolada e mesclagem integral no navegador, confirmação do arquivo analisado e da folha de rosto, fonte TTF/OTF local opcional, geometria compartilhada e orientação explícita sobre PDF/A.
 - Incremento 10 implementado localmente: guia passo a passo do autodepósito no RI/UFBA, mapeamento confirmado por tipo de trabalho, cópia apenas de metadados aplicáveis, registro do início, configuração administrativa por programa e TFG de graduação inicialmente desativado.
+- Incremento 11 implementado localmente: verificação da publicação no RI/UFBA, URL/Handle permanente, encerramento transacional, timeline completa, comunicações finais e Magic Link somente leitura da coordenação com token armazenado apenas como hash.
+- O acesso da coordenação omite CPF, documentos e comentários internos e é inutilizado somente depois que as comunicações finais enfileiradas forem entregues. O encerramento aciona a contagem já existente de 60 dias para expurgo do Nada Consta.
 
 ## Estado operacional do Supabase
 
@@ -46,8 +48,9 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 9. `202608230005_nada_consta_release.sql` (ainda não aplicada ao projeto remoto).
 10. `202608230006_browser_pdf_delivery.sql` (ainda não aplicada ao projeto remoto).
 11. `202608230007_repository_deposit_guide.sql` (ainda não aplicada ao projeto remoto).
+12. `202608230008_protocol_closure_coordination.sql` (ainda não aplicada ao projeto remoto).
 
-O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 10 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
+O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 11 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
 
 ## Testes integrados de banco
 

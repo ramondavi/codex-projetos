@@ -228,6 +228,11 @@ export const repositoryDepositProgress = pgTable("repository_deposit_progress", 
   ...timestamps,
 });
 
+export const repositoryPublications = pgTable("repository_publications", {
+  id: uuid("id").defaultRandom().primaryKey(), requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "restrict" }).notNull().unique(),
+  permanentUrl: text("permanent_url").notNull(), verifiedBy: uuid("verified_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(), verifiedAt: timestamp("verified_at", { withTimezone: true }).defaultNow().notNull(), ...timestamps,
+});
+
 export const staffProfiles = pgTable("staff_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),
@@ -271,6 +276,11 @@ export const coordinationContacts = pgTable("coordination_contacts", {
   receivesIssueEmails: boolean("receives_issue_emails").default(false).notNull(),
   receivesCompletionEmails: boolean("receives_completion_emails").default(true).notNull(),
   ...timestamps,
+});
+
+export const coordinationMagicLinks = pgTable("coordination_magic_links", {
+  id: uuid("id").defaultRandom().primaryKey(), requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(), coordinationContactId: uuid("coordination_contact_id").references(() => coordinationContacts.id, { onDelete: "restrict" }).notNull(),
+  tokenHash: text("token_hash").notNull().unique(), issuedBy: uuid("issued_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(), issuedAt: timestamp("issued_at", { withTimezone: true }).defaultNow().notNull(), invalidatedAt: timestamp("invalidated_at", { withTimezone: true }), finalCommunicatedAt: timestamp("final_communicated_at", { withTimezone: true }), createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const libraryAnnouncements = pgTable("library_announcements", {
