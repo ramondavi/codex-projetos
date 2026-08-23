@@ -71,6 +71,62 @@ export const requestAnalyses = pgTable("request_analyses", {
   ...timestamps,
 });
 
+export const issueTemplates = pgTable("issue_templates", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  code: text("code").notNull().unique(),
+  label: text("label").notNull(),
+  message: text("message").notNull(),
+  active: boolean("active").default(true).notNull(),
+  position: integer("position").default(0).notNull(),
+  ...timestamps,
+});
+
+export const requestRevisionRounds = pgTable("request_revision_rounds", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  roundNumber: integer("round_number").notNull(),
+  returnedBy: uuid("returned_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  returnedAt: timestamp("returned_at", { withTimezone: true }).defaultNow().notNull(),
+  respondedAt: timestamp("responded_at", { withTimezone: true }),
+  ...timestamps,
+});
+
+export const requestFieldIssues = pgTable("request_field_issues", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  revisionRoundId: uuid("revision_round_id").references(() => requestRevisionRounds.id, { onDelete: "cascade" }).notNull(),
+  fieldKey: text("field_key").notNull(),
+  fieldLabel: text("field_label").notNull(),
+  templateId: uuid("template_id").references(() => issueTemplates.id, { onDelete: "restrict" }),
+  justification: text("justification").notNull(),
+  originalValue: jsonb("original_value").$type<unknown>(),
+  resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+  ...timestamps,
+});
+
+export const requestCorrections = pgTable("request_corrections", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  revisionRoundId: uuid("revision_round_id").references(() => requestRevisionRounds.id, { onDelete: "cascade" }).notNull(),
+  fieldKey: text("field_key").notNull(),
+  previousValue: jsonb("previous_value").$type<unknown>(),
+  correctedValue: jsonb("corrected_value").$type<unknown>(),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const emailOutbox = pgTable("email_outbox", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  eventType: text("event_type").notNull(),
+  idempotencyKey: text("idempotency_key").notNull().unique(),
+  recipient: text("recipient").notNull(),
+  subject: text("subject").notNull(),
+  textBody: text("text_body").notNull(),
+  status: text("status").default("pending").notNull(),
+  attempts: integer("attempts").default(0).notNull(),
+  deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+  lastError: text("last_error"),
+  ...timestamps,
+});
+
 export const requestPeople = pgTable("request_people", {
   id: uuid("id").defaultRandom().primaryKey(),
   requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),

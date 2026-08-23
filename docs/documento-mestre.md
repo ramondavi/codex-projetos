@@ -221,12 +221,20 @@ Graduação, Especialização, Mestrado e Doutorado.
 ### 10.2. Devolução por pendência
 
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
-- Destacar pendências para o estudante; campos corretos podem ficar travados ou preservados para evitar alterações indevidas.
+- Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
+- Templates iniciais: campo obrigatório não preenchido; informação divergente do trabalho; nome divergente da folha de rosto; link público indisponível ou sem permissão; informação incompleta; formatação ou padronização a ajustar. O bibliotecário pode complementar ou substituir por justificativa livre.
+- Preservar histórico imutável de cada rodada, das justificativas enviadas e dos valores corrigidos.
 
 ### 10.3. Comentários internos
 
 Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/área, em fluxo assíncrono e não bloqueante. No MVP podem ser observações simples; fórum completo fica para Fase 2.
+
+### 10.4. E-mails durante o desenvolvimento
+
+- Eventos de abertura, pendência e liberação geram registros em fila transacional.
+- Durante o desenvolvimento, o envio externo permanece desativado e a entrega é testada somente no Mailpit local.
+- O aviso de liberação fica preparado para o futuro evento de homologação; este incremento não cria uma ação de homologar a ficha.
 
 ## 11. Entrega final e mesclagem
 
@@ -277,7 +285,7 @@ Os TCCs de graduação da Faculdade de Arquitetura são TFG — Trabalho Final d
 - Abertura ao estudante; abertura à coordenação se Magic Link estiver ativo.
 - Pendência ao estudante com campos/justificativas; para coordenação, opcional/configurável.
 - Liberação da ficha e encerramento ao estudante; encerramento à coordenação com dados básicos e URL/Handle.
-- Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto.
+- Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto; até lá, usar textos operacionais provisórios identificados no código.
 - Priorizar SMTP institucional da biblioteca quando configuração e políticas da UFBA permitirem; serviço transacional externo gratuito é alternativa.
 
 ## 17. Estatísticas, relatórios e backup

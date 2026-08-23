@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { StaffQueue } from "@/components/staff-queue";
 import { createClient } from "@/lib/supabase/server";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
+import { processLocalEmailOutbox } from "./email-actions";
 
 type RawQueueRequest = {
   id: string; protocol: string; status: string; title: string; submitted_at: string; assigned_to: string | null;
@@ -14,7 +15,7 @@ type RawQueueRequest = {
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
 
-export default async function StaffQueuePage() {
+export default async function StaffQueuePage({ searchParams }: { searchParams: Promise<{ emails?: string }> }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
@@ -53,6 +54,7 @@ export default async function StaffQueuePage() {
     };
   });
   const staff: StaffOption[] = (staffData ?? []).map((item) => ({ id: item.id, fullName: item.full_name }));
+  const pageParams = await searchParams;
 
-  return <main className="dashboard-main dashboard-main--queue"><div className="page-heading queue-heading"><div><p className="eyebrow">Atendimento bibliotecário</p><h1>Fila geral</h1><p>Localize, assuma e acompanhe solicitações sem disputa entre atendentes.</p></div><span className="queue-total"><strong>{requests.filter((item) => !item.assignedTo).length}</strong> aguardando responsável</span></div><StaffQueue initialRequests={requests} staff={staff} currentUserId={user.id} isAdministrator={profile.role === "administrator"} /></main>;
+  return <main className="dashboard-main dashboard-main--queue"><div className="page-heading queue-heading"><div><p className="eyebrow">Atendimento bibliotecário</p><h1>Fila geral</h1><p>Localize, assuma e acompanhe solicitações sem disputa entre atendentes.</p></div><span className="queue-total"><strong>{requests.filter((item) => !item.assignedTo).length}</strong> aguardando responsável</span></div>{profile.role === "administrator" && <section className="local-email-panel"><div><strong>E-mails locais de desenvolvimento</strong><p>Envie os eventos pendentes ao Mailpit. Esta ação é bloqueada fora do ambiente local.</p>{pageParams.emails === "sent" && <small>Fila processada. Consulte o Mailpit.</small>}{pageParams.emails === "error" && <small className="local-email-panel__error">Houve falha em uma entrega local.</small>}</div><form action={processLocalEmailOutbox}><button className="button button--secondary button--small" type="submit">Processar e-mails locais</button></form><a className="text-button" href="http://localhost:54324" target="_blank" rel="noreferrer">Abrir Mailpit ↗</a></section>}<StaffQueue initialRequests={requests} staff={staff} currentUserId={user.id} isAdministrator={profile.role === "administrator"} /></main>;
 }
