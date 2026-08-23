@@ -189,6 +189,9 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Bibliotecário pode criar termo; admin pode corrigir e mesclar duplicados.
 - Remover espaços duplos, padronizar caixa e evitar pontuação indevida.
 - A ficha usa termos em português; DSpace poderá usar PT/EN conforme mapeamento.
+- O cadastro controlado é bilíngue: mantém termo preferido em português e, quando aplicável, seu equivalente em inglês. Ambos são reutilizáveis; a ficha continua usando somente a forma em português.
+- Sanitização inicial: remover espaços excedentes e pontuação final, preservar acentos e usar inicial minúscula, exceto em nomes próprios e siglas. A comparação de duplicidade não diferencia maiúsculas de minúsculas.
+- A mesclagem administrativa de termos duplicados fica para evolução posterior; neste incremento, o sistema evita novas duplicidades pela forma normalizada.
 
 ### 9.2. Assistente CDU
 
@@ -197,6 +200,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Solução C: termo principal tem peso maior; termos secundários, peso menor.
 - Explicar a sugestão, por exemplo: “usado em X fichas com este termo”.
 - Versão simples no MVP se possível; ranking refinado e curadoria termo-CDU depois.
+- No MVP, a pontuação é `2 × fichas com o termo principal + 1 × fichas com cada termo secundário`, considerando somente fichas homologadas ou concluídas e contando cada ficha uma vez por componente. Exibir até três sugestões, com as contagens separadas, sem preenchimento automático.
 
 ### 9.3. Assistente Cutter-Sanborn/CAT
 

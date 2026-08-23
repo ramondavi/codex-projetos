@@ -146,6 +146,60 @@ export const requestKeywords = pgTable("request_keywords", {
   ...timestamps,
 });
 
+export const personAuthorities = pgTable("person_authorities", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  authorizedName: text("authorized_name").notNull(),
+  normalizedName: text("normalized_name").notNull().unique(),
+  active: boolean("active").default(true).notNull(),
+  createdBy: uuid("created_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  updatedBy: uuid("updated_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  ...timestamps,
+});
+
+export const requestCatalogingPeople = pgTable("request_cataloging_people", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  authorityPersonId: uuid("authority_person_id").references(() => personAuthorities.id, { onDelete: "restrict" }).notNull(),
+  role: text("role").notNull(),
+  transcribedName: text("transcribed_name").notNull(),
+  authorizedNameSnapshot: text("authorized_name_snapshot").notNull(),
+  position: integer("position").default(0).notNull(),
+  ...timestamps,
+});
+
+export const controlledTerms = pgTable("controlled_terms", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  preferredLabelPt: text("preferred_label_pt").notNull(),
+  normalizedLabelPt: text("normalized_label_pt").notNull().unique(),
+  preferredLabelEn: text("preferred_label_en"),
+  normalizedLabelEn: text("normalized_label_en"),
+  active: boolean("active").default(true).notNull(),
+  createdBy: uuid("created_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  updatedBy: uuid("updated_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  ...timestamps,
+});
+
+export const requestControlledTerms = pgTable("request_controlled_terms", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  controlledTermId: uuid("controlled_term_id").references(() => controlledTerms.id, { onDelete: "restrict" }).notNull(),
+  labelPtSnapshot: text("label_pt_snapshot").notNull(),
+  labelEnSnapshot: text("label_en_snapshot"),
+  isPrimary: boolean("is_primary").default(false).notNull(),
+  position: integer("position").default(0).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const requestCatalogingMetadata = pgTable("request_cataloging_metadata", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull().unique(),
+  cduCode: text("cdu_code"),
+  cutterCode: text("cutter_code"),
+  marc21Preparation: jsonb("marc21_preparation").$type<Record<string, unknown>>().default({}).notNull(),
+  lastEditedBy: uuid("last_edited_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  ...timestamps,
+});
+
 export const staffProfiles = pgTable("staff_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),
