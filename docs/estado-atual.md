@@ -27,6 +27,7 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Entrega local de e-mails preparada no Mailpit para abertura, pendência e futura liberação; nenhum provedor externo de e-mail está habilitado.
 - Incremento 6 implementado localmente: autoridades reutilizáveis de pessoas com formas transcrita e autorizada, vocabulário controlado bilíngue, CDU e Cutter manuais, sugestão CDU explicável pelo histórico e preparação estruturada para futuro MARC 21.
 - Incremento 7 implementado localmente: revisão final, homologação imutável com data, horário, bibliotecário e CRB, geração isolada da ficha em PDF e layout CIP provisório com as regras catalográficas já confirmadas.
+- Incremento 8 implementado localmente: Nada Consta em bucket privado, validações de extensão, MIME, assinatura PDF e limite inicial de 5 MB, aprovação ou devolução pelo responsável, liberação condicionada e expurgo programado para 60 dias após o encerramento.
 
 ## Estado operacional do Supabase
 
@@ -40,12 +41,13 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 6. `202608230002_issues_communications.sql` (ainda não aplicada ao projeto remoto).
 7. `202608230003_assisted_cataloging.sql` (ainda não aplicada ao projeto remoto).
 8. `202608230004_cataloging_card.sql` (ainda não aplicada ao projeto remoto).
+9. `202608230005_nada_consta_release.sql` (ainda não aplicada ao projeto remoto).
 
-O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 7 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
+O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 8 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
 
 ## Testes integrados de banco
 
-A suíte pgTAP em `supabase/tests/database` contém 150 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU e homologação imutável da ficha, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
+A suíte pgTAP em `supabase/tests/database` contém 170 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha e ciclo privado do Nada Consta, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
 
 ## Próximo passo de produto
 
