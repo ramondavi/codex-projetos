@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { bigint, boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const userRole = pgEnum("user_role", ["student", "cataloger", "administrator"]);
 export const accountStatus = pgEnum("account_status", ["active", "blocked", "inactive"]);
@@ -6,6 +6,7 @@ export const academicLevel = pgEnum("academic_level", ["undergraduate", "special
 export const workType = pgEnum("work_type", ["undergraduate_thesis", "specialization_thesis", "dissertation", "thesis"]);
 export const announcementType = pgEnum("announcement_type", ["normal", "recess", "strike", "other"]);
 export const requestStatus = pgEnum("request_status", ["submitted", "in_review", "changes_requested", "approved", "completed", "canceled"]);
+export const nadaConstaStatus = pgEnum("nada_consta_status", ["pending", "approved", "rejected", "purged"]);
 export const personRole = pgEnum("person_role", ["author", "advisor", "coadvisor"]);
 
 const timestamps = {
@@ -210,6 +211,13 @@ export const catalogingCardHomologations = pgTable("cataloging_card_homologation
   librarianCrbSnapshot: text("librarian_crb_snapshot").notNull(),
   homologatedAt: timestamp("homologated_at", { withTimezone: true }).defaultNow().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const nadaConstaDocuments = pgTable("nada_consta_documents", {
+  id: uuid("id").defaultRandom().primaryKey(), requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "restrict" }).notNull(),
+  objectPath: text("object_path"), originalName: text("original_name").notNull(), sizeBytes: bigint("size_bytes", { mode: "number" }).notNull(), mimeType: text("mime_type").notNull(), sha256: text("sha256").notNull(),
+  status: nadaConstaStatus("status").default("pending").notNull(), uploadedBy: uuid("uploaded_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(), uploadedAt: timestamp("uploaded_at", { withTimezone: true }).defaultNow().notNull(),
+  validatedBy: uuid("validated_by").references(() => profiles.id, { onDelete: "restrict" }), validatedAt: timestamp("validated_at", { withTimezone: true }), rejectionReason: text("rejection_reason"), releasedAt: timestamp("released_at", { withTimezone: true }), purgeAfter: timestamp("purge_after", { withTimezone: true }), purgedAt: timestamp("purged_at", { withTimezone: true }), ...timestamps,
 });
 
 export const staffProfiles = pgTable("staff_profiles", {

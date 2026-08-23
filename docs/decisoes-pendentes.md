@@ -27,7 +27,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Arquivos e segurança
 
-- **Nada Consta:** definir o valor inicial do limite máximo configurável durante os testes.
 - **Segurança:** detalhar limites, ações cobertas pelos logs e política de acesso onde ainda não estiver definida no Documento-Mestre.
 
 ## Coordenação, Magic Link e comunicações

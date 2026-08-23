@@ -121,7 +121,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 
 - É o único PDF armazenado pelo Pronto! e deve ser enviado diretamente pelo estudante.
 - A ficha pode ser analisada/homologada em paralelo, mas download final e mesclagem ficam bloqueados até sua validação pelo bibliotecário.
-- Deve ter limite máximo sensato e configurável, ajustável durante testes, e validação por extensão, MIME e *magic bytes*.
+- Deve ter limite máximo configurável, inicialmente definido em 5 MB e ajustável após os testes, e validação por extensão, MIME e *magic bytes*.
 - Deve ser excluído definitivamente 60 dias após o encerramento; preservar apenas registro textual/log da validação.
 - Não assumir regras de Pergamum, validade ou código sem confirmação futura.
 
