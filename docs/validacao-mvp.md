@@ -24,6 +24,13 @@ Depois execute `npm run test:e2e:auth`. Um teste ignorado significa que a respec
 
 Rodada local de 23/08/2026: 9/9 cenários autenticados aprovados (três perfis em desktop claro, desktop escuro e celular). As três sessões temporárias foram removidas imediatamente após a execução.
 
+## Evidência de implantação inicial
+
+- Supabase remoto: migrações `202608230000` a `202608230010` aplicadas em 23/08/2026; histórico alinhado e lint remoto sem erros.
+- Vercel Preview: implantação do merge `6a9de49` concluída com sucesso e protegida por SSO da Vercel.
+- Smoke test assistido: página inicial, login remoto e painel do Administrador confirmados pelo responsável.
+- Ainda pendentes: smoke remoto de Estudante e Catalogador, PDFs institucionais anonimizados, validação com participantes e promoção para Production.
+
 ## Roteiro assistido
 
 Para cada participante, registre apenas perfil, data, dispositivo, tarefa, resultado, dificuldade observada e severidade. Não registre CPF, senha, arquivo acadêmico, link mágico ou conteúdo de comentários internos.
