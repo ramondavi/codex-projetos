@@ -18,6 +18,9 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Esquemas local e remoto alinhados, sem migrações pendentes.
 - Suíte integrada com 36 testes pgTAP executada no CI para Auth, PostgreSQL, RLS e provisionamento.
 - Lint do banco aprovado nos ambientes local e remoto.
+- Incremento 3 implementado localmente em branch própria: vínculos acadêmicos, formulário completo da solicitação, rascunho automático local, validações, protocolo interno e acompanhamento inicial.
+- Abertura da solicitação protegida por função transacional e RLS, com uma única solicitação ativa por estudante imposta no PostgreSQL.
+- Cinco programas iniciais incorporados de forma idempotente ao fluxo de migrações para que o banco local seja reproduzível sem seed externo.
 
 ## Estado operacional do Supabase
 
@@ -25,13 +28,14 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 
 1. `202608060000_foundation.sql`;
 2. `202608060001_auth_accounts.sql`;
-3. `202608220000_auth_authorization_hardening.sql`.
+3. `202608220000_auth_authorization_hardening.sql`;
+4. `202608230000_student_requests.sql` (ainda não aplicada ao projeto remoto).
 
-O hardening está aplicado no projeto `Pronto!`, a comparação de esquema não encontrou divergências nos objetos versionados e o *dry-run* remoto confirmou que não há migrações pendentes.
+O hardening está aplicado no projeto `Pronto!`. A migração do Incremento 3 foi validada somente no Supabase local e permanece pendente no projeto remoto até confirmação explícita do usuário.
 
 ## Testes integrados de banco
 
-A suíte pgTAP em `supabase/tests/database` contém 36 testes integrados executados no CI contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS e provisionamento administrativo, sem depender de credenciais ou dados reais. O lint do banco foi aprovado tanto localmente quanto no projeto remoto.
+A suíte pgTAP em `supabase/tests/database` contém 48 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo e abertura de solicitações, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; a nova migração ainda não foi aplicada remotamente.
 
 ## Próximo passo de produto
 

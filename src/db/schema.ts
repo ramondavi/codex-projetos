@@ -1,10 +1,12 @@
-import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const userRole = pgEnum("user_role", ["student", "cataloger", "administrator"]);
 export const accountStatus = pgEnum("account_status", ["active", "blocked", "inactive"]);
 export const academicLevel = pgEnum("academic_level", ["undergraduate", "specialization", "master", "doctorate"]);
 export const workType = pgEnum("work_type", ["undergraduate_thesis", "specialization_thesis", "dissertation", "thesis"]);
 export const announcementType = pgEnum("announcement_type", ["normal", "recess", "strike", "other"]);
+export const requestStatus = pgEnum("request_status", ["submitted", "in_review", "changes_requested", "approved", "completed", "canceled"]);
+export const personRole = pgEnum("person_role", ["author", "advisor", "coadvisor"]);
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -25,6 +27,54 @@ export const studentProfiles = pgTable("student_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),
   cpf: text("cpf").notNull().unique(),
+  ...timestamps,
+});
+
+export const academicEnrollments = pgTable("academic_enrollments", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  studentProfileId: uuid("student_profile_id").references(() => studentProfiles.id, { onDelete: "cascade" }).notNull(),
+  academicProgramId: uuid("academic_program_id").references(() => academicPrograms.id).notNull(),
+  registrationNumber: text("registration_number").notNull(),
+  ...timestamps,
+}, (table) => [uniqueIndex("academic_enrollments_student_program_registration_key").on(table.studentProfileId, table.academicProgramId, table.registrationNumber)]);
+
+export const catalogingRequests = pgTable("cataloging_requests", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  studentProfileId: uuid("student_profile_id").references(() => studentProfiles.id, { onDelete: "restrict" }).notNull(),
+  academicEnrollmentId: uuid("academic_enrollment_id").references(() => academicEnrollments.id, { onDelete: "restrict" }).notNull(),
+  protocol: text("protocol").notNull().unique(),
+  status: requestStatus("status").default("submitted").notNull(),
+  title: text("title").notNull(),
+  subtitle: text("subtitle"),
+  equivalentTitle: text("equivalent_title"),
+  otherTitles: jsonb("other_titles").$type<string[]>().default([]).notNull(),
+  publicWorkUrl: text("public_work_url").notNull(),
+  specialCases: jsonb("special_cases").$type<string[]>().default([]).notNull(),
+  volumeInformation: text("volume_information"),
+  libraryNote: text("library_note"),
+  defendedAndApproved: boolean("defended_and_approved").notNull(),
+  finalFileConfirmed: boolean("final_file_confirmed").notNull(),
+  approvalPageConfirmed: boolean("approval_page_confirmed").notNull(),
+  submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow().notNull(),
+  ...timestamps,
+});
+
+export const requestPeople = pgTable("request_people", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  role: personRole("role").notNull(),
+  transcribedName: text("transcribed_name").notNull(),
+  authorizedName: text("authorized_name"),
+  position: integer("position").default(0).notNull(),
+  ...timestamps,
+});
+
+export const requestKeywords = pgTable("request_keywords", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  language: text("language").notNull(),
+  term: text("term").notNull(),
+  position: integer("position").default(0).notNull(),
   ...timestamps,
 });
 

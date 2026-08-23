@@ -1,9 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
+import Link from "next/link";
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("full_name").eq("id", user.id).single() : { data: null };
+  const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
   const firstName = profile?.full_name.split(/\s+/)[0] ?? "estudante";
   return (
     <main className="dashboard-main">
@@ -17,9 +19,9 @@ export default async function StudentDashboardPage() {
           <span className="next-action__index">01</span>
           <div>
             <p className="eyebrow">Sua próxima ação</p>
-            <h2>Inicie sua solicitação</h2>
-            <p>Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo.</p>
-            <button className="button button--primary" disabled>Iniciar solicitação · em breve</button>
+            <h2>{activeRequest ? activeRequest.protocol : "Inicie sua solicitação"}</h2>
+            <p>{activeRequest ? `Seu trabalho “${activeRequest.title}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
+            <Link className="button button--primary" href={activeRequest ? "/painel/solicitacao" : "/painel/solicitacao/nova"}>{activeRequest ? "Acompanhar protocolo" : "Iniciar solicitação"}</Link>
           </div>
         </article>
         <aside className="dashboard-side">
@@ -39,10 +41,10 @@ export default async function StudentDashboardPage() {
         </aside>
       </section>
 
-      <section className="history-empty">
+      {!activeRequest && <section className="history-empty">
         <div><p className="eyebrow">Histórico</p><h2>Nenhuma solicitação anterior</h2></div>
         <p>Quando um protocolo for concluído, ele continuará disponível aqui para consulta.</p>
-      </section>
+      </section>}
     </main>
   );
 }
