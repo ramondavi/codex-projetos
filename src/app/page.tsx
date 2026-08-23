@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Geometry } from "@/components/geometry";
 import { Notice } from "@/components/notice";
 import { SiteHeader } from "@/components/site-header";
+import { OfficialLibraryLogo } from "@/components/official-library-logo";
 
 const steps = [
   ["01", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
@@ -60,7 +61,10 @@ export default function HomePage() {
       </main>
       <footer className="footer">
         <div className="container footer__inner">
-          <strong>Biblioteca da Faculdade de Arquitetura — BIB/FA</strong>
+          <div className="footer__identity">
+            <OfficialLibraryLogo decorative />
+            <strong>Biblioteca da Faculdade de Arquitetura — BIB/FA</strong>
+          </div>
           <span>SIBI · Universidade Federal da Bahia</span>
         </div>
       </footer>

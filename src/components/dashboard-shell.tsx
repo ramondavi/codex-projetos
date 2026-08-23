@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Brand } from "./brand";
 import { ThemeSwitcher } from "./theme-switcher";
+import { OfficialLibraryLogo } from "./official-library-logo";
 import { logout } from "@/app/auth-actions";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
@@ -27,7 +28,10 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
           <Link className={activeClass("/painel/autodeposito")} href="/painel/autodeposito">Autodepósito</Link>
           <Link className={activeClass("/painel/conta")} href="/painel/conta">Minha conta</Link>
         </nav>}
-        <p className="dashboard-nav__institution">BIB/FA · SIBI/UFBA</p>
+        <div className="dashboard-nav__institution">
+          <OfficialLibraryLogo />
+          <span>SIBI · Universidade Federal da Bahia</span>
+        </div>
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">
