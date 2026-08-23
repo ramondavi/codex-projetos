@@ -44,6 +44,9 @@ export const catalogingRequests = pgTable("cataloging_requests", {
   academicEnrollmentId: uuid("academic_enrollment_id").references(() => academicEnrollments.id, { onDelete: "restrict" }).notNull(),
   protocol: text("protocol").notNull().unique(),
   status: requestStatus("status").default("submitted").notNull(),
+  assignedTo: uuid("assigned_to").references(() => profiles.id, { onDelete: "restrict" }),
+  assignedAt: timestamp("assigned_at", { withTimezone: true }),
+  lockedAt: timestamp("locked_at", { withTimezone: true }),
   title: text("title").notNull(),
   subtitle: text("subtitle"),
   equivalentTitle: text("equivalent_title"),
@@ -56,6 +59,15 @@ export const catalogingRequests = pgTable("cataloging_requests", {
   finalFileConfirmed: boolean("final_file_confirmed").notNull(),
   approvalPageConfirmed: boolean("approval_page_confirmed").notNull(),
   submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow().notNull(),
+  ...timestamps,
+});
+
+export const requestAnalyses = pgTable("request_analyses", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull().unique(),
+  analysisNotes: text("analysis_notes").default("").notNull(),
+  internalNote: text("internal_note").default("").notNull(),
+  lastEditedBy: uuid("last_edited_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
   ...timestamps,
 });
 
