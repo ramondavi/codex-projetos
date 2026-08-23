@@ -32,6 +32,7 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Incremento 10 implementado localmente: guia passo a passo do autodepósito no RI/UFBA, mapeamento confirmado por tipo de trabalho, cópia apenas de metadados aplicáveis, registro do início, configuração administrativa por programa e TFG de graduação inicialmente desativado.
 - Incremento 11 implementado localmente: verificação da publicação no RI/UFBA, URL/Handle permanente, encerramento transacional, timeline completa, comunicações finais e Magic Link somente leitura da coordenação com token armazenado apenas como hash.
 - O acesso da coordenação omite CPF, documentos e comentários internos e é inutilizado somente depois que as comunicações finais enfileiradas forem entregues. O encerramento aciona a contagem já existente de 60 dias para expurgo do Nada Consta.
+- Incremento 12 implementado localmente: gestão auditada de contas, bloqueio/inativação e perfis, coordenações, Magic Link, guia do RI, mural, SLA, templates básicos, indicadores, exportações CSV/JSON, expurgo assistido do Nada Consta e consulta aos logs.
 
 ## Estado operacional do Supabase
 
@@ -49,12 +50,13 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 10. `202608230006_browser_pdf_delivery.sql` (ainda não aplicada ao projeto remoto).
 11. `202608230007_repository_deposit_guide.sql` (ainda não aplicada ao projeto remoto).
 12. `202608230008_protocol_closure_coordination.sql` (ainda não aplicada ao projeto remoto).
+13. `202608230009_administration_operations.sql` (ainda não aplicada ao projeto remoto).
 
-O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 11 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
+O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 12 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
 
 ## Testes integrados de banco
 
-A suíte pgTAP em `supabase/tests/database` contém 193 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante e início/configuração do autodepósito assistido, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
+A suíte pgTAP em `supabase/tests/database` contém 206 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante, autodepósito assistido e operações administrativas, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
 
 ## Próximo passo de produto
 

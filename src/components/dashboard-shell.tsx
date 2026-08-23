@@ -14,7 +14,7 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
         {isStaff ? <nav aria-label="Área da biblioteca">
           <Link className="is-active" href="/painel/fila">Fila de solicitações</Link>
           <Link href="/painel/fila?responsavel=me">Meus atendimentos</Link>
-          {role === "administrator" && <Link href="/painel/admin/programas">Administração</Link>}
+          {role === "administrator" && <Link href="/painel/admin">Administração</Link>}
           <Link href="/painel/conta">Minha conta</Link>
         </nav> : <nav aria-label="Área do estudante">
           <Link className="is-active" href="/painel">Visão geral</Link>

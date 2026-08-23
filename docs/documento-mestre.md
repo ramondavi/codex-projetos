@@ -432,3 +432,14 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - O Magic Link é configurável por programa, usa token imprevisível armazenado somente como hash e apresenta identificação básica do trabalho, status, SLA e marcos operacionais da timeline.
 - A página da coordenação é somente leitura e não expõe CPF, documentos, arquivo do Nada Consta nem comentários internos.
 - O link é inutilizado após a conclusão e a entrega das comunicações finais. Os textos atuais dos e-mails são provisórios até validação institucional.
+
+## 26. Administração e operação — decisão implementada
+
+- O administrador gerencia contas e perfis por operações transacionais auditadas; bloqueio e inativação retiram imediatamente a autorização operacional imposta por RLS.
+- A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
+- Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
+- O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.
+- Os seis templates básicos de pendência podem ter rótulo, texto, ordem e ativação ajustados, sem criar um construtor avançado de templates.
+- Indicadores simples apresentam volume por período, status, curso/programa e bibliotecário, com exportação local em CSV e JSON.
+- O expurgo operacional lista somente Nada Consta com retenção vencida, remove o objeto privado e preserva o registro textual e o log da ação.
+- A consulta administrativa aos logs exibe ações operacionais e administrativas já registradas; detalhes adicionais de cobertura continuam sujeitos à política de logs pendente.
