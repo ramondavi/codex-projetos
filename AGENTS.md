@@ -1,6 +1,6 @@
 # Instruções para agentes — Pronto!
 
-Estas instruções valem para todo o repositório e devem ser seguidas no Codex Desktop, CLI, IDE ou Cloud.
+Estas instruções valem para todo o repositório e devem ser seguidas no Codex App, CLI, IDE ou Cloud. O ambiente local recomendado para este usuário é o Codex App no Windows, operando as ferramentas locais em seu nome.
 
 ## Fonte da verdade
 
@@ -21,6 +21,7 @@ Estas instruções valem para todo o repositório e devem ser seguidas no Codex 
 ## Fluxo Git
 
 - Antes de editar, confirme que a tarefa parte da `master` atualizada e que `git status` está limpo.
+- No Codex App, trabalhe somente na raiz do repositório clonado pelo GitHub, nunca em ZIP, cópia do Cloud ou pasta sem `.git`.
 - Trabalhe em uma branch nova por incremento ou correção.
 - Não force push, não reescreva a `master` e não apague branches sem solicitação.
 - Faça um commit claro e abra um PR; não faça merge automaticamente.
@@ -44,5 +45,6 @@ npm run build
 ## Comunicação
 
 - Explique procedimentos ao usuário como a uma pessoa não-programadora: passos numerados, nomes exatos dos botões e indicação clara do que não deve ser compartilhado.
+- Faça sozinho tudo o que for seguro e automatizável. Quando login, clique ou confirmação humana forem indispensáveis, pare e apresente somente uma instrução simples por vez.
 - Responda em português, salvo solicitação diferente.
 - Preserve os fluxos e decisões existentes; faça somente as alterações pedidas.

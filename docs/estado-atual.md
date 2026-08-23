@@ -1,6 +1,8 @@
-# Estado atual e passagem para o Codex Desktop
+# Estado atual e passagem para o Codex App
 
 Este arquivo oferece contexto curto para iniciar uma conversa nova sem depender do histórico do Codex Cloud. O Documento-Mestre continua sendo a fonte da verdade das regras de negócio.
+
+O ambiente local recomendado é o Codex App no Windows, conforme `docs/configuracao-codex-app.md`. Codex App, Git/GitHub, Node.js, Docker e o clone do repositório já foram instalados pelo usuário; ainda é necessário validar versões, autenticações e ferramentas complementares.
 
 ## Concluído
 

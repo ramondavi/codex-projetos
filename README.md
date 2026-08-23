@@ -23,7 +23,7 @@ Os formulários de autenticação estão integrados ao Supabase Auth. O cadastro
 
 ## Configuração local
 
-Para migrar do Codex Cloud e preparar um computador Windows sem experiência técnica, siga primeiro `docs/migracao-codex-desktop.md`.
+Para preparar o Codex App no Windows e integrar o ambiente local por etapas, siga primeiro `docs/configuracao-codex-app.md`.
 
 ```bash
 cp .env.example .env.local
