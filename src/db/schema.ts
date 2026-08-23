@@ -200,6 +200,18 @@ export const requestCatalogingMetadata = pgTable("request_cataloging_metadata", 
   ...timestamps,
 });
 
+export const catalogingCardHomologations = pgTable("cataloging_card_homologations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "restrict" }).notNull().unique(),
+  snapshot: jsonb("snapshot").$type<Record<string, unknown>>().notNull(),
+  layoutVersion: text("layout_version").default("provisional-v1").notNull(),
+  homologatedBy: uuid("homologated_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  librarianNameSnapshot: text("librarian_name_snapshot").notNull(),
+  librarianCrbSnapshot: text("librarian_crb_snapshot").notNull(),
+  homologatedAt: timestamp("homologated_at", { withTimezone: true }).defaultNow().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
 export const staffProfiles = pgTable("staff_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),

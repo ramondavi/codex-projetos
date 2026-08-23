@@ -238,7 +238,17 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 
 - Eventos de abertura, pendência e liberação geram registros em fila transacional.
 - Durante o desenvolvimento, o envio externo permanece desativado e a entrega é testada somente no Mailpit local.
-- O aviso de liberação fica preparado para o futuro evento de homologação; este incremento não cria uma ação de homologar a ficha.
+- A homologação da ficha não libera isoladamente a solicitação nem gera aviso de liberação: o envio depende também da validação do Nada Consta.
+
+### 10.5. Revisão e homologação da ficha
+
+- A revisão final usa somente os metadados homologados pelo bibliotecário, incluindo CDU e Cutter informados manualmente.
+- Ao homologar, congelar um snapshot imutável do conteúdo, das formas autorizadas e transcritas, da classificação e da identidade profissional responsável.
+- Registrar data, horário, bibliotecário e CRB, além da ação relevante no log.
+- A ficha isolada identifica UFBA, SIBI e BIB/FA, usa cabeçalho institucional CIP, linhas superior e inferior sem bordas laterais, CDU à direita e altura capaz de acomodar conteúdo variável.
+- A forma autorizada do autor abre a entrada principal; a forma transcrita aparece na responsabilidade. Orientador e coorientador usam a forma transcrita na nota e a autorizada nos traçados.
+- O layout `provisional-v1` implementa apenas regras confirmadas. Largura, métricas, espaçamentos e demais refinamentos milimétricos aguardam comparação com exemplos institucionais reais.
+- O ano de nascimento do autor e paginação não são exibidos enquanto suas regras ou fontes de dados não estiverem confirmadas.
 
 ## 11. Entrega final e mesclagem
 
