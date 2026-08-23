@@ -342,6 +342,24 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .revision-issue:last-child { border-bottom: 0; }
 .revision-issue p { margin: 4px 0; color: var(--text-muted); }
 .revision-issue small { color: var(--success); }
+.assisted-cataloging { margin-top: 22px; display: grid; gap: 20px; }
+.assisted-cataloging__heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+.assisted-cataloging__heading h2 { margin: 4px 0; }
+.assisted-cataloging fieldset { display: grid; gap: 16px; padding: 20px; border: 1px solid var(--line); }
+.assisted-cataloging legend { padding-right: 10px; font-weight: 850; }
+.field-help { margin: 0; color: var(--text-muted); font-size: 0.8rem; }
+.cataloging-list { display: grid; gap: 10px; }
+.cataloging-row { display: grid; grid-template-columns: minmax(130px, .6fr) 1fr 1fr auto; gap: 12px; align-items: end; padding: 14px; border: 1px solid var(--line); background: var(--surface); }
+.cataloging-row label, .classification-grid label { display: grid; gap: 6px; font-size: .78rem; font-weight: 800; }
+.cataloging-row input, .cataloging-row select, .classification-grid input { width: 100%; }
+.radio-choice { align-self: center; grid-template-columns: auto 1fr !important; align-items: center; }
+.text-action { padding: 12px 4px; border: 0; background: transparent; color: var(--danger); text-decoration: underline; cursor: pointer; }
+.classification-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.cdu-suggestions { display: grid; gap: 8px; }
+.cdu-suggestions button { display: grid; grid-template-columns: minmax(90px, auto) 1fr; gap: 12px; padding: 13px; border: 1px solid var(--line); background: var(--surface); color: inherit; text-align: left; cursor: pointer; }
+.cdu-suggestions button:hover { border-color: var(--gold); }
+.marc-preparation { padding: 14px 18px; border-left: 3px solid var(--institutional); background: var(--institutional-soft); }
+.marc-preparation p { margin: 4px 0 0; color: var(--text-muted); }
 
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -360,6 +378,9 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
   .queue-item__actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .queue-item__actions > span, .queue-item__actions select { grid-column: 1 / -1; }
   .analysis-layout { grid-template-columns: 1fr; }
+  .assisted-cataloging__heading { display: grid; grid-template-columns: 1fr; }
+  .cataloging-row { grid-template-columns: 1fr; align-items: stretch; }
+  .classification-grid { grid-template-columns: 1fr; }
   .local-email-panel { align-items: flex-start; flex-wrap: wrap; }
 }
 
