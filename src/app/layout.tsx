@@ -13,7 +13,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <ThemeScript />
       </head>
-      <body>{children}</body>
+      <body>
+        <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+        <div id="conteudo" tabIndex={-1}>{children}</div>
+      </body>
     </html>
   );
 }

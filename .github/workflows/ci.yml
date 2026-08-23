@@ -43,6 +43,15 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: public-anon-key-for-build-validation
 
+      - name: Instalar Chromium para os testes públicos
+        run: npx playwright install --with-deps chromium
+
+      - name: Testar acessibilidade, temas e responsividade pública
+        run: npm run test:e2e:public
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: public-anon-key-for-browser-validation
+
   database:
     name: Migrações e testes do banco local
     runs-on: ubuntu-latest

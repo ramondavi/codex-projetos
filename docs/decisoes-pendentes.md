@@ -27,6 +27,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 ## Arquivos e segurança
 
 - **Segurança:** detalhar limites, ações cobertas pelos logs e política de acesso onde ainda não estiver definida no Documento-Mestre.
+- **LGPD:** validar institucionalmente o canal de direitos do titular, a base aplicável e os prazos de retenção dos metadados e logs preservados depois do expurgo.
 
 ## Coordenação, Magic Link e comunicações
 
@@ -44,3 +45,9 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 - Detalhar telas e componentes do MVP dentro do design system consolidado.
 - Escolher entre as alternativas tipográficas sugeridas quando necessário, sem descaracterizar a identidade da BIB/FA.
+
+## Lançamento
+
+- Confirmar os domínios definitivos da Vercel e as URLs de callback do Supabase.
+- Aprovar o aviso de privacidade, o canal do titular, o SMTP institucional e os textos finais antes do lançamento público.
+- Executar a validação assistida com estudantes e bibliotecários e registrar o aceite sem dados pessoais.

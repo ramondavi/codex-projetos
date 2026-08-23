@@ -33,6 +33,9 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Incremento 11 implementado localmente: verificação da publicação no RI/UFBA, URL/Handle permanente, encerramento transacional, timeline completa, comunicações finais e Magic Link somente leitura da coordenação com token armazenado apenas como hash.
 - O acesso da coordenação omite CPF, documentos e comentários internos e é inutilizado somente depois que as comunicações finais enfileiradas forem entregues. O encerramento aciona a contagem já existente de 60 dias para expurgo do Nada Consta.
 - Incremento 12 implementado localmente: gestão auditada de contas, bloqueio/inativação e perfis, coordenações, Magic Link, guia do RI, mural, SLA, templates básicos, indicadores, exportações CSV/JSON, expurgo assistido do Nada Consta e consulta aos logs.
+- Incremento 13 em estabilização: Playwright e axe cobrem páginas públicas em desktop claro/escuro e celular, teclado, acessibilidade, responsividade, persistência de tema e latência simulada. A rodada autenticada dos três perfis aprovou 9/9 cenários e as sessões temporárias permaneceram fora do Git e foram apagadas depois do teste.
+- Runbook operacional, matriz de validação assistida e revisão técnica de segurança/LGPD estão versionados. Implantação remota e validação com pessoas reais ainda não foram executadas.
+- Dependências de produção atualizadas para Next.js 16.3.2 e Drizzle ORM 0.45.2 após auditoria de segurança; `npm audit --omit=dev` não aponta vulnerabilidades conhecidas. A convenção de proteção de rotas foi migrada de `middleware` para `proxy` sem alteração da política de acesso.
 
 ## Estado operacional do Supabase
 
@@ -51,13 +54,14 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 11. `202608230007_repository_deposit_guide.sql` (ainda não aplicada ao projeto remoto).
 12. `202608230008_protocol_closure_coordination.sql` (ainda não aplicada ao projeto remoto).
 13. `202608230009_administration_operations.sql` (ainda não aplicada ao projeto remoto).
+14. `202608230010_stabilization_release.sql` (ainda não aplicada ao projeto remoto).
 
 O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 12 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
 
 ## Testes integrados de banco
 
-A suíte pgTAP em `supabase/tests/database` contém 206 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante, autodepósito assistido e operações administrativas, sem depender de credenciais ou dados reais. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
+A suíte pgTAP em `supabase/tests/database` contém 209 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante, autodepósito assistido, operações administrativas e regressão da edição do mural, sem depender de credenciais ou dados reais. A estabilização acrescenta 24 cenários E2E públicos e um roteiro autenticado seguro. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
 
 ## Próximo passo de produto
 
-Não iniciar um novo incremento com base apenas neste resumo. Obter a relação aprovada de incrementos, conferir o escopo com `docs/documento-mestre.md` e resolver somente as decisões pendentes necessárias à entrega escolhida.
+Concluir as evidências locais do Incremento 13, executar a validação assistida e resolver os bloqueadores institucionais de lançamento. Antes de qualquer implantação, explicar o impacto das migrações remotas pendentes e obter confirmação explícita.

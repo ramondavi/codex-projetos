@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(16);
 select has_function('public','admin_manage_account',array['uuid','user_role','account_status','text','text'],'gestão de contas existe');
 select has_function('public','admin_configure_program',array['uuid','integer','boolean','boolean','text','text'],'configuração operacional existe');
 select has_function('public','admin_statistics',array['timestamp with time zone','timestamp with time zone'],'indicadores existem');
@@ -27,6 +27,9 @@ select lives_ok($$select public.admin_configure_program((select id from public.a
 select is((select service_level_business_days from public.academic_programs order by code limit 1),5,'SLA atualizado');
 select is((select count(*)::integer from public.sla_settings where business_days=5),1,'histórico do SLA preservado');
 select lives_ok($$select public.admin_update_issue_template((select id from public.issue_templates order by position limit 1),'Obrigatório','Preencha a informação obrigatória.',true,10)$$,'template básico editável');
+select lives_ok($$select public.admin_save_announcement(null,'normal','Aviso inicial','Atendimento em horário normal.',now(),null,true)$$,'admin cria aviso');
+select lives_ok($$select public.admin_save_announcement((select id from public.library_announcements where title='Aviso inicial'),'recess','Aviso atualizado','Atendimento em horário reduzido.',now()+interval '1 day',now()+interval '2 days',true)$$,'admin edita aviso sem ambiguidade de datas');
+select is((select type::text from public.library_announcements where title='Aviso atualizado'),'recess','edição do aviso persiste o tipo e as datas');
 select ok((select public.admin_statistics(null,null)->>'total')::integer>=0,'estatísticas retornam volume');
 select * from finish();
 rollback;
