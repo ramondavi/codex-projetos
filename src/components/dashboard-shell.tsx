@@ -12,7 +12,7 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
         <Brand compact />
         <nav aria-label="Área do estudante">
           <Link className="is-active" href="/painel">Visão geral</Link>
-          <span aria-disabled="true">Minha solicitação <small>Em breve</small></span>
+          <Link href="/painel/solicitacao">Minha solicitação</Link>
           <span aria-disabled="true">Autodepósito <small>Em breve</small></span>
           <Link href="/painel/conta">Minha conta</Link>
         </nav>
