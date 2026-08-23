@@ -31,6 +31,10 @@ Rodada local de 23/08/2026: 9/9 cenários autenticados aprovados (três perfis e
 - Smoke test assistido: página inicial, login remoto e painel do Administrador confirmados pelo responsável.
 - Ainda pendentes: smoke remoto de Estudante e Catalogador, PDFs institucionais anonimizados, validação com participantes e promoção para Production.
 
+## Evidência de mesclagem sintética
+
+Rodada de 23/08/2026: o mesmo código de mesclagem usado no navegador inseriu a ficha A4 como página 2 de um PDF sintético de 12 páginas. O documento cobriu A4, Letter, Legal, páginas paisagem e uma página com rotação de 90 graus. A validação confirmou 13 páginas finais, preservação exata da geometria e rotação das 12 páginas originais, ausência de formulário incorporado e renderização legível das páginas representativas. A validação com exemplos institucionais reais continua pendente, conforme a decisão existente sobre o layout provisório.
+
 ## Roteiro assistido
 
 Para cada participante, registre apenas perfil, data, dispositivo, tarefa, resultado, dificuldade observada e severidade. Não registre CPF, senha, arquivo acadêmico, link mágico ou conteúdo de comentários internos.
