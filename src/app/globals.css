@@ -154,7 +154,8 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 60px; border-top: 1px solid var(--line); }
 .step { min-height: 260px; padding: 28px 30px; border-right: 1px solid var(--line); }
 .step:first-child { border-left: 1px solid var(--line); }
-.step__number { color: var(--gold); font-family: ui-monospace, monospace; font-weight: 800; }
+.step__number { color: #765b1f; font-family: ui-monospace, monospace; font-weight: 800; }
+:root[data-theme="dark"] .step__number { color: var(--gold); }
 .step h3 { margin: 54px 0 10px; font-size: 1.22rem; }
 .step p { margin: 0; color: var(--text-muted); }
 .footer { border-top: 1px solid var(--line); padding-block: 30px; }
@@ -497,3 +498,6 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
   .repository-progress, .program-settings article { align-items: stretch; grid-template-columns: 1fr; flex-direction: column; }
   .repository-map article { grid-template-columns: 1fr; }
 }
+/* Atalho de teclado visível somente quando recebe foco. */
+.skip-link { position: fixed; z-index: 1000; top: 12px; left: 12px; padding: 10px 14px; transform: translateY(-180%); background: var(--text); color: var(--bg); font-weight: 800; }
+.skip-link:focus { transform: translateY(0); }

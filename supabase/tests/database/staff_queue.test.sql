@@ -5,7 +5,7 @@ select plan(21);
 
 insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data)
 values
-  ('50000000-0000-4000-8000-000000000001', 'fila.estudante@ufba.br', now(), '{"registration_source":"student","full_name":"Estudante da Fila","cpf":"12345678909"}'::jsonb),
+  ('50000000-0000-4000-8000-000000000001', 'fila.estudante@ufba.br', now(), '{"registration_source":"student","full_name":"Estudante da Fila","cpf":"81000000427"}'::jsonb),
   ('50000000-0000-4000-8000-000000000002', 'fila.catalogador1@ufba.br', now(), '{}'::jsonb),
   ('50000000-0000-4000-8000-000000000003', 'fila.catalogador2@ufba.br', now(), '{}'::jsonb),
   ('50000000-0000-4000-8000-000000000004', 'fila.administrador@ufba.br', now(), '{}'::jsonb),

@@ -443,3 +443,12 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - Indicadores simples apresentam volume por período, status, curso/programa e bibliotecário, com exportação local em CSV e JSON.
 - O expurgo operacional lista somente Nada Consta com retenção vencida, remove o objeto privado e preserva o registro textual e o log da ação.
 - A consulta administrativa aos logs exibe ações operacionais e administrativas já registradas; detalhes adicionais de cobertura continuam sujeitos à política de logs pendente.
+
+## 27. Estabilização e lançamento do MVP
+
+- A regressão automatizada combina testes unitários, pgTAP e Playwright. As sessões autenticadas de Estudante, Catalogador e Administrador são artefatos locais temporários, ignorados pelo Git e sem senhas versionadas.
+- A matriz mínima inclui desktop claro/escuro, celular, teclado, acessibilidade automatizada, responsividade e latência simulada. Testes com leitor de tela, dispositivo institucional simples e participantes reais continuam assistidos.
+- PDFs acadêmicos reais usados na homologação devem ser anonimizados e permanecer fora do repositório; o aceite inclui documentos longos, páginas rotacionadas e preservação integral das páginas originais.
+- A revisão LGPD técnica confirma minimização, restrição por RLS, processamento local do trabalho e expurgo do Nada Consta. Aviso, canal do titular, base institucional e retenção residual dependem de validação institucional.
+- O lançamento usa Vercel e Supabase, mas nenhuma migração remota é aplicada sem revisão de impacto e confirmação explícita. O lançamento público depende também das URLs definitivas, SMTP e textos de e-mail aprovados.
+- A validação com estudantes e bibliotecários produz evidências de tarefas e severidade sem registrar CPF, senha, arquivo acadêmico, token ou comentário interno.

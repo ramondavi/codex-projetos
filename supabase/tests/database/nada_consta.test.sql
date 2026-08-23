@@ -3,7 +3,7 @@ create extension if not exists pgtap with schema extensions;
 select plan(20);
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Nada","cpf":"52998224725"}'),
+ ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Nada","cpf":"81000000770"}'),
  ('94000000-0000-4000-8000-000000000002','nada.catalogador@ufba.br',now(),'{}'),
  ('94000000-0000-4000-8000-000000000003','nada.outro@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values

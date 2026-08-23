@@ -9,7 +9,7 @@ select function_returns('public','set_repository_deposit_enabled',array['uuid','
 select ok((select not repository_deposit_enabled from public.academic_programs where code='architecture-urbanism-undergraduate'),'TFG de graduação começa desativado');
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('98000000-0000-4000-8000-000000000001','deposito.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Depósito","cpf":"52998224725"}'),
+ ('98000000-0000-4000-8000-000000000001','deposito.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Depósito","cpf":"81000000346"}'),
  ('98000000-0000-4000-8000-000000000002','deposito.admin@ufba.br',now(),'{}'),
  ('98000000-0000-4000-8000-000000000003','deposito.catalogador@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values
