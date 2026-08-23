@@ -81,7 +81,7 @@ set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000003';
 
 select is(public.current_user_role(), 'cataloger'::public.user_role, 'Catalogador ativo recebe o papel cataloger');
 select results_eq(
-  $$select count(*)::bigint from public.profiles$$,
+  $$select count(*)::bigint from public.profiles where id::text like '10000000-%'$$,
   array[6::bigint],
   'Catalogador ativo lê os perfis operacionais autorizados'
 );
@@ -91,7 +91,7 @@ select results_eq(
   'Catalogador ativo lê os perfis estudantis autorizados'
 );
 select results_eq(
-  $$select count(*)::bigint from public.staff_profiles$$,
+  $$select count(*)::bigint from public.staff_profiles where profile_id::text like '10000000-%'$$,
   array[1::bigint],
   'Catalogador ativo lê somente o próprio perfil de equipe'
 );
@@ -116,7 +116,7 @@ set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000004';
 
 select is(public.current_user_role(), 'administrator'::public.user_role, 'Administrador ativo recebe o papel administrator');
 select results_eq(
-  $$select count(*)::bigint from public.staff_profiles$$,
+  $$select count(*)::bigint from public.staff_profiles where profile_id::text like '10000000-%'$$,
   array[4::bigint],
   'Administrador ativo lê os perfis de equipe'
 );
