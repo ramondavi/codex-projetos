@@ -232,6 +232,11 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .account-panel { display: grid; gap: 0; }
 .account-panel > div { display: grid; grid-template-columns: 140px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
 .account-panel span, .account-panel p { color: var(--text-muted); }
+.account-email-panel { display: grid; gap: 22px; margin-top: 24px; }
+.account-email-panel h2 { margin: 4px 0 8px; font-size: 1.35rem; }
+.account-email-panel p:not(.eyebrow) { max-width: 650px; margin: 0; color: var(--text-muted); }
+.account-email-panel .auth-feedback { margin: 0; }
+.account-email-panel .button { justify-self: start; }
 
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
