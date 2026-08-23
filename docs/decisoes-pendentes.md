@@ -40,8 +40,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Atendimento e operação
 
-- Redigir os templates de justificativas de pendência.
-- Detalhar quando campos corretos ficarão travados ou apenas preservados após uma devolução.
+- Refinar os textos dos templates de justificativas após uso piloto, sem alterar a decisão de bloquear campos já aprovados.
 
 ## Interface
 
