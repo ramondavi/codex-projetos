@@ -109,10 +109,11 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 }
 .brand__subtitle { margin-top: 8px; max-width: 320px; font-size: 0.72rem; line-height: 1.35; color: var(--text-muted); }
 .brand--compact .brand__name { font-size: 1.75rem; }
-.theme-switcher select {
-  min-height: 36px; padding: 5px 30px 5px 10px; border: 1px solid var(--line);
-  border-radius: var(--radius); background: var(--field); color: var(--text); font-size: 0.82rem;
-}
+.theme-switcher { display: inline-flex; padding: 3px; border: 1px solid var(--line); border-radius: 999px; background: var(--field); }
+.theme-switcher button { width: 32px; height: 28px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--text-muted); cursor: pointer; }
+.theme-switcher button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+.theme-switcher button:hover:not([aria-pressed="true"]) { background: var(--surface); color: var(--text); }
+.theme-switcher svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
 .geometry {
