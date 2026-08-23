@@ -1,10 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: profile } = user ? await supabase.from("profiles").select("full_name").eq("id", user.id).single() : { data: null };
+  const { data: profile } = user ? await supabase.from("profiles").select("full_name, role").eq("id", user.id).single() : { data: null };
+  if (profile?.role === "cataloger" || profile?.role === "administrator") redirect("/painel/fila");
   const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
   const firstName = profile?.full_name.split(/\s+/)[0] ?? "estudante";
   return (
