@@ -271,6 +271,17 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 
 Os TCCs de graduação da Faculdade de Arquitetura são TFG — Trabalho Final de Graduação. Como seu depósito no RI/UFBA está atualmente suspenso por questões normativas, o admin pode ativar/desativar o guia por curso/programa; para TFG, começa desativado. Emissão e homologação da ficha independem do guia.
 
+### 12.2. Mapeamento confirmado das telas do RI/UFBA
+
+O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de descrição; upload; verificação; seleção de licença; licença de distribuição; conclusão. O guia registra somente o início do autodepósito e abre o RI/UFBA em nova aba.
+
+- Copiar quando disponível e homologado: coleção configurada, tipo de documento, grau acadêmico, título e subtítulo, título equivalente, pessoas relacionadas, instituição, sigla, unidade, curso/programa, país, idioma e palavras-chave em português e inglês.
+- Preencher e decidir diretamente no RI: data de defesa, acesso, data e razão de embargo, Lattes, ORCID, banca, referências, DOI, área CNPq, resumo, abstract, agência de fomento, relações, citação, arquivo, descrição/formato/configuração do arquivo e arquivo primário.
+- A área CNPq deve ser selecionada na taxonomia “Categorias de assuntos” do RI. Termos do vocabulário catalográfico do Pronto! não substituem essa classificação.
+- Para TCC, as palavras-chave em inglês, o abstract e os membros da banca aparecem como opcionais no fluxo observado. Para dissertação e tese, palavras-chave em inglês e abstract são obrigatórios. Na dissertação, os três primeiros membros da banca são obrigatórios; na tese, os cinco primeiros são obrigatórios.
+- O upload, a revisão, a escolha Creative Commons ou “Nenhuma licença” e a concessão da licença de distribuição ocorrem exclusivamente no RI. Recusar a licença mantém uma submissão não concluída no “Meu espaço”.
+- PDF/A é orientação de preservação. O Pronto! referencia o tutorial oficial, mas não converte nem certifica conformidade.
+
 ## 13. QR Code e autenticação pública
 
 - Aprovado para Fase 2 como autenticação da ficha e ponte para o DSpace.

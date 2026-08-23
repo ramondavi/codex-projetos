@@ -21,7 +21,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## DSpace/RI-UFBA
 
-- Completar e validar o mapeamento dos campos das telas reais de autodepósito que serão auxiliados por botões de copiar.
+- O mapeamento das telas de TCC, dissertação e tese foi validado em 23/08/2026 com capturas do fluxo real e tutoriais oficiais do RI/UFBA. Permanecem pendentes somente decisões futuras explicitadas abaixo.
 - Decidir futuramente se a página pública do QR Code redirecionará automaticamente ou exibirá um botão para a URL/Handle.
 
 ## Arquivos e segurança

@@ -220,6 +220,14 @@ export const nadaConstaDocuments = pgTable("nada_consta_documents", {
   validatedBy: uuid("validated_by").references(() => profiles.id, { onDelete: "restrict" }), validatedAt: timestamp("validated_at", { withTimezone: true }), rejectionReason: text("rejection_reason"), releasedAt: timestamp("released_at", { withTimezone: true }), purgeAfter: timestamp("purge_after", { withTimezone: true }), purgedAt: timestamp("purged_at", { withTimezone: true }), ...timestamps,
 });
 
+export const repositoryDepositProgress = pgTable("repository_deposit_progress", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "restrict" }).notNull().unique(),
+  startedBy: uuid("started_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  startedAt: timestamp("started_at", { withTimezone: true }).defaultNow().notNull(),
+  ...timestamps,
+});
+
 export const staffProfiles = pgTable("staff_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),

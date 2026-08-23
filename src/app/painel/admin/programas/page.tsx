@@ -1,0 +1,4 @@
+import { redirect } from "next/navigation";
+import { RepositoryProgramSettings } from "@/components/repository-program-settings";
+import { createClient } from "@/lib/supabase/server";
+export default async function ProgramSettingsPage(){const supabase=await createClient();const {data:{user}}=await supabase.auth.getUser();const {data:profile}=user?await supabase.from("profiles").select("role").eq("id",user.id).single():{data:null};if(profile?.role!=="administrator")redirect("/painel");const {data:programs}=await supabase.from("academic_programs").select("id,name,level,repository_deposit_enabled,repository_collection_label").eq("active",true).order("name");return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Autodepósito por programa</h1><p>Ative somente programas cuja situação normativa e coleção no RI estejam confirmadas.</p></div></div><RepositoryProgramSettings programs={programs??[]}/></main>}
