@@ -8,6 +8,6 @@ const compatibilityConfig = new FlatCompat({ baseDirectory: currentDirectory });
 export default [
   ...compatibilityConfig.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "drizzle/**", "next-env.d.ts"],
+    ignores: [".next/**", "drizzle/**", "next-env.d.ts", "supabase/.temp/**"],
   },
 ];

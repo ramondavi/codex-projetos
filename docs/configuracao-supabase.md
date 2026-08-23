@@ -13,6 +13,28 @@ Este guia operacional complementa o Documento-Mestre. Nunca cole senhas, chaves 
 
 Copie `.env.example` para `.env.local` e preencha os valores diretamente no ambiente local. A chave *publishable* é usada pelo aplicativo; senhas e a conexão do banco permanecem somente no ambiente seguro.
 
+## Supabase local
+
+O Supabase CLI está fixado como dependência de desenvolvimento do projeto, na versão `2.115.0`, e deve ser executado pela raiz do repositório com `npx`. O ambiente local usa o Docker Desktop e não depende de login ou vínculo com o projeto hospedado.
+
+Fluxo local habitual:
+
+```powershell
+npx supabase start
+npx supabase db reset --local
+npx supabase db lint --local --level error
+npx supabase stop
+```
+
+- `start` inicia os serviços locais e aplica as migrações versionadas.
+- `db reset --local` apaga somente o banco local descartável, recria a estrutura e reaplica todas as migrações em ordem.
+- `db lint --local --level error` verifica erros no esquema local.
+- `stop` desliga os serviços e preserva os dados locais para a próxima execução.
+
+Não executar `supabase login`, `supabase link`, `db pull`, `db push`, `db reset --linked` nem qualquer outro comando que acesse ou altere o Supabase remoto sem explicar previamente o impacto e obter confirmação explícita. O comando `stop --no-backup` também exige confirmação, pois remove os dados locais preservados.
+
+Ainda não existem testes de banco pgTAP versionados em `supabase/tests/database`. Até que uma suíte seja criada em incremento próprio, a validação local consiste em reaplicar as migrações do zero e executar o lint do banco; não apresentar essa validação como substituta de testes integrados.
+
 ## Migrações pelo SQL Editor
 
 Em um projeto vazio, execute uma única vez e nesta ordem:
