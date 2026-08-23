@@ -23,17 +23,19 @@ Fluxo local habitual:
 npx supabase start
 npx supabase db reset --local
 npx supabase db lint --local --level error
+npx supabase test db --local
 npx supabase stop
 ```
 
 - `start` inicia os serviços locais e aplica as migrações versionadas.
 - `db reset --local` apaga somente o banco local descartável, recria a estrutura e reaplica todas as migrações em ordem.
 - `db lint --local --level error` verifica erros no esquema local.
+- `test db --local` executa os testes pgTAP versionados em `supabase/tests/database`; cada arquivo usa transação e `rollback` explícitos para não conservar dados sintéticos.
 - `stop` desliga os serviços e preserva os dados locais para a próxima execução.
 
 Não executar `supabase login`, `supabase link`, `db pull`, `db push`, `db reset --linked` nem qualquer outro comando que acesse ou altere o Supabase remoto sem explicar previamente o impacto e obter confirmação explícita. O comando `stop --no-backup` também exige confirmação, pois remove os dados locais preservados.
 
-Ainda não existem testes de banco pgTAP versionados em `supabase/tests/database`. Até que uma suíte seja criada em incremento próprio, a validação local consiste em reaplicar as migrações do zero e executar o lint do banco; não apresentar essa validação como substituta de testes integrados.
+Os testes pgTAP em `supabase/tests/database` cobrem as regras de autorização e provisionamento já consolidadas no Incremento 2. Eles usam somente identidades sintéticas, simulam o papel `authenticated` e a claim local do usuário e nunca dependem de JWT, credenciais ou dados reais.
 
 ## Migrações pelo SQL Editor
 
