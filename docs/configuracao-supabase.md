@@ -37,6 +37,14 @@ Não executar `supabase login`, `supabase link`, `db pull`, `db push`, `db reset
 
 Os testes pgTAP em `supabase/tests/database` cobrem as regras de autorização e provisionamento já consolidadas no Incremento 2. Eles usam somente identidades sintéticas, simulam o papel `authenticated` e a claim local do usuário e nunca dependem de JWT, credenciais ou dados reais.
 
+## Estado operacional confirmado
+
+- As três migrações versionadas são reproduzíveis no ambiente local.
+- O histórico remoto contém as três migrações, incluindo `202608220000_auth_authorization_hardening.sql`.
+- O esquema remoto está alinhado aos objetos versionados localmente e não há migrações pendentes.
+- O lint do banco foi aprovado nos ambientes local e remoto.
+- Os 36 testes pgTAP integrados são executados no CI contra o Supabase local.
+
 ## Migrações pelo SQL Editor
 
 Em um projeto vazio, execute uma única vez e nesta ordem:
@@ -55,4 +63,4 @@ As contas internas seguintes também devem ser previamente criadas e confirmadas
 
 ## Verificação de segurança
 
-Após aplicar as migrações, confirme no **Database → Tables** que RLS está habilitado em todas as tabelas do esquema `public`. Teste com contas separadas que estudantes enxergam somente seus próprios perfis, equipe ativa acessa apenas os dados operacionais previstos e contas `blocked` ou `inactive` não obtêm linhas pela Data API. Essas verificações integradas complementam os testes estáticos do repositório.
+Após aplicar as migrações em um novo ambiente, confirme no **Database → Tables** que RLS está habilitado em todas as tabelas do esquema `public`. A suíte pgTAP integrada verifica com identidades sintéticas que estudantes enxergam somente seus próprios perfis, equipe ativa acessa apenas os dados operacionais previstos e contas `blocked` ou `inactive` não obtêm autorização.
