@@ -391,6 +391,28 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .delivery-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16px; }
 .link-button { padding: 4px; border: 0; background: transparent; color: var(--text-muted); text-decoration: underline; cursor: pointer; }
 .link-button:disabled { cursor: not-allowed; opacity: .45; }
+.repository-start { display: grid; gap: 14px; justify-items: start; }
+.repository-start h2, .repository-map h2 { margin: 2px 0; }
+.repository-start p:not(.eyebrow), .repository-map em { color: var(--text-muted); }
+.repository-progress { display: flex; justify-content: space-between; gap: 20px; margin-bottom: 20px; padding: 16px 18px; border-left: 4px solid var(--success); background: var(--surface-raised); }
+.repository-progress span { color: var(--text-muted); font-size: .8rem; }
+.repository-map > div { margin-top: 18px; }
+.repository-map article { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; padding: 15px 0; border-top: 1px solid var(--line); }
+.repository-map article > div { display: grid; gap: 4px; min-width: 0; }
+.repository-map article span { color: var(--text-muted); font-size: .74rem; }
+.repository-map article strong { overflow-wrap: anywhere; }
+.repository-map article em { font-size: .8rem; font-style: normal; }
+.repository-steps { display: grid; gap: 12px; margin-top: 20px; }
+.repository-steps article { display: grid; grid-template-columns: 48px 1fr; gap: 18px; }
+.repository-steps article > span { color: var(--gold); font: 850 .85rem/1 ui-monospace, monospace; }
+.repository-steps h2 { margin: 0; font-size: 1.15rem; }
+.repository-steps p { margin: 6px 0 0; color: var(--text-muted); }
+.repository-ri-link { margin-top: 20px; }
+.program-settings { display: grid; gap: 12px; }
+.program-settings article { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 24px; }
+.program-settings h2 { margin: 3px 0; font-size: 1.15rem; }
+.program-settings span { color: var(--gold); font-size: .7rem; font-weight: 850; text-transform: uppercase; }
+.program-settings p { margin: 5px 0 0; color: var(--text-muted); font-size: .8rem; }
 
 @media (max-width: 900px) {
   .dashboard-shell { grid-template-columns: 1fr; }
@@ -446,4 +468,6 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
   .cataloging-card__content { padding-inline: 0; }
   .cataloging-card__content p { margin-left: 18px; }
   .homologation-actions { align-items: stretch; flex-direction: column; }
+  .repository-progress, .program-settings article { align-items: stretch; grid-template-columns: 1fr; flex-direction: column; }
+  .repository-map article { grid-template-columns: 1fr; }
 }
