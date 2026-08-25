@@ -44,24 +44,24 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 1. `202608060000_foundation.sql`;
 2. `202608060001_auth_accounts.sql`;
 3. `202608220000_auth_authorization_hardening.sql`;
-4. `202608230000_student_requests.sql` (ainda não aplicada ao projeto remoto);
-5. `202608230001_staff_queue.sql` (ainda não aplicada ao projeto remoto).
-6. `202608230002_issues_communications.sql` (ainda não aplicada ao projeto remoto).
-7. `202608230003_assisted_cataloging.sql` (ainda não aplicada ao projeto remoto).
-8. `202608230004_cataloging_card.sql` (ainda não aplicada ao projeto remoto).
-9. `202608230005_nada_consta_release.sql` (ainda não aplicada ao projeto remoto).
-10. `202608230006_browser_pdf_delivery.sql` (ainda não aplicada ao projeto remoto).
-11. `202608230007_repository_deposit_guide.sql` (ainda não aplicada ao projeto remoto).
-12. `202608230008_protocol_closure_coordination.sql` (ainda não aplicada ao projeto remoto).
-13. `202608230009_administration_operations.sql` (ainda não aplicada ao projeto remoto).
-14. `202608230010_stabilization_release.sql` (ainda não aplicada ao projeto remoto).
+4. `202608230000_student_requests.sql`;
+5. `202608230001_staff_queue.sql`;
+6. `202608230002_issues_communications.sql`;
+7. `202608230003_assisted_cataloging.sql`;
+8. `202608230004_cataloging_card.sql`;
+9. `202608230005_nada_consta_release.sql`;
+10. `202608230006_browser_pdf_delivery.sql`;
+11. `202608230007_repository_deposit_guide.sql`;
+12. `202608230008_protocol_closure_coordination.sql`;
+13. `202608230009_administration_operations.sql`;
+14. `202608230010_stabilization_release.sql`.
 
-O hardening está aplicado no projeto `Pronto!`. As migrações dos Incrementos 3 a 12 foram validadas somente no Supabase local e permanecem pendentes no projeto remoto até a publicação final aprovada pelo usuário.
+As 14 migrações estão aplicadas no projeto remoto `Pronto!`. Após a implantação de 23/08/2026, o `db push --dry-run` confirmou histórico alinhado e o lint remoto não encontrou erros.
 
 ## Testes integrados de banco
 
-A suíte pgTAP em `supabase/tests/database` contém 209 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante, autodepósito assistido, operações administrativas e regressão da edição do mural, sem depender de credenciais ou dados reais. A estabilização acrescenta 24 cenários E2E públicos e um roteiro autenticado seguro. O lint remoto citado acima corresponde ao estado anterior; as novas migrações ainda não foram aplicadas remotamente.
+A suíte pgTAP em `supabase/tests/database` contém 209 testes integrados contra o Supabase local. Ela valida com identidades sintéticas as decisões existentes de autorização, RLS, provisionamento administrativo, abertura de solicitações, ticket locking, reatribuição, devolução por campo, reenvio restrito, histórico, caixa de saída de e-mails, autoridades de pessoas, vocabulário bilíngue, sugestão CDU, homologação imutável da ficha, ciclo privado do Nada Consta, liberação restrita do snapshot ao estudante, autodepósito assistido, operações administrativas e regressão da edição do mural, sem depender de credenciais ou dados reais. A estabilização acrescenta 24 cenários E2E públicos e 9 autenticados dos três perfis.
 
 ## Próximo passo de produto
 
-Concluir as evidências locais do Incremento 13, executar a validação assistida e resolver os bloqueadores institucionais de lançamento. Antes de qualquer implantação, explicar o impacto das migrações remotas pendentes e obter confirmação explícita.
+Concluir os testes com PDFs institucionais anonimizados, executar a validação assistida e resolver os bloqueadores institucionais de lançamento. O Preview da Vercel e o Supabase remoto estão implantados; a promoção pública ainda depende desses aceites.
