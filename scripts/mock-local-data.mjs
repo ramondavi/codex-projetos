@@ -9,6 +9,7 @@ const templatePath = path.join(projectRoot, "supabase", "mock-data.sql.template"
 const privateDirectory = path.join(projectRoot, ".auth");
 const credentialsPath = path.join(privateDirectory, "mock-users.txt");
 const container = "supabase_db_codex-projetos";
+const authContainer = "supabase_auth_codex-projetos";
 
 function password() {
   return `${randomBytes(12).toString("base64url")}aA1!`;
@@ -70,6 +71,19 @@ const execution = spawnSync("docker", ["exec", "-i", container, "psql", "-v", "O
 if (execution.status !== 0) {
   process.stderr.write(execution.stderr || "Falha ao carregar os dados locais de demonstração.\n");
   process.exit(execution.status ?? 1);
+}
+
+for (const [key, , email] of accounts) {
+  const authentication = spawnSync("docker", [
+    "exec", authContainer, "wget", "-qO-",
+    "--header", "Content-Type: application/json",
+    "--post-data", JSON.stringify({ email, password: values[key] }),
+    "http://127.0.0.1:9999/token?grant_type=password",
+  ], { encoding: "utf8", maxBuffer: 1024 * 1024, windowsHide: true });
+
+  if (authentication.status !== 0) {
+    throw new Error(`O Supabase Auth local recusou a conta sintética ${email}.`);
+  }
 }
 
 await mkdir(privateDirectory, { recursive: true });

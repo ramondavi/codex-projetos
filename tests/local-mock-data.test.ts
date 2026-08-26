@@ -27,3 +27,14 @@ test("cenários cobrem as etapas operacionais do MVP", () => {
   assert.match(template, /nada_consta_documents/);
   assert.match(template, /repository_publications/);
 });
+
+test("contas SQL preenchem os tokens internos exigidos pelo Supabase Auth", () => {
+  assert.match(template, /confirmation_token\s*=\s*coalesce\(confirmation_token, ''\)/);
+  assert.match(template, /recovery_token\s*=\s*coalesce\(recovery_token, ''\)/);
+  assert.match(template, /email_change_token_new\s*=\s*coalesce\(email_change_token_new, ''\)/);
+  assert.match(template, /email_change\s*=\s*coalesce\(email_change, ''\)/);
+  assert.match(template, /phone_change\s*=\s*coalesce\(phone_change, ''\)/);
+  assert.match(template, /reauthentication_token\s*=\s*coalesce\(reauthentication_token, ''\)/);
+  assert.match(script, /token\?grant_type=password/);
+  assert.match(script, /Supabase Auth local recusou a conta sintética/);
+});
