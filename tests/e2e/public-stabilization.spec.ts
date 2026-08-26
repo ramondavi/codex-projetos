@@ -25,13 +25,17 @@ test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
 
 test("tema explícito persiste e substitui a preferência do sistema", async ({ page }) => {
   await page.goto("/");
-  const selector = page.getByLabel("Tema");
-  await selector.selectOption("dark");
+  const darkTheme = page.getByRole("button", { name: "Usar tema escuro" });
+  const lightTheme = page.getByRole("button", { name: "Usar tema claro" });
+  await darkTheme.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(darkTheme).toHaveAttribute("aria-pressed", "true");
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await selector.selectOption("light");
+  await expect(darkTheme).toHaveAttribute("aria-pressed", "true");
+  await lightTheme.click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(lightTheme).toHaveAttribute("aria-pressed", "true");
 });
 
 test("entrada continua utilizável sob latência simulada", async ({ page }) => {
