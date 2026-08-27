@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { compactDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY, type StudentRequestDraft } from "@/domain/student-requests/draft";
 
-type Program = { id: string; name: string; level: string };
+type Program = { id: string; code: string; name: string; level: string; work_type: string };
 const levelLabels: Record<string, string> = { undergraduate: "Graduação", specialization: "Especialização", master: "Mestrado", doctorate: "Doutorado" };
 const errorLabels: Record<string, string> = {
   active_request_already_exists: "Você já possui um protocolo ativo. Acompanhe-o pelo painel.",
@@ -17,6 +17,10 @@ const errorLabels: Record<string, string> = {
   required_declarations_missing: "Confirme as três declarações obrigatórias.",
   author_and_advisor_required: "Informe os nomes do autor e do orientador.",
   portuguese_keyword_required: "Informe pelo menos uma palavra-chave em português.",
+  valid_cataloging_years_required: "Confira os anos de depósito e de defesa.",
+  valid_physical_extent_required: "Informe a quantidade de páginas ou volumes.",
+  mp_cecre_volume_extent_required: "No MP-CECRE, informe 2 ou 3 volumes.",
+  valid_orientation_labels_required: "Confira as designações de orientação e coorientação.",
 };
 
 export function StudentRequestForm({ programs }: { programs: Program[] }) {
@@ -26,6 +30,8 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   const [savedAt, setSavedAt] = useState<string>();
   const [error, setError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
+  const selectedProgram = programs.find((program) => program.id === draft.academicProgramId);
+  const isMpCecre = selectedProgram?.code === "mp-cecre-master";
 
   useEffect(() => {
     const stored = localStorage.getItem(STUDENT_REQUEST_DRAFT_KEY);
@@ -57,7 +63,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
     setError(undefined);
     const payload = compactDraft(draft);
     const supabase = createClient();
-    const { data, error: rpcError } = await supabase.rpc("open_student_request", { payload });
+    const { data, error: rpcError } = await supabase.rpc("open_student_request_v2", { payload });
     if (rpcError) {
       const known = Object.keys(errorLabels).find((code) => rpcError.message.includes(code));
       setError(known ? errorLabels[known] : "Não foi possível enviar a solicitação. Revise os campos e tente novamente.");
@@ -78,7 +84,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
       <fieldset className="form-section">
         <legend><span>01</span> Vínculo acadêmico</legend>
         <div className="form-row">
-          <label>Curso ou programa <select required value={draft.academicProgramId} onChange={(e) => set("academicProgramId", e.target.value)}><option value="">Selecione</option>{programs.map((program) => <option key={program.id} value={program.id}>{levelLabels[program.level]} · {program.name}</option>)}</select></label>
+          <label>Curso ou programa <select required value={draft.academicProgramId} onChange={(e) => { const program = programs.find((item) => item.id === e.target.value); setDraft((current) => ({ ...current, academicProgramId: e.target.value, extentUnit: program?.code === "mp-cecre-master" ? "volumes" : "pages", extentCount: program?.code === "mp-cecre-master" ? "2" : "" })); }}><option value="">Selecione</option>{programs.map((program) => <option key={program.id} value={program.id}>{levelLabels[program.level]} · {program.name}</option>)}</select></label>
           <label>Matrícula atual <input required minLength={3} maxLength={30} value={draft.registrationNumber} onChange={(e) => set("registrationNumber", e.target.value)} placeholder="Sua matrícula neste vínculo" /></label>
         </div>
         <p className="field-help">A matrícula ficará associada a este vínculo. Em um futuro grau acadêmico, você poderá cadastrar outra.</p>
@@ -94,11 +100,16 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
         </div>
         <DynamicFields label="Outro título" values={draft.otherTitles} onChange={(i, v) => setListItem("otherTitles", i, v)} onAdd={() => addListItem("otherTitles")} onRemove={(i) => removeListItem("otherTitles", i)} />
         <div className="form-row">
-          <label>Orientador — como aparece no trabalho <input required minLength={3} value={draft.people.advisor} onChange={(e) => set("people", { ...draft.people, advisor: e.target.value })} /></label>
-          <label>Coorientador <input value={draft.people.coadvisor} onChange={(e) => set("people", { ...draft.people, coadvisor: e.target.value })} placeholder="Quando houver" /></label>
+          <label>Designação na página de rosto <select value={draft.people.advisorNoteLabel} onChange={(e) => set("people", { ...draft.people, advisorNoteLabel: e.target.value })}><option>Orientador</option><option>Orientadora</option></select></label>
+          <label>Nome da orientação — como aparece no trabalho <input required minLength={3} value={draft.people.advisor} onChange={(e) => set("people", { ...draft.people, advisor: e.target.value })} /></label>
         </div>
-        <div className="special-cases"><span>Casos especiais, quando aplicáveis</span>{[["coadvisor", "Coorientação"], ["cotutelle", "Cotutela"], ["double_degree", "Dupla titulação"], ["multiple_volumes", "Múltiplos volumes"]].map(([value, label]) => <label className="check" key={value}><input type="checkbox" checked={draft.specialCases.includes(value)} onChange={(e) => set("specialCases", e.target.checked ? [...draft.specialCases, value] : draft.specialCases.filter((item) => item !== value))} /> {label}</label>)}</div>
-        {draft.specialCases.includes("multiple_volumes") && <label>Informações dos volumes <input required value={draft.volumeInformation} onChange={(e) => set("volumeInformation", e.target.value)} placeholder="Ex.: 2 volumes" /></label>}
+        <div className="form-row"><label>Designação da coorientação <select value={draft.people.coadvisorNoteLabel} onChange={(e) => set("people", { ...draft.people, coadvisorNoteLabel: e.target.value })}><option>Coorientador</option><option>Coorientadora</option></select></label><label>Nome da coorientação — como aparece no trabalho <input value={draft.people.coadvisor} onChange={(e) => set("people", { ...draft.people, coadvisor: e.target.value })} placeholder="Quando houver" /></label></div>
+        <div className="special-cases"><span>Casos especiais, quando aplicáveis</span>{[["coadvisor", "Coorientação"], ["cotutelle", "Cotutela"], ["double_degree", "Dupla titulação"]].map(([value, label]) => <label className="check" key={value}><input type="checkbox" checked={draft.specialCases.includes(value)} onChange={(e) => set("specialCases", e.target.checked ? [...draft.specialCases, value] : draft.specialCases.filter((item) => item !== value))} /> {label}</label>)}</div>
+        <div className="form-row"><label>Ano de depósito da versão final <input required type="number" min="1900" max="9999" value={draft.depositYear} onChange={(e) => set("depositYear", e.target.value)} /></label><label>Ano de defesa ou apresentação <input required type="number" min="1900" max={draft.depositYear || "9999"} value={draft.defenseYear} onChange={(e) => set("defenseYear", e.target.value)} /></label></div>
+        <div className="form-row">
+          {isMpCecre ? <label>Quantidade de volumes <select required value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)}><option value="2">2 volumes</option><option value="3">3 volumes</option></select></label> : <label>Quantidade total de páginas <input required type="number" min="1" max="99999" value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)} /></label>}
+          <label className="check"><input type="checkbox" checked={draft.hasIllustrations} onChange={(e) => set("hasIllustrations", e.target.checked)} /> O trabalho possui ilustrações (`il.`)</label>
+        </div>
       </fieldset>
 
       <fieldset className="form-section">

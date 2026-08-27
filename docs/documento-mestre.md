@@ -171,12 +171,21 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Usar `[recurso eletrônico]` e `p.` para versão digital conforme decisão baseada na Portaria 153/2023; usar “Traçados” com cedilha.
 - Suportar títulos equivalentes com `=`, coorientação, cotutela, dupla titulação, múltiplos volumes e notas institucionais.
 - A ficha usa termos controlados em português definidos pelo bibliotecário.
+- O título recebe `[recurso eletrônico]` imediatamente antes de ` : subtítulo`, quando houver subtítulo, ou de ` / responsabilidade`, quando não houver.
+- A indicação de responsabilidade usa a forma transcrita do autor e é seguida de travessão, `Salvador` e ano de depósito da versão final.
+- O ano de defesa/apresentação aparece ao final da nota acadêmica e é distinto do ano de depósito.
+- A descrição física usa quantidade de páginas e `p.`; excepcionalmente, o MP-CECRE usa 2 ou 3 volumes e `v.`. A indicação `: il.` é acrescentada quando o trabalho possui ilustrações.
+- A natureza e a nota acadêmica variam entre `Trabalho de Conclusão de Curso`, `Dissertação` e `Tese`. Uma meia-risca separa a natureza do trabalho da instituição.
+- Subdivisões de assuntos e nomes usam hífen. Antes de Salvador usa-se travessão; na nota acadêmica usa-se meia-risca.
+- O Cutter aparece isolado, sem o rótulo “Cutter”, e a CDU usa o prefixo `CDU:`.
+- A ficha não imprime o rótulo “Traçados:”; os assuntos são seguidos por entradas secundárias numeradas dinamicamente em romanos.
 
 ### 8.3. Pessoas e formas de nome
 
 - Dados de autores, orientadores, coorientadores e demais pessoas devem ser armazenados, sanitizados e reutilizáveis para reduzir redigitação.
 - Distinguir forma transcrita (como consta na folha de rosto) e autorizada (pontos de acesso/entradas).
 - Para orientador/coorientador, a nota usa a forma transcrita e a entrada secundária, a autorizada.
+- As designações `Orientador`, `Orientadora`, `Coorientador` e `Coorientadora` também reproduzem a página de rosto.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
 - Correções de forma autorizada não sobrescrevem automaticamente registros históricos; preservar rastreabilidade.
 
@@ -247,7 +256,9 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 - Registrar data, horário, bibliotecário e CRB, além da ação relevante no log.
 - A ficha isolada identifica UFBA, SIBI e BIB/FA, usa cabeçalho institucional CIP, linhas superior e inferior sem bordas laterais, CDU à direita e altura capaz de acomodar conteúdo variável.
 - A forma autorizada do autor abre a entrada principal; a forma transcrita aparece na responsabilidade. Orientador e coorientador usam a forma transcrita na nota e a autorizada nos traçados.
-- O layout `provisional-v1` implementa apenas regras confirmadas. Largura, métricas, espaçamentos e demais refinamentos milimétricos aguardam comparação com exemplos institucionais reais.
+- O layout `institutional-v2` deriva dos modelos institucionais validados de TCC de graduação, TCC do MP-CECRE, dissertação e tese. O conteúdo e a geometria são compartilhados entre a prévia e o PDF.
+- O PPG-AU gera traçado institucional do programa; graduação e MP-CECRE, vinculados diretamente à Faculdade, não geram esse traçado. `Título` permanece como a última entrada secundária.
+- Fichas homologadas anteriormente preservam o snapshot e a versão `provisional-v1`; nenhuma homologação histórica é reescrita.
 - O ano de nascimento do autor e paginação não são exibidos enquanto suas regras ou fontes de dados não estiverem confirmadas.
 
 ## 11. Entrega final e mesclagem
