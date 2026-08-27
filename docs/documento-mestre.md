@@ -381,6 +381,16 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - Interface: Inter ou Fira Sans; títulos: Cinzel ou Playfair, se adequado; técnica: JetBrains Mono ou Fira Code.
 - Temas claro, escuro e conforme sistema; preservar contraste, legibilidade, responsividade e identidade.
 - Refinamento milimétrico da ficha e telas será feito depois.
+- O cabeçalho autenticado identifica o primeiro nome da pessoa logada com a saudação `Olá, [primeiro nome]`, ao lado do perfil operacional e da ação de saída.
+- Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, FAQ, ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.
+- Links possuem estados de foco e passagem do mouse coerentes com a paleta e a linguagem geométrica do sistema.
+- A Administração organiza usuários, programas, biblioteca, atendimento, FAQ, indicadores, retenção e auditoria em abas horizontais responsivas.
+
+### 20.1. Perguntas frequentes e ajuda
+
+- A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
+- Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
+- A página dedicada de Ajuda permanece pendente de aprovação do conteúdo; até lá, o link correspondente encaminha para orientação provisória dentro da FAQ.
 
 ## 21. Escopo por fase
 

@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha"]) {
+for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas-frequentes"]) {
   test(`${path} não tem violações críticas ou sérias`, async ({ page }) => {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).analyze();

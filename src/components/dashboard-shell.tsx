@@ -13,6 +13,7 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
   const isStaff = role === "cataloger" || role === "administrator";
   const pathname = usePathname();
   const activeClass = (href: string) => pathname === href || (href !== "/painel" && pathname.startsWith(`${href}/`)) ? "is-active" : undefined;
+  const firstName = fullName.trim().split(/\s+/)[0] || fullName;
   return (
     <div className="dashboard-shell">
       <aside className="dashboard-nav">
@@ -38,7 +39,7 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
           <div><span className="status-dot" /> Atendimento normal</div>
           <div className="dashboard-header__actions">
             <ThemeSwitcher />
-            <span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span>
+            <span className="user-greeting">Olá, {firstName}</span><span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span>
             <form action={logout}><button className="text-button" type="submit">Sair</button></form>
           </div>
         </header>

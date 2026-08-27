@@ -9,6 +9,7 @@ export function SiteHeader() {
         <Brand compact />
         <nav aria-label="Navegação principal" className="site-header__nav">
           <Link href="/#como-funciona">Como funciona</Link>
+          <Link href="/perguntas-frequentes">Perguntas frequentes</Link>
           <Link href="/entrar">Entrar</Link>
           <ThemeSwitcher />
         </nav>
