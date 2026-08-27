@@ -37,3 +37,10 @@ test("database releases only the immutable snapshot after Nada Consta approval",
   assert.match(migration,/n\.status='approved'/);
   assert.match(migration,/s\.profile_id=auth\.uid\(\)/);
 });
+
+test("uses the cataloged author filename and keeps the complete card in the lower page area", () => {
+  const pdf = readFileSync("src/domain/cataloging-card/pdf.ts", "utf8");
+  assert.match(component, /catalogedWorkFilename\(snapshot\)/);
+  assert.match(pdf, /const headerTop = 397/);
+  assert.match(pdf, /const bottomLine = 72/);
+});

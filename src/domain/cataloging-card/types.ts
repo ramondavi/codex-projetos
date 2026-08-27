@@ -25,6 +25,16 @@ export type CatalogingCardSnapshot = {
 
 const withoutFinalPunctuation = (value: string) => value.trim().replace(/[\s.;:]+$/u, "");
 const sentence = (value: string) => `${withoutFinalPunctuation(value)}.`;
+const lowerInitial = (value: string) => value.replace(/\p{L}/u, (letter) => letter.toLocaleLowerCase("pt-BR"));
+export const normalizeCutterCode = (value: string) => value.trim().replace(/^(\p{L}+\d+)\p{L}+$/u, "$1");
+const slug = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+export function catalogedWorkFilename(snapshot: CatalogingCardSnapshot) {
+  const author = snapshot.people.find((person) => person.role === "author");
+  const authorized = author?.authorizedName.trim() ?? "";
+  const [surnamePart, givenPart] = authorized.includes(",") ? authorized.split(/,(.+)/, 2) : [authorized.split(/\s+/).at(-1) ?? "autor", author?.transcribedName.replace(/\s+\S+$/, "") ?? "autor"];
+  return [surnamePart, givenPart, snapshot.request.depositYear ?? "ano", snapshot.request.workNature ?? "trabalho"].map((part) => slug(String(part))).filter(Boolean).join("-") + ".pdf";
+}
 const normalizeSubdivisionSeparator = (value: string, separator: string) =>
   value.replace(/\s+[–—-]\s+/gu, ` ${separator} `);
 const roman = (value: number) => {
@@ -44,7 +54,7 @@ export function buildCardContent(snapshot: CatalogingCardSnapshot) {
   const advisor = snapshot.people.find((person) => person.role === "advisor");
   const coadvisor = snapshot.people.find((person) => person.role === "coadvisor");
   const title = withoutFinalPunctuation(snapshot.request.title);
-  const subtitle = snapshot.request.subtitle ? ` : ${withoutFinalPunctuation(snapshot.request.subtitle)}` : "";
+  const subtitle = snapshot.request.subtitle ? ` : ${lowerInitial(withoutFinalPunctuation(snapshot.request.subtitle))}` : "";
   const equivalentTitle = snapshot.request.equivalentTitle ? ` = ${withoutFinalPunctuation(snapshot.request.equivalentTitle)}` : "";
   const responsibility = author?.transcribedName ? ` / ${withoutFinalPunctuation(author.transcribedName)}.` : ".";
   const place = snapshot.request.publicationPlace ?? "Salvador";

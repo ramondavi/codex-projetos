@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const migration = readFileSync("supabase/migrations/202608230003_assisted_cataloging.sql", "utf8");
+const reviewMigration = readFileSync("supabase/migrations/202608260001_cataloging_review_workflow.sql", "utf8");
+const workspace = readFileSync("src/components/assisted-cataloging-workspace.tsx", "utf8");
 
 test("stores reusable authorities without overwriting request snapshots", () => {
   assert.match(migration, /create table public\.person_authorities/);
@@ -22,6 +24,21 @@ test("keeps CDU and Cutter manual and prepares structured MARC metadata", () => 
   assert.match(migration, /cutter_code text/);
   assert.match(migration, /marc21_preparation jsonb/);
   assert.doesNotMatch(migration, /cutter.*suggest/i);
+});
+
+test("supports ordered bilingual terms, incremental authority lookup and a live preview", () => {
+  assert.match(workspace, /draggable=\{editable\}/);
+  assert.match(workspace, /moveTerm\(draggedTerm, index\)/);
+  assert.match(workspace, /authorityMatches/);
+  assert.match(workspace, /termMatches/);
+  assert.match(workspace, /CatalogingCardPreview snapshot=\{previewSnapshot\} live/);
+});
+
+test("normalizes Cutter and audits direct staff corrections in a new migration", () => {
+  assert.match(reviewMigration, /normalize_cutter_without_title_initial/);
+  assert.match(reviewMigration, /staff_correct_request_field/);
+  assert.match(reviewMigration, /request_field_corrected_by_staff/);
+  assert.match(reviewMigration, /assigned_to = auth\.uid\(\).*status = 'in_review'/);
 });
 
 test("scores CDU history with primary weight two and secondary weight one", () => {
