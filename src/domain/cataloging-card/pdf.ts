@@ -2,30 +2,59 @@ import { type PDFFont, type PDFPage } from "pdf-lib";
 import { buildCardContent, type CatalogingCardSnapshot } from "./types.ts";
 
 export const A4_PAGE: [number, number] = [595.28, 841.89];
+const CARD_LEFT = 126.25;
+const CARD_RIGHT = 497.75;
+const BODY_LEFT = 163.1;
+const FIRST_LINE_LEFT = 182.2;
+const FONT_SIZE = 10;
+const LINE_HEIGHT = 12.6;
 
 export function drawCatalogingCard(page: PDFPage, snapshot: CatalogingCardSnapshot, fonts: { regular: PDFFont; bold: PDFFont }) {
-  const { regular, bold } = fonts; const content = buildCardContent(snapshot);
-  const left = 62; const right = 533; const cardTop = 485; const minimumCardBottom = 142; const width = right - left;
-  center(page, "Dados Internacionais de Catalogação na Publicação (CIP)", cardTop + 28, 11, bold);
-  center(page, snapshot.institution.university, cardTop + 13, 8.5, regular);
-  center(page, `${snapshot.institution.librarySystem} · ${snapshot.institution.library}`, cardTop + 1, 8.5, regular);
-  page.drawLine({ start: { x: left, y: cardTop - 10 }, end: { x: right, y: cardTop - 10 }, thickness: 1 });
-  let y = cardTop - 34;
-  y = drawWrapped(page, content.authorizedAuthor, left + 12, y, width - 24, 9.5, bold, 12);
-  y = drawWrapped(page, content.titleStatement, left + 36, y - 3, width - 48, 9.5, regular, 12);
-  for (const note of content.notes) y = drawWrapped(page, note, left + 36, y - 3, width - 48, 9.5, regular, 12);
-  y = drawWrapped(page, content.tracings, left + 36, y - 5, width - 48, 9.5, regular, 12);
-  const cardBottom = Math.max(70, Math.min(minimumCardBottom, y - 48));
-  page.drawText(`Cutter ${snapshot.classification.cutter}`, { x: left + 12, y: cardBottom + 30, size: 9, font: regular });
-  const cduText = `CDU ${snapshot.classification.cdu}`;
-  page.drawText(cduText, { x: right - 12 - regular.widthOfTextAtSize(cduText, 9), y: cardBottom + 30, size: 9, font: regular });
-  page.drawLine({ start: { x: left, y: cardBottom + 17 }, end: { x: right, y: cardBottom + 17 }, thickness: 1 });
-  center(page, `${snapshot.technicalResponsibility.name} · ${snapshot.technicalResponsibility.crb}`, cardBottom, 8.5, regular);
+  const { regular, bold } = fonts;
+  const content = buildCardContent(snapshot);
+  center(page, "Dados Internacionais de Catalogação na Publicação (CIP)", 518, FONT_SIZE, bold);
+  center(page, snapshot.institution.university, 505.4, FONT_SIZE, bold);
+  center(page, snapshot.institution.librarySystem, 492.8, FONT_SIZE, bold);
+  center(page, snapshot.institution.library, 480.2, FONT_SIZE, bold);
+  page.drawLine({ start: { x: CARD_LEFT, y: 465.9 }, end: { x: CARD_RIGHT, y: 465.9 }, thickness: 1.4 });
+  page.drawText(snapshot.classification.cutter, { x: 127.7, y: 443, size: FONT_SIZE, font: regular });
+  let y = 430.4;
+  y = drawWrapped(page, content.authorizedAuthor, BODY_LEFT, y, CARD_RIGHT - BODY_LEFT, FONT_SIZE, regular, LINE_HEIGHT);
+  y = drawHanging(page, content.titleStatement, y, regular);
+  if (content.physicalDescription) y = drawHanging(page, content.physicalDescription, y, regular);
+  if (content.academicNote) y = drawHanging(page, content.academicNote, y - LINE_HEIGHT, regular);
+  for (const note of content.notes) y = drawHanging(page, note, y, regular);
+  y = drawHanging(page, content.tracings, y - LINE_HEIGHT, regular);
+  const bottomLine = Math.max(82, y - 48);
+  const cduText = `CDU: ${snapshot.classification.cdu}`;
+  page.drawText(cduText, { x: CARD_RIGHT - regular.widthOfTextAtSize(cduText, FONT_SIZE), y: bottomLine + 24, size: FONT_SIZE, font: regular });
+  page.drawLine({ start: { x: CARD_LEFT, y: bottomLine }, end: { x: CARD_RIGHT, y: bottomLine }, thickness: 1.4 });
+  center(page, content.technicalResponsibility, bottomLine - 28, FONT_SIZE, regular);
 }
 
-function center(page: PDFPage, text: string, y: number, size: number, font: PDFFont) { page.drawText(text, { x: (A4_PAGE[0] - font.widthOfTextAtSize(text, size)) / 2, y, size, font }); }
+function center(page: PDFPage, text: string, y: number, size: number, font: PDFFont) {
+  page.drawText(text, { x: (A4_PAGE[0] - font.widthOfTextAtSize(text, size)) / 2, y, size, font });
+}
+
+function wrap(text: string, firstWidth: number, continuationWidth: number, size: number, font: PDFFont) {
+  const words = text.trim().split(/\s+/); const lines: string[] = []; let line = ""; let width = firstWidth;
+  for (const word of words) {
+    const candidate = line ? `${line} ${word}` : word;
+    if (font.widthOfTextAtSize(candidate, size) <= width) line = candidate;
+    else { if (line) lines.push(line); line = word; width = continuationWidth; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawHanging(page: PDFPage, text: string, y: number, font: PDFFont) {
+  const lines = wrap(text, CARD_RIGHT - FIRST_LINE_LEFT, CARD_RIGHT - BODY_LEFT, FONT_SIZE, font);
+  lines.forEach((line, index) => page.drawText(line, { x: index === 0 ? FIRST_LINE_LEFT : BODY_LEFT, y: y - index * LINE_HEIGHT, size: FONT_SIZE, font }));
+  return y - lines.length * LINE_HEIGHT;
+}
+
 function drawWrapped(page: PDFPage, text: string, x: number, y: number, width: number, size: number, font: PDFFont, lineHeight: number) {
-  const words=text.split(/\s+/);const lines:string[]=[];let line="";
-  for(const word of words){const candidate=line?`${line} ${word}`:word;if(font.widthOfTextAtSize(candidate,size)<=width)line=candidate;else{if(line)lines.push(line);line=word;}}
-  if(line)lines.push(line);lines.forEach((value,index)=>page.drawText(value,{x,y:y-index*lineHeight,size,font}));return y-lines.length*lineHeight;
+  const lines = wrap(text, width, width, size, font);
+  lines.forEach((line, index) => page.drawText(line, { x, y: y - index * lineHeight, size, font }));
+  return y - lines.length * lineHeight;
 }

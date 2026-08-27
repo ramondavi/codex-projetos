@@ -8,20 +8,22 @@ type ControlledTerm = { id: string; preferred_label_pt: string; preferred_label_
 type PersonEntry = { authorityId: string; role: string; transcribedName: string; authorizedName: string };
 type TermEntry = { termId: string; labelPt: string; labelEn: string; isPrimary: boolean };
 type Suggestion = { cdu_code: string; score: number; primary_count: number; secondary_count: number; sheet_count: number };
+export type CardDetailsEntry = { depositYear: number; defenseYear: number; extentUnit: "pages" | "volumes"; extentCount: number; hasIllustrations: boolean; advisorNoteLabel: string; coadvisorNoteLabel: string };
 
 const roleLabels: Record<string, string> = {
   author: "Autor", advisor: "Orientador", coadvisor: "Coorientador",
   committee_member: "Membro de banca", related_person: "Outra pessoa relacionada",
 };
 
-export function AssistedCatalogingWorkspace({ requestId, editable, authorities, controlledTerms, initialPeople, initialTerms, initialCdu, initialCutter }: {
+export function AssistedCatalogingWorkspace({ requestId, editable, authorities, controlledTerms, initialPeople, initialTerms, initialCdu, initialCutter, initialCardDetails }: {
   requestId: string; editable: boolean; authorities: Authority[]; controlledTerms: ControlledTerm[];
-  initialPeople: PersonEntry[]; initialTerms: TermEntry[]; initialCdu: string; initialCutter: string;
+  initialPeople: PersonEntry[]; initialTerms: TermEntry[]; initialCdu: string; initialCutter: string; initialCardDetails: CardDetailsEntry;
 }) {
   const [people, setPeople] = useState(initialPeople);
   const [terms, setTerms] = useState(initialTerms);
   const [cduCode, setCduCode] = useState(initialCdu);
   const [cutterCode, setCutterCode] = useState(initialCutter);
+  const [cardDetails, setCardDetails] = useState(initialCardDetails);
   const [ready, setReady] = useState(false);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error" | "incomplete">("idle");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
@@ -29,7 +31,9 @@ export function AssistedCatalogingWorkspace({ requestId, editable, authorities, 
   const valid = useMemo(() => people.length > 0
     && people.every((person) => person.transcribedName.trim().length >= 3 && person.authorizedName.trim().length >= 3)
     && terms.length > 0 && terms.every((term) => term.labelPt.trim().length >= 2)
-    && terms.filter((term) => term.isPrimary).length === 1, [people, terms]);
+    && terms.filter((term) => term.isPrimary).length === 1
+    && cardDetails.depositYear >= cardDetails.defenseYear
+    && cardDetails.defenseYear >= 1900 && cardDetails.extentCount > 0, [people, terms, cardDetails]);
 
   useEffect(() => setReady(true), []);
   useEffect(() => {
@@ -38,14 +42,14 @@ export function AssistedCatalogingWorkspace({ requestId, editable, authorities, 
     setSaveState("saving");
     const timer = window.setTimeout(async () => {
       const supabase = createClient();
-      const { error } = await supabase.rpc("save_assisted_cataloging", {
-        target_request_id: requestId,
-        payload: { people, terms, cduCode, cutterCode },
-      });
-      setSaveState(error ? "error" : "saved");
+      const [{ error }, { error: detailsError }] = await Promise.all([
+        supabase.rpc("save_assisted_cataloging", { target_request_id: requestId, payload: { people, terms, cduCode, cutterCode } }),
+        supabase.rpc("save_request_card_details", { target_request_id: requestId, payload: cardDetails }),
+      ]);
+      setSaveState(error || detailsError ? "error" : "saved");
     }, 800);
     return () => window.clearTimeout(timer);
-  }, [people, terms, cduCode, cutterCode, requestId, editable, ready, valid]);
+  }, [people, terms, cduCode, cutterCode, cardDetails, requestId, editable, ready, valid]);
 
   function updatePerson(index: number, patch: Partial<PersonEntry>) {
     setPeople((current) => current.map((entry, position) => position === index ? { ...entry, ...patch } : entry));
@@ -80,6 +84,8 @@ export function AssistedCatalogingWorkspace({ requestId, editable, authorities, 
     <fieldset><legend>Vocabulário controlado bilíngue</legend><p className="field-help">O termo em português será usado na ficha; o equivalente em inglês fica preparado para reutilização.</p><datalist id="controlled-terms">{controlledTerms.map((term) => <option key={term.id} value={term.preferred_label_pt}>{term.preferred_label_en ?? "Sem equivalente em inglês"}</option>)}</datalist><div className="cataloging-list">{terms.map((term, index) => <article className="cataloging-row cataloging-row--term" key={index}><label className="radio-choice"><input type="radio" name="primary-term" checked={term.isPrimary} disabled={!editable} onChange={() => setTerms((current) => current.map((entry, position) => ({ ...entry, isPrimary: position === index })))} /> Termo principal</label><label>Termo preferido — português<input list="controlled-terms" value={term.labelPt} disabled={!editable} maxLength={120} onChange={(event) => selectTerm(index, event.target.value)} /></label><label>Equivalente — inglês<input value={term.labelEn} disabled={!editable} maxLength={120} onChange={(event) => updateTerm(index, { labelEn: event.target.value, termId: term.termId })} /></label>{editable && <button className="text-action" type="button" onClick={() => setTerms((current) => { const next = current.filter((_, position) => position !== index); if (term.isPrimary && next[0]) next[0] = { ...next[0], isPrimary: true }; return next; })}>Remover</button>}</article>)}</div>{editable && <button className="button button--secondary button--small" type="button" onClick={() => setTerms((current) => [...current, { termId: "", labelPt: "", labelEn: "", isPrimary: current.length === 0 }])}>Adicionar termo</button>}</fieldset>
 
     <fieldset><legend>Classificação</legend><div className="classification-grid"><label>CDU — decisão manual<input value={cduCode} disabled={!editable} maxLength={80} onChange={(event) => setCduCode(event.target.value)} placeholder="Preenchimento do bibliotecário" /></label><label>Cutter — manual<input value={cutterCode} disabled={!editable} maxLength={40} onChange={(event) => setCutterCode(event.target.value)} placeholder="Sem sugestão até validar a tabela" /></label></div>{editable && <button className="button button--secondary button--small" type="button" onClick={suggestCdu} disabled={!terms.find((term) => term.isPrimary)?.termId}>Sugerir CDU pelo histórico</button>}{suggestions.length > 0 && <div className="cdu-suggestions" aria-label="Sugestões de CDU">{suggestions.map((suggestion) => <button type="button" key={suggestion.cdu_code} onClick={() => setCduCode(suggestion.cdu_code)}><strong>{suggestion.cdu_code}</strong><span>Pontuação {suggestion.score}: {suggestion.primary_count} ficha(s) com o termo principal e {suggestion.secondary_count} ocorrência(s) de termos secundários.</span></button>)}</div>}</fieldset>
+
+    <fieldset><legend>Descrição da ficha</legend><p className="field-help">Confira estes dados na versão final e na página de rosto. A prévia e o PDF usarão exatamente estes valores.</p><div className="classification-grid"><label>Ano de depósito<input type="number" min="1900" max="9999" disabled={!editable} value={cardDetails.depositYear} onChange={(event) => setCardDetails((current) => ({ ...current, depositYear: Number(event.target.value) }))} /></label><label>Ano de defesa<input type="number" min="1900" max={cardDetails.depositYear} disabled={!editable} value={cardDetails.defenseYear} onChange={(event) => setCardDetails((current) => ({ ...current, defenseYear: Number(event.target.value) }))} /></label><label>{cardDetails.extentUnit === "volumes" ? "Quantidade de volumes" : "Quantidade de páginas"}<input type="number" min={cardDetails.extentUnit === "volumes" ? 2 : 1} max={cardDetails.extentUnit === "volumes" ? 3 : 99999} disabled={!editable} value={cardDetails.extentCount} onChange={(event) => setCardDetails((current) => ({ ...current, extentCount: Number(event.target.value) }))} /></label><label className="check"><input type="checkbox" disabled={!editable} checked={cardDetails.hasIllustrations} onChange={(event) => setCardDetails((current) => ({ ...current, hasIllustrations: event.target.checked }))} /> Possui ilustrações (`il.`)</label><label>Designação da orientação<select disabled={!editable} value={cardDetails.advisorNoteLabel} onChange={(event) => setCardDetails((current) => ({ ...current, advisorNoteLabel: event.target.value }))}><option>Orientador</option><option>Orientadora</option></select></label><label>Designação da coorientação<select disabled={!editable} value={cardDetails.coadvisorNoteLabel} onChange={(event) => setCardDetails((current) => ({ ...current, coadvisorNoteLabel: event.target.value }))}><option>Coorientador</option><option>Coorientadora</option></select></label></div></fieldset>
 
     <div className="marc-preparation"><strong>Preparação para futuro MARC 21</strong><p>As autoridades, assuntos bilíngues, CDU e Cutter são salvos separadamente e em um retrato estruturado. Nenhuma exportação MARC é feita neste incremento.</p></div>
     <div className="analysis-workspace__actions"><a className="button button--primary" href={`/painel/atendimento/${requestId}/ficha`}>Revisar ficha catalográfica</a></div>

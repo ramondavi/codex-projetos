@@ -8,6 +8,7 @@ export const announcementType = pgEnum("announcement_type", ["normal", "recess",
 export const requestStatus = pgEnum("request_status", ["submitted", "in_review", "changes_requested", "approved", "completed", "canceled"]);
 export const nadaConstaStatus = pgEnum("nada_consta_status", ["pending", "approved", "rejected", "purged"]);
 export const personRole = pgEnum("person_role", ["author", "advisor", "coadvisor"]);
+export const physicalExtentUnit = pgEnum("physical_extent_unit", ["pages", "volumes"]);
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
@@ -60,6 +61,19 @@ export const catalogingRequests = pgTable("cataloging_requests", {
   finalFileConfirmed: boolean("final_file_confirmed").notNull(),
   approvalPageConfirmed: boolean("approval_page_confirmed").notNull(),
   submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow().notNull(),
+  ...timestamps,
+});
+
+export const requestCardDetails = pgTable("request_card_details", {
+  requestId: uuid("request_id").primaryKey().references(() => catalogingRequests.id, { onDelete: "cascade" }),
+  depositYear: integer("deposit_year").notNull(),
+  defenseYear: integer("defense_year").notNull(),
+  extentUnit: physicalExtentUnit("extent_unit").notNull(),
+  extentCount: integer("extent_count").notNull(),
+  hasIllustrations: boolean("has_illustrations").default(false).notNull(),
+  publicationPlace: text("publication_place").default("Salvador").notNull(),
+  advisorNoteLabel: text("advisor_note_label").notNull(),
+  coadvisorNoteLabel: text("coadvisor_note_label"),
   ...timestamps,
 });
 
@@ -263,6 +277,7 @@ export const academicPrograms = pgTable("academic_programs", {
   repositoryProgramLabel: text("repository_program_label"),
   repositoryCountryLabel: text("repository_country_label").default("Brasil").notNull(),
   repositoryDefaultLanguageLabel: text("repository_default_language_label").default("Português").notNull(),
+  catalogingProgramTracing: text("cataloging_program_tracing"),
   ...timestamps,
 });
 

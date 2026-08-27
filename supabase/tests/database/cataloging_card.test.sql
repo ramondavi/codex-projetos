@@ -15,10 +15,12 @@ insert into public.staff_profiles (profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v2(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),
  'registrationNumber','FICHA2026','title','Arquitetura social','subtitle','Um estudo aplicado','equivalentTitle','Social architecture',
- 'publicWorkUrl','https://example.org/ficha.pdf','people',jsonb_build_object('author','Ana Silva','advisor','Bruno Souza'),
+ 'publicWorkUrl','https://example.org/ficha.pdf',
+ 'depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'hasIllustrations',true,
+ 'people',jsonb_build_object('author','Ana Silva','advisor','Bruno Souza','advisorNoteLabel','Orientador'),
  'keywordsPt',jsonb_build_array('Arquitetura','Habitação'),'keywordsEn',jsonb_build_array('Architecture','Housing'),
  'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre a solicitação');
 
@@ -44,9 +46,9 @@ set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
 select lives_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'responsável homologa a ficha');
 select is((select status from public.cataloging_requests limit 1),'approved'::public.request_status,'solicitação fica homologada');
 select is((select count(*)::integer from public.cataloging_card_homologations),1,'homologação cria um snapshot único');
-select is((select snapshot #>> '{institution,university}' from public.cataloging_card_homologations),'Universidade Federal da Bahia — UFBA','snapshot identifica a UFBA');
-select is((select snapshot #>> '{institution,librarySystem}' from public.cataloging_card_homologations),'Sistema Universitário de Bibliotecas — SIBI','snapshot identifica o SIBI');
-select is((select snapshot #>> '{institution,library}' from public.cataloging_card_homologations),'Biblioteca da Faculdade de Arquitetura — BIB/FA','snapshot identifica a BIB/FA');
+select is((select snapshot #>> '{institution,university}' from public.cataloging_card_homologations),'Universidade Federal da Bahia (UFBA)','snapshot identifica a UFBA');
+select is((select snapshot #>> '{institution,librarySystem}' from public.cataloging_card_homologations),'Sistema Universitário de Bibliotecas (SIBI)','snapshot identifica o SIBI');
+select is((select snapshot #>> '{institution,library}' from public.cataloging_card_homologations),'Biblioteca da Faculdade de Arquitetura (BIB/FA)','snapshot identifica a BIB/FA');
 select is((select snapshot #>> '{people,0,authorizedName}' from public.cataloging_card_homologations),'Silva, Ana','forma autorizada do autor é congelada');
 select is((select snapshot #>> '{people,0,transcribedName}' from public.cataloging_card_homologations),'Ana Silva','forma transcrita do autor é congelada');
 select is((select snapshot #>> '{people,1,authorizedName}' from public.cataloging_card_homologations),'Souza, Bruno','forma autorizada do orientador é congelada');
@@ -55,7 +57,7 @@ select is((select snapshot #>> '{classification,cutter}' from public.cataloging_
 select is((select librarian_name_snapshot from public.cataloging_card_homologations),'Bibliotecário Responsável','responsável técnico é registrado');
 select is((select librarian_crb_snapshot from public.cataloging_card_homologations),'CRB-5/1234','CRB é registrado');
 select ok((select homologated_at is not null from public.cataloging_card_homologations),'data e horário são registrados');
-select is((select layout_version from public.cataloging_card_homologations),'provisional-v1','layout fica explicitamente provisório');
+select is((select layout_version from public.cataloging_card_homologations),'institutional-v2','layout institucional validado é congelado');
 reset role;
 select is((select count(*)::integer from public.audit_logs where action='cataloging_card_homologated'),1,'homologação gera log');
 set local role authenticated;
