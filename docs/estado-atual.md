@@ -27,6 +27,7 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Entrega local de e-mails preparada no Mailpit para abertura, pendência e futura liberação; nenhum provedor externo de e-mail está habilitado.
 - Incremento 6 implementado localmente: autoridades reutilizáveis de pessoas com formas transcrita e autorizada, vocabulário controlado bilíngue, CDU e Cutter manuais, sugestão CDU explicável pelo histórico e preparação estruturada para futuro MARC 21.
 - Incremento 7 implementado localmente: revisão final, homologação imutável com data, horário, bibliotecário e CRB, geração isolada da ficha em PDF e layout CIP provisório com as regras catalográficas já confirmadas.
+- Revisão institucional da ficha implementada em `institutional-v2`: modelos de TCC de graduação, MP-CECRE, dissertação e tese; título com recurso eletrônico condicionado ao subtítulo, extensão por páginas ou volumes, anos de depósito e defesa, ilustrações, notas transcritas, traçados autorizados e geometria compartilhada entre prévia e PDF. Snapshots antigos `provisional-v1` permanecem imutáveis.
 - Incremento 8 implementado localmente: Nada Consta em bucket privado, validações de extensão, MIME, assinatura PDF e limite inicial de 5 MB, aprovação ou devolução pelo responsável, liberação condicionada e expurgo programado para 60 dias após o encerramento.
 - Incremento 9 implementado localmente: ficha isolada e mesclagem integral no navegador, confirmação do arquivo analisado e da folha de rosto, fonte TTF/OTF local opcional, geometria compartilhada e orientação explícita sobre PDF/A.
 - Incremento 10 implementado localmente: guia passo a passo do autodepósito no RI/UFBA, mapeamento confirmado por tipo de trabalho, cópia apenas de metadados aplicáveis, registro do início, configuração administrativa por programa e TFG de graduação inicialmente desativado.
@@ -55,8 +56,9 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 12. `202608230008_protocol_closure_coordination.sql`;
 13. `202608230009_administration_operations.sql`;
 14. `202608230010_stabilization_release.sql`.
+15. `202608260000_cataloging_card_institutional_models.sql`.
 
-As 14 migrações estão aplicadas no projeto remoto `Pronto!`. Após a implantação de 23/08/2026, o `db push --dry-run` confirmou histórico alinhado e o lint remoto não encontrou erros.
+As 14 primeiras migrações estão aplicadas no projeto remoto `Pronto!`. A migração 15 está aplicada somente no Supabase local e não será enviada ao remoto sem revisão de impacto e confirmação explícita.
 
 ## Testes integrados de banco
 
