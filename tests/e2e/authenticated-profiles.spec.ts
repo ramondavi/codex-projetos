@@ -2,7 +2,7 @@ import { existsSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 
 const profiles = [
-  { name: "estudante", state: ".auth/student.json", path: "/painel", heading: /Olá,/ },
+  { name: "estudante", state: ".auth/student.json", path: "/painel", heading: /Seu acompanhamento/ },
   { name: "catalogador", state: ".auth/cataloger.json", path: "/painel/fila", heading: "Fila geral" },
   { name: "administrador", state: ".auth/administrator.json", path: "/painel/admin", heading: "Administração e operação" },
 ] as const;

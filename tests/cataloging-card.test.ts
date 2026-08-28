@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { buildCardContent, type CatalogingCardSnapshot } from "../src/domain/cataloging-card/types.ts";
+import { buildCardContent, catalogedWorkFilename, normalizeCutterCode, type CatalogingCardSnapshot } from "../src/domain/cataloging-card/types.ts";
 
 const originalMigration = readFileSync("supabase/migrations/202608230004_cataloging_card.sql", "utf8");
 const institutionalMigration = readFileSync("supabase/migrations/202608260000_cataloging_card_institutional_models.sql", "utf8");
@@ -30,6 +30,17 @@ test("compõe título, subtítulo, responsabilidade e depósito na ordem institu
 test("remove os dois-pontos quando não há subtítulo", () => {
   const content = buildCardContent({ ...snapshot, request: { ...snapshot.request, subtitle: null } });
   assert.equal(content.titleStatement, "A arquitetura do agora [recurso eletrônico] / Mateus Gama. — Salvador, 2026.");
+});
+
+test("inicia subtítulo comum com minúscula e remove a inicial do título do Cutter", () => {
+  const content = buildCardContent({ ...snapshot, request: { ...snapshot.request, subtitle: "Estudo de caso" } });
+  assert.match(content.titleStatement, / : estudo de caso \/ Mateus/);
+  assert.equal(normalizeCutterCode("S237a"), "S237");
+  assert.equal(normalizeCutterCode("S237"), "S237");
+});
+
+test("nomeia o trabalho mesclado por autor, ano e tipo", () => {
+  assert.equal(catalogedWorkFilename(snapshot), "santos-mateus-gama-dos-2026-dissertacao.pdf");
 });
 
 test("descreve o MP-CECRE por volumes", () => {

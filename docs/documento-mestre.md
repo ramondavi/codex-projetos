@@ -178,6 +178,9 @@ Graduação, Especialização, Mestrado e Doutorado.
 - A natureza e a nota acadêmica variam entre `Trabalho de Conclusão de Curso`, `Dissertação` e `Tese`. Uma meia-risca separa a natureza do trabalho da instituição.
 - Subdivisões de assuntos e nomes usam hífen. Antes de Salvador usa-se travessão; na nota acadêmica usa-se meia-risca.
 - O Cutter aparece isolado, sem o rótulo “Cutter”, e a CDU usa o prefixo `CDU:`.
+- O Cutter não recebe a inicial do título depois da parte numérica.
+- O subtítulo começa com letra minúscula, salvo quando a grafia exigir maiúscula por nome próprio ou outra exceção linguística conferida pelo bibliotecário.
+- A ficha completa, do cabeçalho CIP ao responsável técnico, permanece sempre na região inferior da página.
 - A ficha não imprime o rótulo “Traçados:”; os assuntos são seguidos por entradas secundárias numeradas dinamicamente em romanos.
 
 ### 8.3. Pessoas e formas de nome
@@ -185,7 +188,8 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Dados de autores, orientadores, coorientadores e demais pessoas devem ser armazenados, sanitizados e reutilizáveis para reduzir redigitação.
 - Distinguir forma transcrita (como consta na folha de rosto) e autorizada (pontos de acesso/entradas).
 - Para orientador/coorientador, a nota usa a forma transcrita e a entrada secundária, a autorizada.
-- As designações `Orientador`, `Orientadora`, `Coorientador` e `Coorientadora` também reproduzem a página de rosto.
+- As designações de orientação e coorientação são campos textuais editáveis e reproduzem fielmente a página de rosto, inclusive variantes como `co-orientador` e `coorientador`.
+- A forma autorizada parte da forma transcrita, aproxima registros existentes e apresenta opções progressivamente filtradas durante a digitação, sem retirar do bibliotecário a decisão final.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
 - Correções de forma autorizada não sobrescrevem automaticamente registros históricos; preservar rastreabilidade.
 
@@ -201,6 +205,8 @@ Graduação, Especialização, Mestrado e Doutorado.
 - O cadastro controlado é bilíngue: mantém termo preferido em português e, quando aplicável, seu equivalente em inglês. Ambos são reutilizáveis; a ficha continua usando somente a forma em português.
 - Sanitização inicial: remover espaços excedentes e pontuação final, preservar acentos e usar inicial minúscula, exceto em nomes próprios e siglas. A comparação de duplicidade não diferencia maiúsculas de minúsculas.
 - A mesclagem administrativa de termos duplicados fica para evolução posterior; neste incremento, o sistema evita novas duplicidades pela forma normalizada.
+- A busca de termos segue a mesma aproximação e filtragem progressiva das autoridades de pessoas.
+- Os termos selecionados podem ser reordenados por arrastar e soltar; a marcação independente de um termo principal é preservada para registro e sugestão de CDU.
 
 ### 9.2. Assistente CDU
 
@@ -233,6 +239,8 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 ### 10.2. Devolução por pendência
 
+- A conferência ocorre em tela única: cada valor informado pelo estudante aparece com ações adjacentes para validar, corrigir diretamente ou devolver especificamente ao estudante.
+- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
@@ -251,11 +259,14 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 
 ### 10.5. Revisão e homologação da ficha
 
+- A prévia da ficha é atualizada em tempo real na mesma tela conforme pessoas, assuntos, classificação e descrição são editados.
 - A revisão final usa somente os metadados homologados pelo bibliotecário, incluindo CDU e Cutter informados manualmente.
 - Ao homologar, congelar um snapshot imutável do conteúdo, das formas autorizadas e transcritas, da classificação e da identidade profissional responsável.
 - Registrar data, horário, bibliotecário e CRB, além da ação relevante no log.
 - A ficha isolada identifica UFBA, SIBI e BIB/FA, usa cabeçalho institucional CIP, linhas superior e inferior sem bordas laterais, CDU à direita e altura capaz de acomodar conteúdo variável.
 - A forma autorizada do autor abre a entrada principal; a forma transcrita aparece na responsabilidade. Orientador e coorientador usam a forma transcrita na nota e a autorizada nos traçados.
+- O estudante não visualiza nem baixa a ficha antes da homologação e da aprovação do Nada Consta.
+- O trabalho mesclado é baixado como `ultimosobrenome-nomedoautor-anodeposito-tipodetrabalho.pdf`, com caracteres normalizados para compatibilidade de arquivo.
 - O layout `institutional-v2` deriva dos modelos institucionais validados de TCC de graduação, TCC do MP-CECRE, dissertação e tese. O conteúdo e a geometria são compartilhados entre a prévia e o PDF.
 - O PPG-AU gera traçado institucional do programa; graduação e MP-CECRE, vinculados diretamente à Faculdade, não geram esse traçado. `Título` permanece como a última entrada secundária.
 - Fichas homologadas anteriormente preservam o snapshot e a versão `provisional-v1`; nenhuma homologação histórica é reescrita.
@@ -370,6 +381,16 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - Interface: Inter ou Fira Sans; títulos: Cinzel ou Playfair, se adequado; técnica: JetBrains Mono ou Fira Code.
 - Temas claro, escuro e conforme sistema; preservar contraste, legibilidade, responsividade e identidade.
 - Refinamento milimétrico da ficha e telas será feito depois.
+- O cabeçalho autenticado identifica o primeiro nome da pessoa logada com a saudação `Olá, [primeiro nome]`, ao lado do perfil operacional e da ação de saída.
+- Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, FAQ, ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.
+- Links possuem estados de foco e passagem do mouse coerentes com a paleta e a linguagem geométrica do sistema.
+- A Administração organiza usuários, programas, biblioteca, atendimento, FAQ, indicadores, retenção e auditoria em abas horizontais responsivas.
+
+### 20.1. Perguntas frequentes e ajuda
+
+- A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
+- Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
+- A página dedicada de Ajuda permanece pendente de aprovação do conteúdo; até lá, o link correspondente encaminha para orientação provisória dentro da FAQ.
 
 ## 21. Escopo por fase
 
@@ -450,6 +471,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
 - Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
 - O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.
+- Feriados e pontos facultativos são cadastrados pelo administrador como avisos datados; o painel do estudante apresenta somente os eventos ativos do mês corrente.
 - Os seis templates básicos de pendência podem ter rótulo, texto, ordem e ativação ajustados, sem criar um construtor avançado de templates.
 - Indicadores simples apresentam volume por período, status, curso/programa e bibliotecário, com exportação local em CSV e JSON.
 - O expurgo operacional lista somente Nada Consta com retenção vencida, remove o objeto privado e preserva o registro textual e o log da ação.

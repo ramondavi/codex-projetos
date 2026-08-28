@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme-script";
+import { SiteFooter } from "@/components/site-footer";
+import packageInfo from "../../package.json";
 
 export const metadata: Metadata = {
   title: "Pronto! — Assistente de Fichas Catalográficas e Autodepósito",
@@ -16,6 +18,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
         <div id="conteudo" tabIndex={-1}>{children}</div>
+        <SiteFooter version={packageInfo.version} />
       </body>
     </html>
   );

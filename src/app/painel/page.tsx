@@ -8,11 +8,12 @@ export default async function StudentDashboardPage() {
   const { data: profile } = user ? await supabase.from("profiles").select("full_name, role").eq("id", user.id).single() : { data: null };
   if (profile?.role === "cataloger" || profile?.role === "administrator") redirect("/painel/fila");
   const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
-  const firstName = profile?.full_name.split(/\s+/)[0] ?? "estudante";
+  const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1); const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  const { data: calendarDates } = await supabase.from("library_announcements").select("id,type,title,starts_at").eq("active", true).in("type", ["holiday", "optional_day"]).gte("starts_at", monthStart.toISOString()).lt("starts_at", nextMonth.toISOString()).order("starts_at");
   return (
     <main className="dashboard-main">
       <div className="page-heading">
-        <div><p className="eyebrow">Visão geral</p><h1>Olá, {firstName}.</h1></div>
+        <div><p className="eyebrow">Visão geral</p><h1>Seu acompanhamento</h1></div>
         <span className="sla-card"><strong>3</strong> dias úteis<br />prazo médio atual</span>
       </div>
 
@@ -36,9 +37,10 @@ export default async function StudentDashboardPage() {
               <li>Link público de visualização</li>
             </ul>
           </section>
-          <section className="panel panel--institutional">
-            <strong>Biblioteca da Faculdade de Arquitetura</strong>
-            <p>Atendimento normal. Acompanhe avisos e prazos sempre por este painel.</p>
+          <section className="panel panel--institutional calendar-panel">
+            <strong>Avisos e prazos</strong>
+            <p>Atendimento normal. Acompanhe por aqui os avisos e as datas informadas pela biblioteca.</p>
+            {calendarDates?.length ? <ul>{calendarDates.map((item) => <li key={item.id}><time>{new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(item.starts_at))}</time><span>{item.title} <small>{item.type === "holiday" ? "Feriado" : "Ponto facultativo"}</small></span></li>)}</ul> : <p className="calendar-panel__empty">Não há feriados ou pontos facultativos cadastrados para este mês.</p>}
           </section>
         </aside>
       </section>
