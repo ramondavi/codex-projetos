@@ -20,10 +20,11 @@ Estas instruções valem para todo o repositório e devem ser seguidas no Codex 
 
 ## Fluxo Git
 
-- Antes de editar, confirme que a tarefa parte da `master` atualizada e que `git status` está limpo.
+- Antes de editar, confirme que a tarefa parte da `develop` atualizada e que `git status` está limpo.
+- Use `develop` como branch de integração de incrementos, correções, mocks e testes. Reserve `master` para versões estáveis promovidas em uma liberação planejada de produção.
 - No Codex App, trabalhe somente na raiz do repositório clonado pelo GitHub, nunca em ZIP, cópia do Cloud ou pasta sem `.git`.
 - Trabalhe em uma branch nova por incremento ou correção.
-- Não force push, não reescreva a `master` e não apague branches sem solicitação.
+- Não force push, não reescreva `develop` ou `master` e não apague branches sem solicitação.
 - Faça um commit claro e abra um PR; não faça merge automaticamente.
 - Antes do commit, revise `git diff` e confirme que nenhum segredo entrou no patch.
 

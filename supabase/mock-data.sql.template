@@ -1,0 +1,195 @@
+begin;
+
+-- Contas locais. As senhas e CPFs são injetados em memória pelo script e nunca versionados.
+insert into auth.users (
+  instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,
+  raw_app_meta_data,raw_user_meta_data,created_at,updated_at
+) values
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000001','authenticated','authenticated','demo.admin@ufba.br',extensions.crypt('{{ADMIN_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Marina Costa Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000002','authenticated','authenticated','demo.bibliotecaria@ufba.br',extensions.crypt('{{CATALOGER_ONE_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Helena Almeida Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000003','authenticated','authenticated','demo.catalogador@ufba.br',extensions.crypt('{{CATALOGER_TWO_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Rafael Santos Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000101','authenticated','authenticated','demo.estudante.fila@ufba.br',extensions.crypt('{{STUDENT_QUEUE_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Ana Lima Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000102','authenticated','authenticated','demo.estudante.analise@ufba.br',extensions.crypt('{{STUDENT_REVIEW_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Bruno Rocha Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000103','authenticated','authenticated','demo.estudante.pendencia@ufba.br',extensions.crypt('{{STUDENT_ISSUES_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Carla Nascimento Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000104','authenticated','authenticated','demo.estudante.ficha@ufba.br',extensions.crypt('{{STUDENT_CARD_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Diego Oliveira Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000105','authenticated','authenticated','demo.estudante.liberacao@ufba.br',extensions.crypt('{{STUDENT_RELEASE_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Elisa Ferreira Demo'"'"'}',now(),now()),
+('00000000-0000-0000-0000-000000000000','d0000000-0000-4000-8000-000000000106','authenticated','authenticated','demo.estudante.concluido@ufba.br',extensions.crypt('{{STUDENT_COMPLETE_PASSWORD}}',extensions.gen_salt('bf')),now(),'{'"'"'provider'"'"':'"'"'email'"'"','"'"'providers'"'"':['"'"'email'"'"']}','{'"'"'full_name'"'"':'"'"'Felipe Barbosa Demo'"'"'}',now(),now())
+on conflict (id) do update set encrypted_password=excluded.encrypted_password,email_confirmed_at=now(),updated_at=now();
+
+-- O GoTrue atual converte estes campos para string durante o login. Contas
+-- criadas pela API recebem strings vazias; ao inserir por SQL, o padrão NULL
+-- provoca HTTP 500 antes da validação da senha.
+update auth.users
+set confirmation_token = coalesce(confirmation_token, ''),
+    recovery_token = coalesce(recovery_token, ''),
+    email_change_token_new = coalesce(email_change_token_new, ''),
+    email_change = coalesce(email_change, ''),
+    phone_change = coalesce(phone_change, ''),
+    phone_change_token = coalesce(phone_change_token, ''),
+    email_change_token_current = coalesce(email_change_token_current, ''),
+    reauthentication_token = coalesce(reauthentication_token, '')
+where id::text like 'd0000000-0000-4000-8000-000000000%';
+
+insert into auth.identities(id,provider_id,user_id,identity_data,provider,last_sign_in_at,created_at,updated_at)
+select id,email,id,jsonb_build_object('sub',id::text,'email',email,'email_verified',true),'email',now(),now(),now()
+from auth.users where id::text like 'd0000000-0000-4000-8000-000000000%'
+on conflict (id) do update set identity_data=excluded.identity_data,updated_at=now();
+
+insert into public.profiles(id,full_name,email,role,status) values
+('d0000000-0000-4000-8000-000000000001','Marina Costa Demo','demo.admin@ufba.br','administrator','active'),
+('d0000000-0000-4000-8000-000000000002','Helena Almeida Demo','demo.bibliotecaria@ufba.br','cataloger','active'),
+('d0000000-0000-4000-8000-000000000003','Rafael Santos Demo','demo.catalogador@ufba.br','cataloger','active'),
+('d0000000-0000-4000-8000-000000000101','Ana Lima Demo','demo.estudante.fila@ufba.br','student','active'),
+('d0000000-0000-4000-8000-000000000102','Bruno Rocha Demo','demo.estudante.analise@ufba.br','student','active'),
+('d0000000-0000-4000-8000-000000000103','Carla Nascimento Demo','demo.estudante.pendencia@ufba.br','student','active'),
+('d0000000-0000-4000-8000-000000000104','Diego Oliveira Demo','demo.estudante.ficha@ufba.br','student','active'),
+('d0000000-0000-4000-8000-000000000105','Elisa Ferreira Demo','demo.estudante.liberacao@ufba.br','student','active'),
+('d0000000-0000-4000-8000-000000000106','Felipe Barbosa Demo','demo.estudante.concluido@ufba.br','student','active')
+on conflict(id) do update set full_name=excluded.full_name,email=excluded.email,role=excluded.role,status=excluded.status,updated_at=now();
+
+insert into public.staff_profiles(id,profile_id,professional_name,crb,available_for_assignment) values
+('d0100000-0000-4000-8000-000000000001','d0000000-0000-4000-8000-000000000001','Marina Costa','CRB-5/9001',true),
+('d0100000-0000-4000-8000-000000000002','d0000000-0000-4000-8000-000000000002','Helena Almeida','CRB-5/9002',true),
+('d0100000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003','Rafael Santos','CRB-5/9003',true)
+on conflict(profile_id) do update set professional_name=excluded.professional_name,crb=excluded.crb,available_for_assignment=true,updated_at=now();
+
+insert into public.student_profiles(id,profile_id,cpf) values
+('d1000000-0000-4000-8000-000000000001','d0000000-0000-4000-8000-000000000101','{{STUDENT_1_CPF}}'),
+('d1000000-0000-4000-8000-000000000002','d0000000-0000-4000-8000-000000000102','{{STUDENT_2_CPF}}'),
+('d1000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000103','{{STUDENT_3_CPF}}'),
+('d1000000-0000-4000-8000-000000000004','d0000000-0000-4000-8000-000000000104','{{STUDENT_4_CPF}}'),
+('d1000000-0000-4000-8000-000000000005','d0000000-0000-4000-8000-000000000105','{{STUDENT_5_CPF}}'),
+('d1000000-0000-4000-8000-000000000006','d0000000-0000-4000-8000-000000000106','{{STUDENT_6_CPF}}')
+on conflict(profile_id) do update set cpf=excluded.cpf,updated_at=now();
+
+insert into public.academic_enrollments(id,student_profile_id,academic_program_id,registration_number)
+select 'd2000000-0000-4000-8000-000000000001'::uuid, 'd1000000-0000-4000-8000-000000000001'::uuid,id,'202610001' from public.academic_programs where code='architecture-urbanism-undergraduate'
+union all select 'd2000000-0000-4000-8000-000000000002'::uuid,'d1000000-0000-4000-8000-000000000002'::uuid,id,'202610002' from public.academic_programs where code='ppgau-academic-master'
+union all select 'd2000000-0000-4000-8000-000000000003'::uuid,'d1000000-0000-4000-8000-000000000003'::uuid,id,'202610003' from public.academic_programs where code='mp-cecre-master'
+union all select 'd2000000-0000-4000-8000-000000000004'::uuid,'d1000000-0000-4000-8000-000000000004'::uuid,id,'202610004' from public.academic_programs where code='ppgau-doctorate'
+union all select 'd2000000-0000-4000-8000-000000000005'::uuid,'d1000000-0000-4000-8000-000000000005'::uuid,id,'202610005' from public.academic_programs where code='athdc-specialization'
+union all select 'd2000000-0000-4000-8000-000000000006'::uuid,'d1000000-0000-4000-8000-000000000006'::uuid,id,'202610006' from public.academic_programs where code='ppgau-academic-master'
+on conflict(id) do update set registration_number=excluded.registration_number,updated_at=now();
+
+insert into public.cataloging_requests(id,student_profile_id,academic_enrollment_id,protocol,status,title,subtitle,equivalent_title,public_work_url,special_cases,defended_and_approved,final_file_confirmed,approval_page_confirmed,submitted_at,assigned_to,assigned_at,locked_at) values
+('d3000000-0000-4000-8000-000000000001','d1000000-0000-4000-8000-000000000001','d2000000-0000-4000-8000-000000000001','FC2026-9001','submitted','Habitação social e espaços de convivência em Salvador','Estratégias para bairros periféricos','Social housing and community spaces in Salvador','https://example.com/demo/trabalho-1.pdf','[]',true,true,true,now()-interval '2 hours',null,null,null),
+('d3000000-0000-4000-8000-000000000002','d1000000-0000-4000-8000-000000000002','d2000000-0000-4000-8000-000000000002','FC2026-9002','in_review','Paisagem urbana e adaptação climática','Infraestrutura verde no centro histórico',null,'https://example.com/demo/trabalho-2.pdf','[]',true,true,true,now()-interval '2 days','d0000000-0000-4000-8000-000000000002',now()-interval '1 day',now()-interval '20 minutes'),
+('d3000000-0000-4000-8000-000000000003','d1000000-0000-4000-8000-000000000003','d2000000-0000-4000-8000-000000000003','FC2026-9003','changes_requested','Conservação integrada do patrimônio moderno','Diretrizes para conjuntos residenciais',null,'https://example.com/demo/trabalho-3.pdf','[]',true,true,true,now()-interval '5 days','d0000000-0000-4000-8000-000000000002',now()-interval '4 days',now()-interval '1 day'),
+('d3000000-0000-4000-8000-000000000004','d1000000-0000-4000-8000-000000000004','d2000000-0000-4000-8000-000000000004','FC2026-9004','approved','Urbanização e memória nas cidades brasileiras','Leituras a partir da Bahia',null,'https://example.com/demo/trabalho-4.pdf','[]',true,true,true,now()-interval '8 days','d0000000-0000-4000-8000-000000000003',now()-interval '7 days',now()-interval '2 days'),
+('d3000000-0000-4000-8000-000000000005','d1000000-0000-4000-8000-000000000005','d2000000-0000-4000-8000-000000000005','FC2026-9005','approved','Assistência técnica e melhorias habitacionais','Práticas colaborativas no Recôncavo',null,'https://example.com/demo/trabalho-5.pdf','[]',true,true,true,now()-interval '12 days','d0000000-0000-4000-8000-000000000003',now()-interval '11 days',now()-interval '3 days'),
+('d3000000-0000-4000-8000-000000000006','d1000000-0000-4000-8000-000000000006','d2000000-0000-4000-8000-000000000006','FC2026-9006','completed','Mobilidade ativa e desenho urbano','Percursos cotidianos em Salvador',null,'https://example.com/demo/trabalho-6.pdf','[]',true,true,true,now()-interval '30 days','d0000000-0000-4000-8000-000000000001',now()-interval '29 days',now()-interval '20 days')
+on conflict(id) do update set status=excluded.status,title=excluded.title,subtitle=excluded.subtitle,assigned_to=excluded.assigned_to,assigned_at=excluded.assigned_at,locked_at=excluded.locked_at,updated_at=now();
+
+delete from public.request_people where request_id::text like 'd3000000-0000-4000-8000-000000000%';
+delete from public.request_keywords where request_id::text like 'd3000000-0000-4000-8000-000000000%';
+insert into public.request_people(request_id,role,transcribed_name,position)
+select id,'author',case right(id::text,1) when '1' then 'Ana Lima' when '2' then 'Bruno Rocha' when '3' then 'Carla Nascimento' when '4' then 'Diego Oliveira' when '5' then 'Elisa Ferreira' else 'Felipe Barbosa' end,0 from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%';
+insert into public.request_people(request_id,role,transcribed_name,position)
+select id,'advisor','Prof.ª Joana Martins',0 from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%';
+insert into public.request_keywords(request_id,language,term,position)
+select id,'pt','Arquitetura',0 from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%';
+insert into public.request_keywords(request_id,language,term,position)
+select id,'pt','Planejamento urbano',1 from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%';
+insert into public.request_keywords(request_id,language,term,position)
+select id,'en','Architecture',0 from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%';
+
+insert into public.request_analyses(id,request_id,analysis_notes,internal_note,last_edited_by) values
+('d3100000-0000-4000-8000-000000000002','d3000000-0000-4000-8000-000000000002','Conferência de metadados em andamento. Título e autoria já verificados.','Checar paginação antes de concluir a análise.','d0000000-0000-4000-8000-000000000002'),
+('d3100000-0000-4000-8000-000000000003','d3000000-0000-4000-8000-000000000003','Foram encontradas divergências no título e no link público.','Aguardar retorno da estudante.','d0000000-0000-4000-8000-000000000002')
+on conflict(request_id) do update set analysis_notes=excluded.analysis_notes,internal_note=excluded.internal_note,last_edited_by=excluded.last_edited_by,updated_at=now();
+
+delete from public.request_revision_rounds where request_id='d3000000-0000-4000-8000-000000000003';
+insert into public.request_revision_rounds(id,request_id,round_number,returned_by,returned_at) values
+('d7400000-0000-4000-8000-000000000001','d3000000-0000-4000-8000-000000000003',1,'d0000000-0000-4000-8000-000000000002',now()-interval '1 day');
+insert into public.request_field_issues(revision_round_id,field_key,field_label,template_id,justification,original_value)
+select 'd7400000-0000-4000-8000-000000000001','title','Título',id,'O título deve reproduzir exatamente a folha de rosto.','"Conservação integrada"'::jsonb from public.issue_templates where code='title_page_name';
+insert into public.request_field_issues(revision_round_id,field_key,field_label,template_id,justification,original_value)
+select 'd7400000-0000-4000-8000-000000000001','public_work_url','Link público do trabalho',id,'O link solicita permissão de acesso. Libere a visualização pública.','"https://example.com/restrito"'::jsonb from public.issue_templates where code='public_link_unavailable';
+
+insert into public.person_authorities(id,authorized_name,normalized_name,created_by,updated_by) values
+('d4000000-0000-4000-8000-000000000001','Oliveira, Diego','oliveira diego','d0000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003'),
+('d4000000-0000-4000-8000-000000000002','Martins, Joana','martins joana','d0000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003')
+on conflict(id) do update set authorized_name=excluded.authorized_name,updated_by=excluded.updated_by,updated_at=now();
+insert into public.controlled_terms(id,preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by) values
+('d5000000-0000-4000-8000-000000000001','Arquitetura','arquitetura','Architecture','architecture','d0000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003'),
+('d5000000-0000-4000-8000-000000000002','Planejamento urbano','planejamento urbano','Urban planning','urban planning','d0000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003')
+on conflict(id) do update set preferred_label_pt=excluded.preferred_label_pt,updated_by=excluded.updated_by,updated_at=now();
+
+delete from public.request_cataloging_people where request_id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+delete from public.request_controlled_terms where request_id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+insert into public.request_cataloging_people(request_id,authority_person_id,role,transcribed_name,authorized_name_snapshot,position)
+select id,'d4000000-0000-4000-8000-000000000001','author',case right(id::text,1) when '4' then 'Diego Oliveira' when '5' then 'Elisa Ferreira' else 'Felipe Barbosa' end,'Oliveira, Diego',0 from public.cataloging_requests where id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+insert into public.request_cataloging_people(request_id,authority_person_id,role,transcribed_name,authorized_name_snapshot,position)
+select id,'d4000000-0000-4000-8000-000000000002','advisor','Prof.ª Joana Martins','Martins, Joana',0 from public.cataloging_requests where id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position)
+select id,'d5000000-0000-4000-8000-000000000001','Arquitetura','Architecture',true,0 from public.cataloging_requests where id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position)
+select id,'d5000000-0000-4000-8000-000000000002','Planejamento urbano','Urban planning',false,1 from public.cataloging_requests where id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006');
+insert into public.request_cataloging_metadata(id,request_id,cdu_code,cutter_code,marc21_preparation,last_edited_by) values
+('d3200000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000004','711.4','O48u','{"status":"prepared"}','d0000000-0000-4000-8000-000000000003'),
+('d3200000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000005','728.1','F383a','{"status":"prepared"}','d0000000-0000-4000-8000-000000000003'),
+('d3200000-0000-4000-8000-000000000006','d3000000-0000-4000-8000-000000000006','711.7','B238m','{"status":"prepared"}','d0000000-0000-4000-8000-000000000001')
+on conflict(request_id) do update set cdu_code=excluded.cdu_code,cutter_code=excluded.cutter_code,marc21_preparation=excluded.marc21_preparation,last_edited_by=excluded.last_edited_by,updated_at=now();
+
+insert into public.cataloging_card_homologations(id,request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot,homologated_at)
+select ('d7000000-0000-4000-8000-00000000000'||right(r.id::text,1))::uuid,r.id,
+jsonb_build_object('institution',jsonb_build_object('university','Universidade Federal da Bahia — UFBA','librarySystem','Sistema Universitário de Bibliotecas — SIBI','library','Biblioteca da Faculdade de Arquitetura — BIB/FA'),'request',jsonb_build_object('protocol',r.protocol,'title',r.title,'subtitle',r.subtitle,'programName',p.name,'academicLevel',p.level),'people',jsonb_build_array(jsonb_build_object('role','author','transcribedName',pr.full_name,'authorizedName',split_part(pr.full_name,' ',2)||', '||split_part(pr.full_name,' ',1)),jsonb_build_object('role','advisor','transcribedName','Prof.ª Joana Martins','authorizedName','Martins, Joana')),'subjects',jsonb_build_array(jsonb_build_object('labelPt','Arquitetura','labelEn','Architecture','isPrimary',true),jsonb_build_object('labelPt','Planejamento urbano','labelEn','Urban planning','isPrimary',false)),'classification',jsonb_build_object('cdu',m.cdu_code,'cutter',m.cutter_code),'technicalResponsibility',jsonb_build_object('name',s.professional_name,'crb',s.crb),'catalogingConventions',jsonb_build_object('electronicResourceLabel','[recurso eletrônico]','physicalDescriptionAbbreviation','p.','tracingsLabel','Traçados'),'layoutStatus','provisional_pending_institutional_examples'),
+r.assigned_to,s.professional_name,s.crb,now()-interval '2 days'
+from public.cataloging_requests r join public.academic_enrollments e on e.id=r.academic_enrollment_id join public.academic_programs p on p.id=e.academic_program_id join public.profiles pr on pr.id=(select profile_id from public.student_profiles where id=r.student_profile_id) join public.staff_profiles s on s.profile_id=r.assigned_to join public.request_cataloging_metadata m on m.request_id=r.id
+where r.id in ('d3000000-0000-4000-8000-000000000004','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000006')
+on conflict(request_id) do nothing;
+
+insert into public.nada_consta_documents(id,request_id,object_path,original_name,size_bytes,mime_type,sha256,status,uploaded_by,uploaded_at,validated_by,validated_at,released_at,purge_after) values
+('d7100000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000005/nada-consta.pdf','nada-consta-demo.pdf',184320,'application/pdf',repeat('a',64),'approved','d0000000-0000-4000-8000-000000000105',now()-interval '3 days','d0000000-0000-4000-8000-000000000003',now()-interval '2 days',now()-interval '2 days',null),
+('d7100000-0000-4000-8000-000000000006','d3000000-0000-4000-8000-000000000006','d3000000-0000-4000-8000-000000000006/nada-consta.pdf','nada-consta-demo.pdf',204800,'application/pdf',repeat('b',64),'approved','d0000000-0000-4000-8000-000000000106',now()-interval '25 days','d0000000-0000-4000-8000-000000000001',now()-interval '24 days',now()-interval '24 days',now()-interval '1 day')
+on conflict(id) do update set status=excluded.status,object_path=excluded.object_path,validated_by=excluded.validated_by,validated_at=excluded.validated_at,released_at=excluded.released_at,purge_after=excluded.purge_after,updated_at=now();
+insert into public.repository_deposit_progress(id,request_id,started_by,started_at) values
+('d7200000-0000-4000-8000-000000000005','d3000000-0000-4000-8000-000000000005','d0000000-0000-4000-8000-000000000105',now()-interval '1 day'),
+('d7200000-0000-4000-8000-000000000006','d3000000-0000-4000-8000-000000000006','d0000000-0000-4000-8000-000000000106',now()-interval '23 days')
+on conflict(request_id) do update set started_at=excluded.started_at,updated_at=now();
+insert into public.repository_publications(id,request_id,permanent_url,verified_by,verified_at) values
+('d7300000-0000-4000-8000-000000000006','d3000000-0000-4000-8000-000000000006','https://repositorio.ufba.br/handle/demo/9006','d0000000-0000-4000-8000-000000000001',now()-interval '20 days')
+on conflict(request_id) do update set permanent_url=excluded.permanent_url,verified_by=excluded.verified_by,verified_at=excluded.verified_at,updated_at=now();
+
+insert into public.coordination_contacts(id,academic_program_id,name,email,active,receives_opening_emails,receives_issue_emails,receives_completion_emails)
+select 'd6000000-0000-4000-8000-000000000001',id,'Coordenação PPGAU Demo','demo.coordenacao@ufba.br',true,true,true,true from public.academic_programs where code='ppgau-academic-master'
+on conflict(id) do update set name=excluded.name,email=excluded.email,active=true,updated_at=now();
+insert into public.coordination_magic_links(id,request_id,coordination_contact_id,token_hash,issued_by,issued_at,invalidated_at) values
+('d6100000-0000-4000-8000-000000000001','d3000000-0000-4000-8000-000000000002','d6000000-0000-4000-8000-000000000001','{{COORDINATION_TOKEN_HASH}}','d0000000-0000-4000-8000-000000000002',now()-interval '1 day',null)
+on conflict(id) do update set token_hash=excluded.token_hash,issued_at=excluded.issued_at,invalidated_at=null;
+
+insert into public.library_announcements(id,type,title,message,starts_at,active,created_by) values
+('d8000000-0000-4000-8000-000000000001','normal','Atendimento em funcionamento','Cenário sintético: atendimento regular e prazo médio de três dias úteis.',now()-interval '1 day',true,'d0000000-0000-4000-8000-000000000001')
+on conflict(id) do update set title=excluded.title,message=excluded.message,starts_at=excluded.starts_at,active=true,updated_at=now();
+
+delete from public.audit_logs where id::text like 'd9000000-0000-4000-8000-000000000%';
+insert into public.audit_logs(id,actor_id,action,entity_type,entity_id,metadata,occurred_at) values
+('d9000000-0000-4000-8000-000000000001','d0000000-0000-4000-8000-000000000002','cataloging_request_assumed','cataloging_request','d3000000-0000-4000-8000-000000000002','{"scenario":"demo"}',now()-interval '1 day'),
+('d9000000-0000-4000-8000-000000000002','d0000000-0000-4000-8000-000000000002','changes_requested','cataloging_request','d3000000-0000-4000-8000-000000000003','{"scenario":"demo","round":1}',now()-interval '1 day'),
+('d9000000-0000-4000-8000-000000000003','d0000000-0000-4000-8000-000000000003','cataloging_card_homologated','cataloging_request','d3000000-0000-4000-8000-000000000005','{"scenario":"demo"}',now()-interval '2 days'),
+('d9000000-0000-4000-8000-000000000004','d0000000-0000-4000-8000-000000000001','request_completed','cataloging_request','d3000000-0000-4000-8000-000000000006','{"scenario":"demo"}',now()-interval '20 days');
+
+insert into public.protocol_counters(year,last_number) values (2026,9006)
+on conflict(year) do update set last_number=greatest(public.protocol_counters.last_number,excluded.last_number);
+
+do $$
+declare valid_passwords boolean;
+begin
+  if (select count(*) from public.profiles where id::text like 'd0000000-0000-4000-8000-000000000%') <> 9 then raise exception 'mock_profile_count_invalid'; end if;
+  if (select count(*) from public.cataloging_requests where id::text like 'd3000000-0000-4000-8000-000000000%') <> 6 then raise exception 'mock_request_count_invalid'; end if;
+  select bool_and(encrypted_password = extensions.crypt(case id
+    when 'd0000000-0000-4000-8000-000000000001' then '{{ADMIN_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000002' then '{{CATALOGER_ONE_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000003' then '{{CATALOGER_TWO_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000101' then '{{STUDENT_QUEUE_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000102' then '{{STUDENT_REVIEW_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000103' then '{{STUDENT_ISSUES_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000104' then '{{STUDENT_CARD_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000105' then '{{STUDENT_RELEASE_PASSWORD}}'
+    when 'd0000000-0000-4000-8000-000000000106' then '{{STUDENT_COMPLETE_PASSWORD}}'
+  end, encrypted_password)) into valid_passwords from auth.users where id::text like 'd0000000-0000-4000-8000-000000000%';
+  if valid_passwords is distinct from true then raise exception 'mock_password_hash_invalid'; end if;
+  if not exists(select 1 from public.coordination_magic_links where token_hash='{{COORDINATION_TOKEN_HASH}}' and invalidated_at is null) then raise exception 'mock_coordination_link_invalid'; end if;
+end $$;
+
+commit;

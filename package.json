@@ -15,7 +15,8 @@
     "test:e2e:auth": "playwright test tests/e2e/authenticated-profiles.spec.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx src/db/run-seed.ts"
+    "db:seed": "tsx src/db/run-seed.ts",
+    "db:mock": "node scripts/mock-local-data.mjs"
   },
   "dependencies": {
     "@next/env": "^15.4.6",
