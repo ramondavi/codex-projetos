@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Brand } from "./brand";
 import { ThemeSwitcher } from "./theme-switcher";
-import { OfficialLibraryLogo } from "./official-library-logo";
+import { LibrarySocialLinks } from "./library-social-links";
 import { logout } from "@/app/auth-actions";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
@@ -29,16 +29,12 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
           <Link className={activeClass("/painel/autodeposito")} href="/painel/autodeposito">Autodepósito</Link>
           <Link className={activeClass("/painel/conta")} href="/painel/conta">Minha conta</Link>
         </nav>}
-        <div className="dashboard-nav__institution">
-          <OfficialLibraryLogo />
-          <span>SIBI · Universidade Federal da Bahia</span>
-        </div>
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">
           <div><span className="status-dot" /> Atendimento normal</div>
           <div className="dashboard-header__actions">
-            <ThemeSwitcher />
+            <LibrarySocialLinks /><span className="header-divider" aria-hidden="true" /><ThemeSwitcher />
             <span className="user-greeting">Olá, {firstName}</span><span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span>
             <form action={logout}><button className="text-button" type="submit">Sair</button></form>
           </div>

@@ -36,6 +36,7 @@ O ambiente local recomendado é o Codex App no Windows, conforme `docs/configura
 - Incremento 12 implementado localmente: gestão auditada de contas, bloqueio/inativação e perfis, coordenações, Magic Link, guia do RI, mural, SLA, templates básicos, indicadores, exportações CSV/JSON, expurgo assistido do Nada Consta e consulta aos logs.
 - Incremento 13 em estabilização: Playwright e axe cobrem páginas públicas, incluindo a FAQ, em desktop claro/escuro e celular, teclado, acessibilidade, responsividade, persistência de tema e latência simulada. A rodada pública atual aprovou 27/27 cenários; a rodada autenticada dos três perfis aprovou 9/9 cenários e as sessões temporárias permaneceram fora do Git e foram apagadas depois do teste.
 - Refinamento catalográfico em implementação local: Cutter sem inicial do título, subtítulo normalizado, ficha ancorada na região inferior, designações livres, prévia reativa, validação por campo na mesma tela, autoridades e vocabulário com aproximação, termos reordenáveis e nome padronizado do PDF mesclado.
+- Refinamento de interface em implementação local: identidade institucional e rodapés responsivos, conta destacada no cabeçalho, navegação rápida por perfil, FAQ administrável e calendário mensal de feriados e pontos facultativos no painel do estudante.
 - Runbook operacional, matriz de validação assistida e revisão técnica de segurança/LGPD estão versionados. Implantação remota e validação com pessoas reais ainda não foram executadas.
 - Dependências de produção atualizadas para Next.js 16.3.2 e Drizzle ORM 0.45.2 após auditoria de segurança; `npm audit --omit=dev` não aponta vulnerabilidades conhecidas. A convenção de proteção de rotas foi migrada de `middleware` para `proxy` sem alteração da política de acesso.
 
@@ -60,8 +61,9 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 15. `202608260000_cataloging_card_institutional_models.sql`.
 16. `202608260001_cataloging_review_workflow.sql`.
 17. `202608260002_frequently_asked_questions.sql`.
+18. `202608280000_library_calendar_dates.sql`.
 
-As 14 primeiras migrações estão aplicadas no projeto remoto `Pronto!`. As migrações 15, 16 e 17 estão aplicadas somente no Supabase local. Nenhuma delas será enviada ao remoto sem revisão de impacto e confirmação explícita.
+As 14 primeiras migrações estão aplicadas no projeto remoto `Pronto!`. As migrações 15, 16, 17 e 18 estão aplicadas somente no Supabase local. Nenhuma delas será enviada ao remoto sem revisão de impacto e confirmação explícita.
 
 ## Testes integrados de banco
 

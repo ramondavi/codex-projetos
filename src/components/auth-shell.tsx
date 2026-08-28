@@ -2,13 +2,14 @@ import Link from "next/link";
 import { Brand } from "./brand";
 import { Geometry } from "./geometry";
 import { ThemeSwitcher } from "./theme-switcher";
+import { OfficialLibraryLogo } from "./official-library-logo";
 
 export function AuthShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
     <main className="auth-shell">
       <Geometry />
       <div className="auth-shell__top">
-        <Brand compact />
+        <div className="shell-brand"><OfficialLibraryLogo decorative variant="auth" /><Brand compact /></div>
         <ThemeSwitcher />
       </div>
       <section className="auth-card">
