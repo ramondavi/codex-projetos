@@ -7,8 +7,9 @@ export default async function AdminPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
   if (profile?.role !== "administrator") redirect("/painel");
-  const [users, programs, announcements, templates, logs, purge, faqs] = await Promise.all([
+  const [users, candidates, programs, announcements, templates, logs, purge, faqs] = await Promise.all([
     supabase.from("profiles").select("id,full_name,email,role,status,created_at,staff_profiles(professional_name,crb)").order("full_name"),
+    supabase.rpc("list_confirmed_staff_candidates"),
     supabase.from("academic_programs").select("id,name,level,service_level_business_days,repository_deposit_enabled,coordination_magic_link_enabled,coordination_contacts(name,email,active)").eq("active", true).order("name"),
     supabase.from("library_announcements").select("id,type,title,message,starts_at,ends_at,active").order("starts_at", { ascending: false }),
     supabase.from("issue_templates").select("id,code,label,message,active,position").order("position"),
@@ -16,5 +17,5 @@ export default async function AdminPage() {
     supabase.from("nada_consta_documents").select("id,request_id,object_path,purge_after,cataloging_requests(protocol)").lte("purge_after", new Date().toISOString()).not("object_path", "is", null).order("purge_after"),
     supabase.from("frequently_asked_questions").select("id,question,answer,position,active").order("position"),
   ]);
-  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations users={users.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} faqs={faqs.data ?? []} /></main>;
+  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} faqs={faqs.data ?? []} /></main>;
 }

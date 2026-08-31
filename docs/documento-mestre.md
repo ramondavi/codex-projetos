@@ -468,6 +468,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 ## 26. Administração e operação — decisão implementada
 
 - O administrador gerencia contas e perfis por operações transacionais auditadas; bloqueio e inativação retiram imediatamente a autorização operacional imposta por RLS.
+- O provisionamento de equipe lista no painel somente contas institucionais confirmadas no Supabase e ainda sem perfil; o administrador seleciona pelo e-mail, sem copiar ou digitar UUID.
 - A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
 - Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
 - O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.
