@@ -62,8 +62,9 @@ As migrações versionadas abaixo estão registradas no histórico remoto e repr
 16. `202608260001_cataloging_review_workflow.sql`.
 17. `202608260002_frequently_asked_questions.sql`.
 18. `202608280000_library_calendar_dates.sql`.
+19. `202608310000_staff_candidate_selection.sql`.
 
-As 14 primeiras migrações estão aplicadas no projeto remoto `Pronto!`. As migrações 15, 16, 17 e 18 estão aplicadas somente no Supabase local. Nenhuma delas será enviada ao remoto sem revisão de impacto e confirmação explícita.
+As 14 primeiras migrações estão aplicadas no projeto remoto `Pronto!`. As migrações 15 a 19 estão aplicadas somente no Supabase local. Nenhuma delas será enviada ao remoto sem revisão de impacto e confirmação explícita.
 
 ## Testes integrados de banco
 
