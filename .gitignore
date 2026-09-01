@@ -2,6 +2,11 @@ node_modules/
 .next/
 out/
 coverage/
+playwright-report/
+test-results/
+.auth/
+/output/
+/tmp/
 .env
 .env.local
 .env.*.local

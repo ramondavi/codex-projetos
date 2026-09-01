@@ -121,7 +121,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 
 - É o único PDF armazenado pelo Pronto! e deve ser enviado diretamente pelo estudante.
 - A ficha pode ser analisada/homologada em paralelo, mas download final e mesclagem ficam bloqueados até sua validação pelo bibliotecário.
-- Deve ter limite máximo sensato e configurável, ajustável durante testes, e validação por extensão, MIME e *magic bytes*.
+- Deve ter limite máximo configurável, inicialmente definido em 5 MB e ajustável após os testes, e validação por extensão, MIME e *magic bytes*.
 - Deve ser excluído definitivamente 60 dias após o encerramento; preservar apenas registro textual/log da validação.
 - Não assumir regras de Pergamum, validade ou código sem confirmação futura.
 
@@ -138,7 +138,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 - Palavras-chave são tags individuais, em português e inglês quando aplicável.
 - Permite título, subtítulo, título em inglês, outros títulos, orientador, coorientador, cotutela, dupla titulação, título equivalente e múltiplos volumes quando aplicável.
 - Permite formato/dimensão A4, A3, paisagem, livro/quadrado ou personalizado.
-- Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca.
+- Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca, além de ano de depósito, ano de defesa/apresentação, quantidade física e escolha explícita sobre ilustrações.
 
 ### 7.1. Níveis acadêmicos do MVP
 
@@ -171,12 +171,25 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Usar `[recurso eletrônico]` e `p.` para versão digital conforme decisão baseada na Portaria 153/2023; usar “Traçados” com cedilha.
 - Suportar títulos equivalentes com `=`, coorientação, cotutela, dupla titulação, múltiplos volumes e notas institucionais.
 - A ficha usa termos controlados em português definidos pelo bibliotecário.
+- O título recebe `[recurso eletrônico]` imediatamente antes de ` : subtítulo`, quando houver subtítulo, ou de ` / responsabilidade`, quando não houver.
+- A indicação de responsabilidade usa a forma transcrita do autor e é seguida de travessão, `Salvador` e ano de depósito da versão final.
+- O ano de defesa/apresentação aparece ao final da nota acadêmica e é distinto do ano de depósito.
+- A descrição física usa quantidade de páginas e `p.`; excepcionalmente, o MP-CECRE usa 2 ou 3 volumes e `v.`. A indicação `: il.` é acrescentada quando o trabalho possui ilustrações.
+- A natureza e a nota acadêmica variam entre `Trabalho de Conclusão de Curso`, `Dissertação` e `Tese`. Uma meia-risca separa a natureza do trabalho da instituição.
+- Subdivisões de assuntos e nomes usam hífen. Antes de Salvador usa-se travessão; na nota acadêmica usa-se meia-risca.
+- O Cutter aparece isolado, sem o rótulo “Cutter”, e a CDU usa o prefixo `CDU:`.
+- O Cutter não recebe a inicial do título depois da parte numérica.
+- O subtítulo começa com letra minúscula, salvo quando a grafia exigir maiúscula por nome próprio ou outra exceção linguística conferida pelo bibliotecário.
+- A ficha completa, do cabeçalho CIP ao responsável técnico, permanece sempre na região inferior da página.
+- A ficha não imprime o rótulo “Traçados:”; os assuntos são seguidos por entradas secundárias numeradas dinamicamente em romanos.
 
 ### 8.3. Pessoas e formas de nome
 
 - Dados de autores, orientadores, coorientadores e demais pessoas devem ser armazenados, sanitizados e reutilizáveis para reduzir redigitação.
 - Distinguir forma transcrita (como consta na folha de rosto) e autorizada (pontos de acesso/entradas).
 - Para orientador/coorientador, a nota usa a forma transcrita e a entrada secundária, a autorizada.
+- As designações de orientação e coorientação são campos textuais editáveis e reproduzem fielmente a página de rosto, inclusive variantes como `co-orientador` e `coorientador`.
+- A forma autorizada parte da forma transcrita, aproxima registros existentes e apresenta opções progressivamente filtradas durante a digitação, sem retirar do bibliotecário a decisão final.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
 - Correções de forma autorizada não sobrescrevem automaticamente registros históricos; preservar rastreabilidade.
 
@@ -189,6 +202,11 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Bibliotecário pode criar termo; admin pode corrigir e mesclar duplicados.
 - Remover espaços duplos, padronizar caixa e evitar pontuação indevida.
 - A ficha usa termos em português; DSpace poderá usar PT/EN conforme mapeamento.
+- O cadastro controlado é bilíngue: mantém termo preferido em português e, quando aplicável, seu equivalente em inglês. Ambos são reutilizáveis; a ficha continua usando somente a forma em português.
+- Sanitização inicial: remover espaços excedentes e pontuação final, preservar acentos e usar inicial minúscula, exceto em nomes próprios e siglas. A comparação de duplicidade não diferencia maiúsculas de minúsculas.
+- A mesclagem administrativa de termos duplicados fica para evolução posterior; neste incremento, o sistema evita novas duplicidades pela forma normalizada.
+- A busca de termos segue a mesma aproximação e filtragem progressiva das autoridades de pessoas.
+- Os termos selecionados podem ser reordenados por arrastar e soltar; a marcação independente de um termo principal é preservada para registro e sugestão de CDU.
 
 ### 9.2. Assistente CDU
 
@@ -197,6 +215,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Solução C: termo principal tem peso maior; termos secundários, peso menor.
 - Explicar a sugestão, por exemplo: “usado em X fichas com este termo”.
 - Versão simples no MVP se possível; ranking refinado e curadoria termo-CDU depois.
+- No MVP, a pontuação é `2 × fichas com o termo principal + 1 × fichas com cada termo secundário`, considerando somente fichas homologadas ou concluídas e contando cada ficha uma vez por componente. Exibir até três sugestões, com as contagens separadas, sem preenchimento automático.
 
 ### 9.3. Assistente Cutter-Sanborn/CAT
 
@@ -220,13 +239,38 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 ### 10.2. Devolução por pendência
 
+- A conferência ocorre em tela única: cada valor informado pelo estudante aparece com ações adjacentes para validar, corrigir diretamente ou devolver especificamente ao estudante.
+- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
-- Destacar pendências para o estudante; campos corretos podem ficar travados ou preservados para evitar alterações indevidas.
+- Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
+- Templates iniciais: campo obrigatório não preenchido; informação divergente do trabalho; nome divergente da folha de rosto; link público indisponível ou sem permissão; informação incompleta; formatação ou padronização a ajustar. O bibliotecário pode complementar ou substituir por justificativa livre.
+- Preservar histórico imutável de cada rodada, das justificativas enviadas e dos valores corrigidos.
 
 ### 10.3. Comentários internos
 
 Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/área, em fluxo assíncrono e não bloqueante. No MVP podem ser observações simples; fórum completo fica para Fase 2.
+
+### 10.4. E-mails durante o desenvolvimento
+
+- Eventos de abertura, pendência e liberação geram registros em fila transacional.
+- Durante o desenvolvimento, o envio externo permanece desativado e a entrega é testada somente no Mailpit local.
+- A homologação da ficha não libera isoladamente a solicitação nem gera aviso de liberação: o envio depende também da validação do Nada Consta.
+
+### 10.5. Revisão e homologação da ficha
+
+- A prévia da ficha é atualizada em tempo real na mesma tela conforme pessoas, assuntos, classificação e descrição são editados.
+- A revisão final usa somente os metadados homologados pelo bibliotecário, incluindo CDU e Cutter informados manualmente.
+- Ao homologar, congelar um snapshot imutável do conteúdo, das formas autorizadas e transcritas, da classificação e da identidade profissional responsável.
+- Registrar data, horário, bibliotecário e CRB, além da ação relevante no log.
+- A ficha isolada identifica UFBA, SIBI e BIB/FA, usa cabeçalho institucional CIP, linhas superior e inferior sem bordas laterais, CDU à direita e altura capaz de acomodar conteúdo variável.
+- A forma autorizada do autor abre a entrada principal; a forma transcrita aparece na responsabilidade. Orientador e coorientador usam a forma transcrita na nota e a autorizada nos traçados.
+- O estudante não visualiza nem baixa a ficha antes da homologação e da aprovação do Nada Consta.
+- O trabalho mesclado é baixado como `ultimosobrenome-nomedoautor-anodeposito-tipodetrabalho.pdf`, com caracteres normalizados para compatibilidade de arquivo.
+- O layout `institutional-v2` deriva dos modelos institucionais validados de TCC de graduação, TCC do MP-CECRE, dissertação e tese. O conteúdo e a geometria são compartilhados entre a prévia e o PDF.
+- O PPG-AU gera traçado institucional do programa; graduação e MP-CECRE, vinculados diretamente à Faculdade, não geram esse traçado. `Título` permanece como a última entrada secundária.
+- Fichas homologadas anteriormente preservam o snapshot e a versão `provisional-v1`; nenhuma homologação histórica é reescrita.
+- O ano de nascimento do autor e paginação não são exibidos enquanto suas regras ou fontes de dados não estiverem confirmadas.
 
 ## 11. Entrega final e mesclagem
 
@@ -235,7 +279,7 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 - Mesclar no navegador, sem upload do trabalho, usando `pdf-lib` ou equivalente leve.
 - Inserir a ficha depois da folha de rosto; bibliotecário pode informar/confirmar sua página.
 - Antes, mostrar nome/tamanho e exigir confirmação do arquivo pelo estudante.
-- Não prometer PDF/A garantido em JavaScript; orientar conferência/conversão final conforme exigência do repositório.
+- Não prometer PDF/A garantido em JavaScript. Informar que o navegador gera um PDF comum, não certifica conformidade PDF/A e que o estudante deve conferir ou converter o arquivo final conforme a exigência do Repositório Institucional.
 
 ## 12. Autodepósito e DSpace/RI-UFBA
 
@@ -248,6 +292,17 @@ Permitir dúvidas técnicas invisíveis ao estudante, gerais ou ligadas a campo/
 ### 12.1. Guia para graduação
 
 Os TCCs de graduação da Faculdade de Arquitetura são TFG — Trabalho Final de Graduação. Como seu depósito no RI/UFBA está atualmente suspenso por questões normativas, o admin pode ativar/desativar o guia por curso/programa; para TFG, começa desativado. Emissão e homologação da ficha independem do guia.
+
+### 12.2. Mapeamento confirmado das telas do RI/UFBA
+
+O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de descrição; upload; verificação; seleção de licença; licença de distribuição; conclusão. O guia registra somente o início do autodepósito e abre o RI/UFBA em nova aba.
+
+- Copiar quando disponível e homologado: coleção configurada, tipo de documento, grau acadêmico, título e subtítulo, título equivalente, pessoas relacionadas, instituição, sigla, unidade, curso/programa, país, idioma e palavras-chave em português e inglês.
+- Preencher e decidir diretamente no RI: data de defesa, acesso, data e razão de embargo, Lattes, ORCID, banca, referências, DOI, área CNPq, resumo, abstract, agência de fomento, relações, citação, arquivo, descrição/formato/configuração do arquivo e arquivo primário.
+- A área CNPq deve ser selecionada na taxonomia “Categorias de assuntos” do RI. Termos do vocabulário catalográfico do Pronto! não substituem essa classificação.
+- Para TCC, as palavras-chave em inglês, o abstract e os membros da banca aparecem como opcionais no fluxo observado. Para dissertação e tese, palavras-chave em inglês e abstract são obrigatórios. Na dissertação, os três primeiros membros da banca são obrigatórios; na tese, os cinco primeiros são obrigatórios.
+- O upload, a revisão, a escolha Creative Commons ou “Nenhuma licença” e a concessão da licença de distribuição ocorrem exclusivamente no RI. Recusar a licença mantém uma submissão não concluída no “Meu espaço”.
+- PDF/A é orientação de preservação. O Pronto! referencia o tutorial oficial, mas não converte nem certifica conformidade.
 
 ## 13. QR Code e autenticação pública
 
@@ -277,7 +332,7 @@ Os TCCs de graduação da Faculdade de Arquitetura são TFG — Trabalho Final d
 - Abertura ao estudante; abertura à coordenação se Magic Link estiver ativo.
 - Pendência ao estudante com campos/justificativas; para coordenação, opcional/configurável.
 - Liberação da ficha e encerramento ao estudante; encerramento à coordenação com dados básicos e URL/Handle.
-- Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto.
+- Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto; até lá, usar textos operacionais provisórios identificados no código.
 - Priorizar SMTP institucional da biblioteca quando configuração e políticas da UFBA permitirem; serviço transacional externo gratuito é alternativa.
 
 ## 17. Estatísticas, relatórios e backup
@@ -315,6 +370,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - ORM/prepared statements contra SQL injection; sanitização/escape contra XSS; proteção CSRF em rotas sensíveis quando aplicável.
 - Validar uploads permitidos e registrar ações administrativas/operacionais relevantes.
 - Coletar o mínimo, expurgar temporários e excluir Nada Consta 60 dias após encerramento.
+- A política de privacidade aprovada identifica a UFBA, por meio da BIB/FA, como controladora do serviço; a Biblioteca atende dúvidas operacionais em `bibarq@ufba.br`, e a Ouvidoria da UFBA atende direitos e privacidade em `ouvidoria@ufba.br`. O tratamento fundamenta-se no cumprimento de obrigação legal ou regulatória. Conta, CPF, e-mail, solicitação, metadados, ficha, pendências e homologação integram o assentamento individual do aluno: enquanto houver vínculo e, no total, 100 anos, segundo os códigos 125.43 (graduação), 134.43 (pós-graduação stricto sensu) e 144.43 (pós-graduação lato sensu). O Nada Consta recebido pelo Pronto! é arquivo temporário de verificação, removido 60 dias após encerramento; seu registro institucional de longo prazo é mantido no Pergamum. Auditorias administrativas e operacionais permanecem 5 anos; logs brutos de acesso, sessão, aplicação, rede, banco e erros técnicos, 6 meses; dossiês de incidentes, 5 anos após encerramento; backups rotativos, 90 dias, salvo preservação necessária. Logs não devem duplicar conteúdo sensível. A aplicação técnica dos prazos deve respeitar a tabela de temporalidade e orientações arquivísticas da UFBA. A ciência da política v1.0 é obrigatória no cadastro e no primeiro acesso das contas existentes; o sistema registra perfil, versão, origem e data/hora, sem IP ou conteúdo adicional.
 - Magic Link imprevisível, somente leitura, sem documentos sensíveis e inútil após conclusão integral e envio final.
 - Limites exatos, detalhes de logs e política de acesso que não estejam aqui permanecem pendentes.
 
@@ -322,10 +378,20 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 
 - Identidade institucional da UFBA, com destaque à identidade visual atual da BIB/FA.
 - Linguagem predominantemente monocromática, arquitetônica, geométrica e técnica, inspirada no logotipo da biblioteca.
-- Azul `#1A3B70` e ouro `#C5A059` como possíveis acentos; grafite `#1E293B`, concreto/prata `#E2E8F0`/`#F4F6F9`, linha `#CBD5E1` e vermelho `#991B1B` na paleta sugerida.
+- Violeta `#3C3873` como acento no tema claro e variantes mais claras no tema escuro para preservar contraste; grafite `#1E293B`, concreto/prata `#E2E8F0`/`#F4F6F9`, linha `#CBD5E1` e vermelho `#991B1B` na paleta sugerida.
 - Interface: Inter ou Fira Sans; títulos: Cinzel ou Playfair, se adequado; técnica: JetBrains Mono ou Fira Code.
 - Temas claro, escuro e conforme sistema; preservar contraste, legibilidade, responsividade e identidade.
 - Refinamento milimétrico da ficha e telas será feito depois.
+- O cabeçalho autenticado identifica o primeiro nome da pessoa logada com a saudação `Olá, [primeiro nome]`, ao lado do perfil operacional e da ação de saída.
+- Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, FAQ, ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.
+- Links possuem estados de foco e passagem do mouse coerentes com a paleta e a linguagem geométrica do sistema.
+- A Administração organiza usuários, programas, biblioteca, atendimento, FAQ, indicadores, retenção e auditoria em abas horizontais responsivas.
+
+### 20.1. Perguntas frequentes e ajuda
+
+- A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
+- Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
+- A página dedicada de Ajuda permanece pendente de aprovação do conteúdo; até lá, o link correspondente encaminha para orientação provisória dentro da FAQ.
 
 ## 21. Escopo por fase
 
@@ -391,3 +457,38 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 6. detalhar a stack gratuita;
 7. preparar plano de desenvolvimento por etapas;
 8. só depois escrever o prompt técnico final para desenvolvimento.
+
+## 25. Encerramento e acesso da coordenação — decisão implementada
+
+- O encerramento exige ficha homologada, Nada Consta aprovado, início registrado do autodepósito e URL permanente HTTPS verificada pelo bibliotecário no RI/UFBA.
+- O encerramento registra a publicação, conclui o protocolo, enfileira as comunicações finais ao estudante e aos contatos ativos da coordenação e inicia a retenção de 60 dias do Nada Consta.
+- O Magic Link é configurável por programa, usa token imprevisível armazenado somente como hash e apresenta identificação básica do trabalho, status, SLA e marcos operacionais da timeline.
+- A página da coordenação é somente leitura e não expõe CPF, documentos, arquivo do Nada Consta nem comentários internos.
+- O link é inutilizado após a conclusão e a entrega das comunicações finais. Os textos atuais dos e-mails são provisórios até validação institucional.
+
+## 26. Administração e operação — decisão implementada
+
+- O administrador gerencia contas e perfis por operações transacionais auditadas; bloqueio e inativação retiram imediatamente a autorização operacional imposta por RLS.
+- O provisionamento de equipe lista no painel somente contas institucionais confirmadas no Supabase e ainda sem perfil; o administrador seleciona pelo e-mail, sem copiar ou digitar UUID.
+- Somente administradores provisionam novos perfis internos. A visão geral administrativa destaca contas institucionais confirmadas e ainda sem perfil, com resumo e provisionamento no próprio painel.
+- Quando uma conta interna confirmada fica pendente, o sistema enfileira aviso para cada administrador ativo; no ambiente local, a entrega é processada pelo Mailpit. A entrega institucional depende da definição do SMTP.
+- Toda conta ativa pode solicitar a alteração de senha dentro do sistema; o Pronto! envia um link de confirmação ao e-mail institucional antes da definição da nova senha.
+- Cada alteração administrativa só recebe mensagem de sucesso após o Pronto! reler e confirmar no banco os campos persistidos; falhas de conferência ficam explícitas na tela.
+- A Visão geral é a página inicial da equipe e o primeiro item do menu: catalogadores veem sua carga, fila, correções, aprovações e informes; administradores veem também contas pendentes, equipe ativa e atalhos de gestão.
+- A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
+- Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
+- O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.
+- Feriados e pontos facultativos são cadastrados pelo administrador como avisos datados; o painel do estudante apresenta somente os eventos ativos do mês corrente.
+- Os seis templates básicos de pendência podem ter rótulo, texto, ordem e ativação ajustados, sem criar um construtor avançado de templates.
+- Indicadores simples apresentam volume por período, status, curso/programa e bibliotecário, com exportação local em CSV e JSON.
+- O expurgo operacional lista somente Nada Consta com retenção vencida, remove o objeto privado e preserva o registro textual e o log da ação.
+- A consulta administrativa aos logs exibe ações operacionais e administrativas já registradas; detalhes adicionais de cobertura continuam sujeitos à política de logs pendente.
+
+## 27. Estabilização e lançamento do MVP
+
+- A regressão automatizada combina testes unitários, pgTAP e Playwright. As sessões autenticadas de Estudante, Catalogador e Administrador são artefatos locais temporários, ignorados pelo Git e sem senhas versionadas.
+- A matriz mínima inclui desktop claro/escuro, celular, teclado, acessibilidade automatizada, responsividade e latência simulada. Testes com leitor de tela, dispositivo institucional simples e participantes reais continuam assistidos.
+- PDFs acadêmicos reais usados na homologação devem ser anonimizados e permanecer fora do repositório; o aceite inclui documentos longos, páginas rotacionadas e preservação integral das páginas originais.
+- A revisão LGPD técnica confirma minimização, restrição por RLS, processamento local do trabalho e expurgo do Nada Consta. Aviso, canal do titular, base institucional e retenção residual dependem de validação institucional.
+- O lançamento usa Vercel e Supabase, mas nenhuma migração remota é aplicada sem revisão de impacto e confirmação explícita. O lançamento público depende também das URLs definitivas, SMTP e textos de e-mail aprovados.
+- A validação com estudantes e bibliotecários produz evidências de tarefas e severidade sem registrar CPF, senha, arquivo acadêmico, token ou comentário interno.

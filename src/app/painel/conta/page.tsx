@@ -1,7 +1,7 @@
 import { maskCpf } from "@/domain/students/cpf";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { requestEmailChange } from "@/app/auth-actions";
+import { requestAuthenticatedPasswordChange, requestEmailChange } from "@/app/auth-actions";
 import { AuthFeedback } from "@/components/auth-feedback";
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string }> }) {
@@ -33,6 +33,16 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         <form className="form-stack" action={requestEmailChange}>
           <label>Novo e-mail institucional<input type="email" name="email" autoComplete="email" placeholder="novoemail@ufba.br" required /></label>
           <button className="button button--primary" type="submit">Solicitar alteração</button>
+        </form>
+      </section>
+      <section className="panel account-email-panel">
+        <div>
+          <p className="eyebrow">Segurança</p>
+          <h2>Alterar senha</h2>
+          <p>Para proteger sua conta, enviaremos um link de confirmação para seu e-mail institucional. A nova senha só poderá ser definida depois que você abrir esse link.</p>
+        </div>
+        <form action={requestAuthenticatedPasswordChange}>
+          <button className="button button--secondary" type="submit">Enviar link para alterar senha</button>
         </form>
       </section>
     </main>

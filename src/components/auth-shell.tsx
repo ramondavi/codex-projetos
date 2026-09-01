@@ -8,7 +8,7 @@ export function AuthShell({ title, description, children }: { title: string; des
     <main className="auth-shell">
       <Geometry />
       <div className="auth-shell__top">
-        <Brand compact />
+        <div className="shell-brand"><Brand compact /></div>
         <ThemeSwitcher />
       </div>
       <section className="auth-card">

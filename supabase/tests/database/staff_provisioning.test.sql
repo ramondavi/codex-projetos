@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(13);
+select plan(20);
 
 select throws_ok(
   $$insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data)
@@ -25,7 +25,8 @@ values
   ('30000000-0000-4000-8000-000000000006', 'teste.pgtap.alvo-catalogador@ufba.br', now(), '{}'::jsonb),
   ('30000000-0000-4000-8000-000000000007', 'teste.pgtap.alvo-administrador@ufba.br', now(), '{}'::jsonb),
   ('30000000-0000-4000-8000-000000000008', 'teste.pgtap.alvo-nao-confirmado@ufba.br', null, '{}'::jsonb),
-  ('30000000-0000-4000-8000-000000000009', 'teste.pgtap.alvo-papel-invalido@ufba.br', now(), '{}'::jsonb);
+  ('30000000-0000-4000-8000-000000000009', 'teste.pgtap.alvo-papel-invalido@ufba.br', now(), '{}'::jsonb),
+  ('30000000-0000-4000-8000-000000000010', 'teste.pgtap.aviso-pendente@ufba.br', null, '{}'::jsonb);
 
 insert into public.profiles (id, full_name, email, role, status)
 values
@@ -41,8 +42,33 @@ values
   ('30000000-0000-4000-8000-000000000004', 'Administrador Bloqueado Sintético', 'CRB-TESTE-12'),
   ('30000000-0000-4000-8000-000000000005', 'Administrador Inativo Sintético', 'CRB-TESTE-13');
 
+update auth.users set email_confirmed_at=now() where id='30000000-0000-4000-8000-000000000010';
+
+select is((select count(*)::integer from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),1,'conta interna confirmada gera aviso para administrador ativo');
+select is((select recipient from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),'teste.pgtap.admin-ativo@ufba.br','aviso é destinado somente ao administrador ativo');
+select is((select status from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),'pending','aviso começa pendente para entrega local');
+
 set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000002';
+
+select results_eq(
+  $$select count(*)::bigint from public.list_confirmed_staff_candidates()
+    where user_id = '30000000-0000-4000-8000-000000000006'$$,
+  array[1::bigint],
+  'Administrador vê conta confirmada ainda não provisionada'
+);
+select results_eq(
+  $$select count(*)::bigint from public.list_confirmed_staff_candidates()
+    where user_id = '30000000-0000-4000-8000-000000000008'$$,
+  array[0::bigint],
+  'lista não inclui conta sem confirmação de e-mail'
+);
+select results_eq(
+  $$select count(*)::bigint from public.list_confirmed_staff_candidates()
+    where user_id = '30000000-0000-4000-8000-000000000002'$$,
+  array[0::bigint],
+  'lista não inclui conta que já possui perfil'
+);
 
 select lives_ok(
   $$select public.provision_staff_account(
@@ -126,6 +152,12 @@ select throws_ok(
 );
 
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000003';
+select throws_ok(
+  $$select * from public.list_confirmed_staff_candidates()$$,
+  'P0001',
+  'active_administrator_required',
+  'Catalogador não consulta candidatos ao provisionamento'
+);
 select throws_ok(
   $$select public.provision_staff_account(
       '30000000-0000-4000-8000-000000000009',

@@ -9,13 +9,13 @@ values
     '10000000-0000-4000-8000-000000000001',
     'teste.pgtap.estudante1@ufba.br',
     now(),
-    '{"registration_source":"student","full_name":"Estudante Sintético Um","cpf":"52998224725"}'::jsonb
+    '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Sintético Um","cpf":"81000001156"}'::jsonb
   ),
   (
     '10000000-0000-4000-8000-000000000002',
     'teste.pgtap.estudante2@ufba.br',
     now(),
-    '{"registration_source":"student","full_name":"Estudante Sintético Dois","cpf":"11144477735"}'::jsonb
+    '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Sintético Dois","cpf":"81000001237"}'::jsonb
   ),
   ('10000000-0000-4000-8000-000000000003', 'teste.pgtap.catalogador@ufba.br', now(), '{}'::jsonb),
   ('10000000-0000-4000-8000-000000000004', 'teste.pgtap.administrador@ufba.br', now(), '{}'::jsonb),
@@ -81,17 +81,17 @@ set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000003';
 
 select is(public.current_user_role(), 'cataloger'::public.user_role, 'Catalogador ativo recebe o papel cataloger');
 select results_eq(
-  $$select count(*)::bigint from public.profiles$$,
+  $$select count(*)::bigint from public.profiles where id::text like '10000000-%'$$,
   array[6::bigint],
   'Catalogador ativo lê os perfis operacionais autorizados'
 );
 select results_eq(
-  $$select count(*)::bigint from public.student_profiles$$,
+  $$select count(*)::bigint from public.student_profiles where profile_id::text like '10000000-%'$$,
   array[2::bigint],
   'Catalogador ativo lê os perfis estudantis autorizados'
 );
 select results_eq(
-  $$select count(*)::bigint from public.staff_profiles$$,
+  $$select count(*)::bigint from public.staff_profiles where profile_id::text like '10000000-%'$$,
   array[1::bigint],
   'Catalogador ativo lê somente o próprio perfil de equipe'
 );
@@ -116,7 +116,7 @@ set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000004';
 
 select is(public.current_user_role(), 'administrator'::public.user_role, 'Administrador ativo recebe o papel administrator');
 select results_eq(
-  $$select count(*)::bigint from public.staff_profiles$$,
+  $$select count(*)::bigint from public.staff_profiles where profile_id::text like '10000000-%'$$,
   array[4::bigint],
   'Administrador ativo lê os perfis de equipe'
 );

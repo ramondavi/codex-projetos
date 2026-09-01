@@ -1,4 +1,4 @@
-export const STUDENT_REQUEST_DRAFT_KEY = "pronto:student-request-draft:v1";
+export const STUDENT_REQUEST_DRAFT_KEY = "pronto:student-request-draft:v2";
 
 export type StudentRequestDraft = {
   academicProgramId: string;
@@ -8,11 +8,16 @@ export type StudentRequestDraft = {
   equivalentTitle: string;
   otherTitles: string[];
   publicWorkUrl: string;
-  people: { author: string; advisor: string; coadvisor: string };
+  people: { author: string; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
   keywordsPt: string[];
   keywordsEn: string[];
   specialCases: string[];
   volumeInformation: string;
+  depositYear: string;
+  defenseYear: string;
+  extentUnit: "pages" | "volumes";
+  extentCount: string;
+  hasIllustrations: "" | "yes" | "no";
   libraryNote: string;
   defendedAndApproved: boolean;
   finalFileConfirmed: boolean;
@@ -27,11 +32,16 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   equivalentTitle: "",
   otherTitles: [""],
   publicWorkUrl: "",
-  people: { author: "", advisor: "", coadvisor: "" },
+  people: { author: "", advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   keywordsPt: [""],
   keywordsEn: [""],
   specialCases: [],
   volumeInformation: "",
+  depositYear: String(new Date().getFullYear()),
+  defenseYear: "",
+  extentUnit: "pages",
+  extentCount: "",
+  hasIllustrations: "",
   libraryNote: "",
   defendedAndApproved: false,
   finalFileConfirmed: false,
@@ -53,8 +63,14 @@ export function compactDraft(draft: StudentRequestDraft) {
     people: {
       author: draft.people.author.trim(),
       advisor: draft.people.advisor.trim(),
+      advisorNoteLabel: draft.people.advisorNoteLabel,
       coadvisor: draft.people.coadvisor.trim(),
+      coadvisorNoteLabel: draft.people.coadvisor ? draft.people.coadvisorNoteLabel : "",
     },
+    depositYear: Number(draft.depositYear),
+    defenseYear: Number(draft.defenseYear),
+    extentCount: Number(draft.extentCount),
+    hasIllustrations: draft.hasIllustrations === "yes",
     volumeInformation: draft.volumeInformation.trim(),
     libraryNote: draft.libraryNote.trim(),
   };

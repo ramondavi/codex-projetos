@@ -4,6 +4,7 @@ import test from "node:test";
 import { compactDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY } from "../src/domain/student-requests/draft.ts";
 
 const migration = readFileSync(new URL("../supabase/migrations/202608230000_student_requests.sql", import.meta.url), "utf8");
+const requiredDetailsMigration = readFileSync(new URL("../supabase/migrations/202608310005_require_student_cataloging_details.sql", import.meta.url), "utf8");
 
 test("keeps registration numbers on reusable academic enrollments", () => {
   assert.match(migration, /create table public\.academic_enrollments/);
@@ -39,10 +40,16 @@ test("compacts repeatable draft fields without losing structured people", () => 
     ...emptyStudentRequestDraft,
     title: "  Um trabalho  ",
     keywordsPt: [" Arquitetura ", "", " Cidade "],
-    people: { author: "  Ana Silva ", advisor: " Prof. José ", coadvisor: "" },
+    people: { author: "  Ana Silva ", advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   });
   assert.equal(compact.title, "Um trabalho");
   assert.deepEqual(compact.keywordsPt, ["Arquitetura", "Cidade"]);
   assert.equal(compact.people.author, "Ana Silva");
   assert.match(STUDENT_REQUEST_DRAFT_KEY, /^pronto:student-request-draft:/);
+});
+
+test("exige a escolha explícita sobre ilustrações", () => {
+  assert.match(requiredDetailsMigration, /illustrations_choice_required/);
+  assert.match(requiredDetailsMigration, /payload \? 'hasIllustrations'/);
+  assert.equal(emptyStudentRequestDraft.hasIllustrations, "");
 });

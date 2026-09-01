@@ -37,6 +37,13 @@ test("validates all signup decisions together", () => {
   }), null);
 });
 
+test("requires acknowledgement of the privacy policy", () => {
+  assert.equal(validateSignup({
+    fullName: "Maria da Silva", cpf: "529.982.247-25", email: "maria@ufba.br",
+    password: "uma-senha-segura", passwordConfirmation: "uma-senha-segura", privacyAccepted: false,
+  }), "É necessário declarar ciência da Política de Privacidade.");
+});
+
 test("student metadata never accepts a client-provided role", () => {
   const metadata = normalizedSignupMetadata({
     fullName: "Maria da Silva", cpf: "529.982.247-25", email: "maria@ufba.br",

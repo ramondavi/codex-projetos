@@ -39,21 +39,17 @@ Os testes pgTAP em `supabase/tests/database` cobrem as regras de autorização e
 
 ## Estado operacional confirmado
 
-- As três migrações versionadas são reproduzíveis no ambiente local.
-- O histórico remoto contém as três migrações, incluindo `202608220000_auth_authorization_hardening.sql`.
+- As 14 migrações versionadas são reproduzíveis no ambiente local.
+- O histórico remoto contém as 14 migrações, da fundação ao Incremento 13.
 - O esquema remoto está alinhado aos objetos versionados localmente e não há migrações pendentes.
 - O lint do banco foi aprovado nos ambientes local e remoto.
-- Os 36 testes pgTAP integrados são executados no CI contra o Supabase local.
+- Os 209 testes pgTAP integrados são executados no CI contra o Supabase local.
 
 ## Migrações pelo SQL Editor
 
-Em um projeto vazio, execute uma única vez e nesta ordem:
+Em um projeto vazio, prefira `npx supabase db push --linked` após revisar o modo `--dry-run` e obter confirmação explícita. Se o SQL Editor for indispensável, execute uma única vez todas as migrações de `supabase/migrations`, em ordem lexicográfica, sem pular arquivos.
 
-1. `supabase/migrations/202608060000_foundation.sql`;
-2. `supabase/migrations/202608060001_auth_accounts.sql`;
-3. `supabase/migrations/202608220000_auth_authorization_hardening.sql`.
-
-No Dashboard, abra **SQL Editor**, crie uma nova consulta, cole todo o primeiro arquivo e execute. Somente depois de sucesso repita, na ordem, com cada arquivo seguinte. Não execute parcialmente, não altere o SQL durante a cópia e interrompa se houver erro.
+No Dashboard, abra **SQL Editor**, crie uma nova consulta, cole um arquivo completo e execute. Somente depois de sucesso prossiga para o arquivo seguinte. Não execute parcialmente, não altere o SQL durante a cópia e interrompa se houver erro.
 
 ## Primeira conta administrativa
 

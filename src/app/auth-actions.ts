@@ -1,9 +1,11 @@
 "use server";
 
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { canChangeAuthenticatedEmail, isUfbaEmail, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "@/domain/auth/account";
 import { createClient } from "@/lib/supabase/server";
+import { PRIVACY_NOTICE_VERSION } from "@/domain/privacy/notice";
 
 function destination(path: string, kind: "error" | "message", text: string) {
   return `${path}?${kind}=${encodeURIComponent(text)}`;
@@ -15,9 +17,6 @@ async function siteOrigin() {
 }
 
 export async function signup(formData: FormData) {
-  if (!process.env.PRIVACY_NOTICE_VERSION) {
-    redirect(destination("/cadastro", "error", "O cadastro será liberado após a validação institucional do aviso de privacidade."));
-  }
   const input = {
     fullName: String(formData.get("name") ?? ""),
     cpf: String(formData.get("cpf") ?? ""),
@@ -34,7 +33,7 @@ export async function signup(formData: FormData) {
     email: normalizeEmail(input.email),
     password: input.password,
     options: {
-      data: normalizedSignupMetadata(input),
+      data: { ...normalizedSignupMetadata(input), privacy_notice_version: PRIVACY_NOTICE_VERSION },
       emailRedirectTo: `${await siteOrigin()}/auth/callback`,
     },
   });
@@ -65,6 +64,34 @@ export async function requestPasswordReset(formData: FormData) {
   const supabase = await createClient();
   await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${await siteOrigin()}/auth/callback?next=/redefinir-senha` });
   redirect(destination("/recuperar-senha", "message", "Se o endereço estiver cadastrado, enviaremos as instruções."));
+}
+
+export type PrivacyAcknowledgementState = { error?: string; success?: boolean };
+
+export async function acknowledgePrivacyNotice(_previousState: PrivacyAcknowledgementState): Promise<PrivacyAcknowledgementState> {
+  void _previousState;
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Sua sessão expirou. Entre novamente para continuar." };
+  const { error } = await supabase.rpc("acknowledge_privacy_notice", { target_notice_version: PRIVACY_NOTICE_VERSION });
+  if (error) return { error: "Não foi possível registrar sua ciência da política. Tente novamente." };
+  revalidatePath("/painel", "layout");
+  return { success: true };
+}
+
+export async function requestAuthenticatedPasswordChange() {
+  const supabase = await createClient();
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError || !user?.email) redirect(destination("/entrar", "error", "Sua sessão expirou. Entre novamente para alterar a senha."));
+
+  const { data: profile } = await supabase.from("profiles").select("status").eq("id", user.id).single();
+  if (!canChangeAuthenticatedEmail(profile?.status)) {
+    await supabase.auth.signOut();
+    redirect(destination("/entrar", "error", "Não foi possível continuar. Entre novamente ou procure a biblioteca."));
+  }
+
+  await supabase.auth.resetPasswordForEmail(user.email, { redirectTo: `${await siteOrigin()}/auth/callback?next=/redefinir-senha` });
+  redirect(destination("/painel/conta", "message", "Enviamos um link de confirmação para seu e-mail institucional. Abra-o para definir a nova senha."));
 }
 
 export async function updatePassword(formData: FormData) {
