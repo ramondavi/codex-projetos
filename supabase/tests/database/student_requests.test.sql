@@ -5,8 +5,8 @@ select plan(14);
 
 insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data)
 values
-  ('30000000-0000-4000-8000-000000000001', 'teste.solicitacao1@ufba.br', now(), '{"registration_source":"student","full_name":"Estudante Solicitação Um","cpf":"81000000001"}'::jsonb),
-  ('30000000-0000-4000-8000-000000000002', 'teste.solicitacao2@ufba.br', now(), '{"registration_source":"student","full_name":"Estudante Solicitação Dois","cpf":"81000000184"}'::jsonb);
+  ('30000000-0000-4000-8000-000000000001', 'teste.solicitacao1@ufba.br', now(), '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Solicitação Um","cpf":"81000000001"}'::jsonb),
+  ('30000000-0000-4000-8000-000000000002', 'teste.solicitacao2@ufba.br', now(), '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Solicitação Dois","cpf":"81000000184"}'::jsonb);
 
 insert into public.academic_programs (id, code, name, short_name, level, work_type)
 values ('30000000-0000-4000-8000-000000000010', 'PGTAP-SOLICITACAO', 'Programa para Solicitações', 'PS', 'master', 'dissertation');

@@ -3,8 +3,8 @@ create extension if not exists pgtap with schema extensions;
 select plan(29);
 
 insert into auth.users (id,email,email_confirmed_at,raw_user_meta_data) values
- ('70000000-0000-4000-8000-000000000001','pendencia.estudante1@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Pendência Um","cpf":"81000000508"}'::jsonb),
- ('70000000-0000-4000-8000-000000000002','pendencia.estudante2@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante Pendência Dois","cpf":"81000000699"}'::jsonb),
+ ('70000000-0000-4000-8000-000000000001','pendencia.estudante1@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Pendência Um","cpf":"81000000508"}'::jsonb),
+ ('70000000-0000-4000-8000-000000000002','pendencia.estudante2@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Pendência Dois","cpf":"81000000699"}'::jsonb),
  ('70000000-0000-4000-8000-000000000003','pendencia.catalogador@ufba.br',now(),'{}'::jsonb),
  ('70000000-0000-4000-8000-000000000004','pendencia.admin@ufba.br',now(),'{}'::jsonb);
 insert into public.profiles (id,full_name,email,role,status) values

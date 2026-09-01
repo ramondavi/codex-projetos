@@ -83,8 +83,18 @@ export const requestAnalyses = pgTable("request_analyses", {
   analysisNotes: text("analysis_notes").default("").notNull(),
   internalNote: text("internal_note").default("").notNull(),
   lastEditedBy: uuid("last_edited_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  reviewCompletedAt: timestamp("review_completed_at", { withTimezone: true }),
+  reviewCompletedBy: uuid("review_completed_by").references(() => profiles.id, { onDelete: "restrict" }),
   ...timestamps,
 });
+
+export const requestDirectCorrectionBaselines = pgTable("request_direct_correction_baselines", {
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "cascade" }).notNull(),
+  fieldKey: text("field_key").notNull(),
+  originalValue: jsonb("original_value").notNull(),
+  correctedBy: uuid("corrected_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [uniqueIndex("request_direct_correction_baselines_pkey").on(table.requestId, table.fieldKey)]);
 
 export const issueTemplates = pgTable("issue_templates", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -140,6 +150,22 @@ export const emailOutbox = pgTable("email_outbox", {
   deliveredAt: timestamp("delivered_at", { withTimezone: true }),
   lastError: text("last_error"),
   ...timestamps,
+});
+
+export const privacyNoticeAcknowledgements = pgTable("privacy_notice_acknowledgements", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull(),
+  noticeVersion: text("notice_version").notNull(),
+  source: text("source").notNull(),
+  acknowledgedAt: timestamp("acknowledged_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [uniqueIndex("privacy_notice_acknowledgements_profile_version_key").on(table.profileId, table.noticeVersion)]);
+
+export const accountNotificationOutbox = pgTable("account_notification_outbox", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  targetUserId: uuid("target_user_id").notNull(),
+  recipient: text("recipient").notNull(), subject: text("subject").notNull(), textBody: text("text_body").notNull(),
+  idempotencyKey: text("idempotency_key").notNull().unique(), status: text("status").default("pending").notNull(), attempts: integer("attempts").default(0).notNull(),
+  deliveredAt: timestamp("delivered_at", { withTimezone: true }), lastError: text("last_error"), ...timestamps,
 });
 
 export const requestPeople = pgTable("request_people", {

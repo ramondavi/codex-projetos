@@ -19,6 +19,7 @@ const errorLabels: Record<string, string> = {
   portuguese_keyword_required: "Informe pelo menos uma palavra-chave em português.",
   valid_cataloging_years_required: "Confira os anos de depósito e de defesa.",
   valid_physical_extent_required: "Informe a quantidade de páginas ou volumes.",
+  illustrations_choice_required: "Informe se o trabalho possui ilustrações.",
   mp_cecre_volume_extent_required: "No MP-CECRE, informe 2 ou 3 volumes.",
   valid_orientation_labels_required: "Confira as designações de orientação e coorientação.",
 };
@@ -36,7 +37,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   useEffect(() => {
     const stored = localStorage.getItem(STUDENT_REQUEST_DRAFT_KEY);
     if (stored) {
-      try { setDraft({ ...emptyStudentRequestDraft, ...JSON.parse(stored) }); } catch { localStorage.removeItem(STUDENT_REQUEST_DRAFT_KEY); }
+      try { const parsed = JSON.parse(stored); setDraft({ ...emptyStudentRequestDraft, ...parsed, hasIllustrations: typeof parsed.hasIllustrations === "boolean" ? parsed.hasIllustrations ? "yes" : "no" : parsed.hasIllustrations ?? "" }); } catch { localStorage.removeItem(STUDENT_REQUEST_DRAFT_KEY); }
     }
     setReady(true);
   }, []);
@@ -108,7 +109,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
         <div className="form-row"><label>Ano de depósito da versão final <input required type="number" min="1900" max="9999" value={draft.depositYear} onChange={(e) => set("depositYear", e.target.value)} /></label><label>Ano de defesa ou apresentação <input required type="number" min="1900" max={draft.depositYear || "9999"} value={draft.defenseYear} onChange={(e) => set("defenseYear", e.target.value)} /></label></div>
         <div className="form-row">
           {isMpCecre ? <label>Quantidade de volumes <select required value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)}><option value="2">2 volumes</option><option value="3">3 volumes</option></select></label> : <label>Quantidade total de páginas <input required type="number" min="1" max="99999" value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)} /></label>}
-          <label className="check"><input type="checkbox" checked={draft.hasIllustrations} onChange={(e) => set("hasIllustrations", e.target.checked)} /> O trabalho possui ilustrações (`il.`)</label>
+          <label>O trabalho possui ilustrações? <select required value={draft.hasIllustrations} onChange={(e) => set("hasIllustrations", e.target.value as "" | "yes" | "no")}><option value="">Selecione</option><option value="yes">Sim</option><option value="no">Não</option></select></label>
         </div>
       </fieldset>
 

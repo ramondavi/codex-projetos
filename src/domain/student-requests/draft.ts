@@ -17,7 +17,7 @@ export type StudentRequestDraft = {
   defenseYear: string;
   extentUnit: "pages" | "volumes";
   extentCount: string;
-  hasIllustrations: boolean;
+  hasIllustrations: "" | "yes" | "no";
   libraryNote: string;
   defendedAndApproved: boolean;
   finalFileConfirmed: boolean;
@@ -41,7 +41,7 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   defenseYear: "",
   extentUnit: "pages",
   extentCount: "",
-  hasIllustrations: false,
+  hasIllustrations: "",
   libraryNote: "",
   defendedAndApproved: false,
   finalFileConfirmed: false,
@@ -70,6 +70,7 @@ export function compactDraft(draft: StudentRequestDraft) {
     depositYear: Number(draft.depositYear),
     defenseYear: Number(draft.defenseYear),
     extentCount: Number(draft.extentCount),
+    hasIllustrations: draft.hasIllustrations === "yes",
     volumeInformation: draft.volumeInformation.trim(),
     libraryNote: draft.libraryNote.trim(),
   };

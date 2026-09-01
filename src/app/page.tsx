@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Geometry } from "@/components/geometry";
 import { Notice } from "@/components/notice";
 import { SiteHeader } from "@/components/site-header";
+import { createClient } from "@/lib/supabase/server";
 
 const steps = [
   ["pencil", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
@@ -9,7 +10,9 @@ const steps = [
   ["file", "Receba sua ficha", "Após a homologação e a validação do Nada Consta, gere o trabalho completo no seu navegador."],
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
   return (
     <>
       <SiteHeader />
@@ -19,13 +22,9 @@ export default function HomePage() {
           <div className="container hero__grid">
             <div className="hero__content">
               <p className="eyebrow">Biblioteca da Faculdade de Arquitetura · UFBA</p>
-              <h1>Pronto!</h1>
               <p className="hero__lead">Assistente de Fichas Catalográficas e Autodepósito</p>
               <p className="hero__description">Um fluxo claro e seguro para concluir sua ficha catalográfica com acompanhamento profissional da BIB/FAUFBA.</p>
-              <div className="actions">
-                <Link className="button button--primary" href="/entrar">Entrar no Pronto!</Link>
-                <Link className="button button--secondary" href="/cadastro">Criar conta</Link>
-              </div>
+              {!user && <div className="actions"><Link className="button button--primary" href="/entrar">Entrar no Pronto!</Link><Link className="button button--secondary" href="/cadastro">Criar conta</Link></div>}
             </div>
             <div className="hero__aside">
               <Notice />

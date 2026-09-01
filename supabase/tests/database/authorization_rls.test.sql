@@ -9,13 +9,13 @@ values
     '10000000-0000-4000-8000-000000000001',
     'teste.pgtap.estudante1@ufba.br',
     now(),
-    '{"registration_source":"student","full_name":"Estudante Sintético Um","cpf":"81000001156"}'::jsonb
+    '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Sintético Um","cpf":"81000001156"}'::jsonb
   ),
   (
     '10000000-0000-4000-8000-000000000002',
     'teste.pgtap.estudante2@ufba.br',
     now(),
-    '{"registration_source":"student","full_name":"Estudante Sintético Dois","cpf":"81000001237"}'::jsonb
+    '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Sintético Dois","cpf":"81000001237"}'::jsonb
   ),
   ('10000000-0000-4000-8000-000000000003', 'teste.pgtap.catalogador@ufba.br', now(), '{}'::jsonb),
   ('10000000-0000-4000-8000-000000000004', 'teste.pgtap.administrador@ufba.br', now(), '{}'::jsonb),

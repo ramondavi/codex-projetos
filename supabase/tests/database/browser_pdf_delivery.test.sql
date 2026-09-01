@@ -3,8 +3,8 @@ create extension if not exists pgtap with schema extensions;
 select plan(6);
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('97000000-0000-4000-8000-000000000001','pdf.estudante@ufba.br',now(),'{"registration_source":"student","full_name":"Estudante PDF","cpf":"81000000931"}'),
- ('97000000-0000-4000-8000-000000000002','pdf.outro@ufba.br',now(),'{"registration_source":"student","full_name":"Outro PDF","cpf":"81000001075"}'),
+ ('97000000-0000-4000-8000-000000000001','pdf.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante PDF","cpf":"81000000931"}'),
+ ('97000000-0000-4000-8000-000000000002','pdf.outro@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Outro PDF","cpf":"81000001075"}'),
  ('97000000-0000-4000-8000-000000000003','pdf.catalogador@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values('97000000-0000-4000-8000-000000000003','Catalogador PDF','pdf.catalogador@ufba.br','cataloger','active');
 insert into public.staff_profiles(profile_id,professional_name,crb) values('97000000-0000-4000-8000-000000000003','Catalogador PDF','CRB-5/3333');

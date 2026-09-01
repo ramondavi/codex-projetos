@@ -32,6 +32,8 @@ test("supports ordered bilingual terms, incremental authority lookup and a live 
   assert.match(workspace, /authorityMatches/);
   assert.match(workspace, /termMatches/);
   assert.match(workspace, /CatalogingCardPreview snapshot=\{previewSnapshot\} live/);
+  assert.match(workspace, /activeAutocomplete/);
+  assert.match(workspace, /onFocus=\{\(\) => setActiveAutocomplete/);
 });
 
 test("normalizes Cutter and audits direct staff corrections in a new migration", () => {

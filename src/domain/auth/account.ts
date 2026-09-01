@@ -37,7 +37,7 @@ export function validateSignup(input: SignupInput) {
   if (!isUfbaEmail(input.email)) return "Use seu endereço institucional @ufba.br.";
   if (input.password.length < 8) return "A senha deve ter pelo menos 8 caracteres.";
   if (input.password !== input.passwordConfirmation) return "As senhas não coincidem.";
-  if (!input.privacyAccepted) return "É necessário aceitar o aviso de privacidade.";
+  if (!input.privacyAccepted) return "É necessário declarar ciência da Política de Privacidade.";
   return null;
 }
 

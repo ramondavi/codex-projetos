@@ -138,7 +138,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 - Palavras-chave são tags individuais, em português e inglês quando aplicável.
 - Permite título, subtítulo, título em inglês, outros títulos, orientador, coorientador, cotutela, dupla titulação, título equivalente e múltiplos volumes quando aplicável.
 - Permite formato/dimensão A4, A3, paisagem, livro/quadrado ou personalizado.
-- Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca.
+- Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca, além de ano de depósito, ano de defesa/apresentação, quantidade física e escolha explícita sobre ilustrações.
 
 ### 7.1. Níveis acadêmicos do MVP
 
@@ -240,7 +240,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 ### 10.2. Devolução por pendência
 
 - A conferência ocorre em tela única: cada valor informado pelo estudante aparece com ações adjacentes para validar, corrigir diretamente ou devolver especificamente ao estudante.
-- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas.
+- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
@@ -370,6 +370,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - ORM/prepared statements contra SQL injection; sanitização/escape contra XSS; proteção CSRF em rotas sensíveis quando aplicável.
 - Validar uploads permitidos e registrar ações administrativas/operacionais relevantes.
 - Coletar o mínimo, expurgar temporários e excluir Nada Consta 60 dias após encerramento.
+- A política de privacidade aprovada identifica a UFBA, por meio da BIB/FA, como controladora do serviço; a Biblioteca atende dúvidas operacionais em `bibarq@ufba.br`, e a Ouvidoria da UFBA atende direitos e privacidade em `ouvidoria@ufba.br`. O tratamento fundamenta-se no cumprimento de obrigação legal ou regulatória. Conta, CPF, e-mail, solicitação, metadados, ficha, pendências e homologação integram o assentamento individual do aluno: enquanto houver vínculo e, no total, 100 anos, segundo os códigos 125.43 (graduação), 134.43 (pós-graduação stricto sensu) e 144.43 (pós-graduação lato sensu). O Nada Consta recebido pelo Pronto! é arquivo temporário de verificação, removido 60 dias após encerramento; seu registro institucional de longo prazo é mantido no Pergamum. Auditorias administrativas e operacionais permanecem 5 anos; logs brutos de acesso, sessão, aplicação, rede, banco e erros técnicos, 6 meses; dossiês de incidentes, 5 anos após encerramento; backups rotativos, 90 dias, salvo preservação necessária. Logs não devem duplicar conteúdo sensível. A aplicação técnica dos prazos deve respeitar a tabela de temporalidade e orientações arquivísticas da UFBA. A ciência da política v1.0 é obrigatória no cadastro e no primeiro acesso das contas existentes; o sistema registra perfil, versão, origem e data/hora, sem IP ou conteúdo adicional.
 - Magic Link imprevisível, somente leitura, sem documentos sensíveis e inútil após conclusão integral e envio final.
 - Limites exatos, detalhes de logs e política de acesso que não estejam aqui permanecem pendentes.
 
@@ -377,7 +378,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 
 - Identidade institucional da UFBA, com destaque à identidade visual atual da BIB/FA.
 - Linguagem predominantemente monocromática, arquitetônica, geométrica e técnica, inspirada no logotipo da biblioteca.
-- Azul `#1A3B70` e ouro `#C5A059` como possíveis acentos; grafite `#1E293B`, concreto/prata `#E2E8F0`/`#F4F6F9`, linha `#CBD5E1` e vermelho `#991B1B` na paleta sugerida.
+- Violeta `#3C3873` como acento no tema claro e variantes mais claras no tema escuro para preservar contraste; grafite `#1E293B`, concreto/prata `#E2E8F0`/`#F4F6F9`, linha `#CBD5E1` e vermelho `#991B1B` na paleta sugerida.
 - Interface: Inter ou Fira Sans; títulos: Cinzel ou Playfair, se adequado; técnica: JetBrains Mono ou Fira Code.
 - Temas claro, escuro e conforme sistema; preservar contraste, legibilidade, responsividade e identidade.
 - Refinamento milimétrico da ficha e telas será feito depois.
@@ -469,6 +470,11 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 
 - O administrador gerencia contas e perfis por operações transacionais auditadas; bloqueio e inativação retiram imediatamente a autorização operacional imposta por RLS.
 - O provisionamento de equipe lista no painel somente contas institucionais confirmadas no Supabase e ainda sem perfil; o administrador seleciona pelo e-mail, sem copiar ou digitar UUID.
+- Somente administradores provisionam novos perfis internos. A visão geral administrativa destaca contas institucionais confirmadas e ainda sem perfil, com resumo e provisionamento no próprio painel.
+- Quando uma conta interna confirmada fica pendente, o sistema enfileira aviso para cada administrador ativo; no ambiente local, a entrega é processada pelo Mailpit. A entrega institucional depende da definição do SMTP.
+- Toda conta ativa pode solicitar a alteração de senha dentro do sistema; o Pronto! envia um link de confirmação ao e-mail institucional antes da definição da nova senha.
+- Cada alteração administrativa só recebe mensagem de sucesso após o Pronto! reler e confirmar no banco os campos persistidos; falhas de conferência ficam explícitas na tela.
+- A Visão geral é a página inicial da equipe e o primeiro item do menu: catalogadores veem sua carga, fila, correções, aprovações e informes; administradores veem também contas pendentes, equipe ativa e atalhos de gestão.
 - A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
 - Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
 - O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.

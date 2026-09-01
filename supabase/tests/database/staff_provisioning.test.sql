@@ -1,7 +1,7 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(17);
+select plan(20);
 
 select throws_ok(
   $$insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data)
@@ -25,7 +25,8 @@ values
   ('30000000-0000-4000-8000-000000000006', 'teste.pgtap.alvo-catalogador@ufba.br', now(), '{}'::jsonb),
   ('30000000-0000-4000-8000-000000000007', 'teste.pgtap.alvo-administrador@ufba.br', now(), '{}'::jsonb),
   ('30000000-0000-4000-8000-000000000008', 'teste.pgtap.alvo-nao-confirmado@ufba.br', null, '{}'::jsonb),
-  ('30000000-0000-4000-8000-000000000009', 'teste.pgtap.alvo-papel-invalido@ufba.br', now(), '{}'::jsonb);
+  ('30000000-0000-4000-8000-000000000009', 'teste.pgtap.alvo-papel-invalido@ufba.br', now(), '{}'::jsonb),
+  ('30000000-0000-4000-8000-000000000010', 'teste.pgtap.aviso-pendente@ufba.br', null, '{}'::jsonb);
 
 insert into public.profiles (id, full_name, email, role, status)
 values
@@ -40,6 +41,12 @@ values
   ('30000000-0000-4000-8000-000000000003', 'Catalogador Ativo Sintético', 'CRB-TESTE-11'),
   ('30000000-0000-4000-8000-000000000004', 'Administrador Bloqueado Sintético', 'CRB-TESTE-12'),
   ('30000000-0000-4000-8000-000000000005', 'Administrador Inativo Sintético', 'CRB-TESTE-13');
+
+update auth.users set email_confirmed_at=now() where id='30000000-0000-4000-8000-000000000010';
+
+select is((select count(*)::integer from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),1,'conta interna confirmada gera aviso para administrador ativo');
+select is((select recipient from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),'teste.pgtap.admin-ativo@ufba.br','aviso é destinado somente ao administrador ativo');
+select is((select status from public.account_notification_outbox where target_user_id='30000000-0000-4000-8000-000000000010'),'pending','aviso começa pendente para entrega local');
 
 set local role authenticated;
 set local request.jwt.claim.sub = '30000000-0000-4000-8000-000000000002';

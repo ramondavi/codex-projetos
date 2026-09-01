@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
@@ -21,6 +21,10 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
   const [age, setAge] = useState("");
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
+
+  useEffect(() => {
+    setAssignee(params.get("responsavel") === "me" ? "me" : "");
+  }, [params]);
 
   const programs = useMemo(() => Array.from(new Map(requests.map((item) => [item.programId, item.programName])).entries()), [requests]);
   const filtered = useMemo(() => requests.filter((item) => {

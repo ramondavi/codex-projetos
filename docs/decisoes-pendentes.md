@@ -2,10 +2,6 @@
 
 Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda não resolveu. Nenhuma opção abaixo deve ser inferida durante o desenvolvimento. Ao resolver uma pendência, atualizar também `docs/documento-mestre.md`.
 
-## Autenticação e contas
-
-- Elaborar uma proposta de aviso de privacidade para posterior validação institucional e, depois da aprovação, definir sua forma de aceite no cadastro.
-
 ## Catalogação e ficha
 
 - **Ano de nascimento:** decidir obrigatoriedade e regra de exibição do ano do autor.
@@ -26,7 +22,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 ## Arquivos e segurança
 
 - **Segurança:** detalhar limites, ações cobertas pelos logs e política de acesso onde ainda não estiver definida no Documento-Mestre.
-- **LGPD:** validar institucionalmente o canal de direitos do titular, a base aplicável e os prazos de retenção dos metadados e logs preservados depois do expurgo.
 
 ## Coordenação, Magic Link e comunicações
 
