@@ -1,4 +1,4 @@
-export type CardPerson = { role: string; transcribedName: string; authorizedName: string; noteLabel?: string | null; position?: number };
+export type CardPerson = { role: string; transcribedName: string; authorizedName: string; birthYear?: number | null; birthYearValidated?: boolean; noteLabel?: string | null; position?: number };
 export type CardSubject = { labelPt: string; labelEn?: string | null; isPrimary: boolean; position?: number };
 
 export type CatalogingCardSnapshot = {
@@ -49,6 +49,17 @@ export function formatProfessionalRegistration(value: string) {
   return normalized ? `CRB/${normalized[1]}-${normalized[2]}` : value.trim();
 }
 
+export function prefixBeforeFourthAuthorLetter(value: string) {
+  let letters = 0;
+  let prefix = "";
+  for (const character of value.trim()) {
+    if (/\p{L}/u.test(character)) letters += 1;
+    if (letters > 3) break;
+    prefix += character;
+  }
+  return prefix;
+}
+
 export function buildCardContent(snapshot: CatalogingCardSnapshot) {
   const author = snapshot.people.find((person) => person.role === "author");
   const advisor = snapshot.people.find((person) => person.role === "advisor");
@@ -79,12 +90,12 @@ export function buildCardContent(snapshot: CatalogingCardSnapshot) {
   const entries = snapshot.subjects.map((subject, index) =>
     `${index + 1}. ${sentence(normalizeSubdivisionSeparator(subject.labelPt, subdivisionSeparator))}`,
   );
-  const secondary = [advisor?.authorizedName, coadvisor?.authorizedName].filter((name): name is string => Boolean(name));
+  const secondary = [...snapshot.people.filter((person) => person.role === "author").slice(1).map((person) => person.authorizedName), advisor?.authorizedName, coadvisor?.authorizedName].filter((name): name is string => Boolean(name));
   if (snapshot.request.programTracing) secondary.push(`Universidade Federal da Bahia. Faculdade de Arquitetura. ${sentence(snapshot.request.programTracing)}`);
   secondary.push("Título");
   secondary.forEach((name, index) => entries.push(`${roman(index + 1)}. ${sentence(name)}`));
   return {
-    authorizedAuthor: author?.authorizedName ? sentence(author.authorizedName) : "",
+    authorizedAuthor: author?.authorizedName ? sentence(`${author.authorizedName}${author.birthYear && author.birthYearValidated ? `, ${author.birthYear}-` : ""}`) : "",
     titleStatement,
     physicalDescription,
     academicNote,

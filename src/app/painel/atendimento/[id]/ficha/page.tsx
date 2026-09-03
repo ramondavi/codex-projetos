@@ -17,9 +17,10 @@ export default async function CatalogingCardPage({ params }: { params: Promise<{
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
   if (!user || !profile || !["cataloger", "administrator"].includes(profile.role)) redirect("/painel");
-  const [{ data }, { data: people }, { data: subjects }, { data: metadata }, { data: details }, { data: staff }, { data: homologation }] = await Promise.all([
+  const [{ data }, { data: people }, { data: authorBirth }, { data: subjects }, { data: metadata }, { data: details }, { data: staff }, { data: homologation }] = await Promise.all([
     supabase.from("cataloging_requests").select(`id, protocol, status, assigned_to, title, subtitle, equivalent_title, other_titles, volume_information, special_cases, enrollment:academic_enrollments!cataloging_requests_academic_enrollment_id_fkey(program:academic_programs!academic_enrollments_academic_program_id_fkey(name, level, work_type, cataloging_program_tracing))`).eq("id", id).maybeSingle(),
     supabase.from("request_cataloging_people").select("role, transcribed_name, authorized_name_snapshot, position").eq("request_id", id).order("position"),
+    supabase.from("request_people").select("birth_year, birth_year_validated_at").eq("request_id", id).eq("role", "author").maybeSingle(),
     supabase.from("request_controlled_terms").select("label_pt_snapshot, label_en_snapshot, is_primary, position").eq("request_id", id).order("position"),
     supabase.from("request_cataloging_metadata").select("cdu_code, cutter_code").eq("request_id", id).maybeSingle(),
     supabase.from("request_card_details").select("deposit_year, defense_year, extent_unit, extent_count, has_illustrations, publication_place, advisor_note_label, coadvisor_note_label").eq("request_id", id).maybeSingle(),
@@ -33,7 +34,7 @@ export default async function CatalogingCardPage({ params }: { params: Promise<{
   const draft: CatalogingCardSnapshot = {
     institution: { university: "Universidade Federal da Bahia (UFBA)", librarySystem: "Sistema Universitário de Bibliotecas (SIBI)", library: "Biblioteca da Faculdade de Arquitetura (BIB/FA)" },
     request: { protocol: request.protocol, title: request.title, subtitle: request.subtitle, equivalentTitle: request.equivalent_title, otherTitles: request.other_titles, volumeInformation: request.volume_information, specialCases: request.special_cases, programName: program?.name ?? "", academicLevel: program?.level ?? "", workNature, programTracing: program?.cataloging_program_tracing, depositYear: details?.deposit_year, defenseYear: details?.defense_year, extentUnit: details?.extent_unit, extentCount: details?.extent_count, hasIllustrations: details?.has_illustrations, publicationPlace: details?.publication_place ?? "Salvador" },
-    people: (people ?? []).map((person) => ({ role: person.role, transcribedName: person.transcribed_name, authorizedName: person.authorized_name_snapshot, noteLabel: person.role === "advisor" ? details?.advisor_note_label : person.role === "coadvisor" ? details?.coadvisor_note_label : null, position: person.position })),
+    people: (people ?? []).map((person) => ({ role: person.role, transcribedName: person.transcribed_name, authorizedName: person.authorized_name_snapshot, birthYear: person.role === "author" ? authorBirth?.birth_year : null, birthYearValidated: person.role === "author" ? Boolean(authorBirth?.birth_year_validated_at) : false, noteLabel: person.role === "advisor" ? details?.advisor_note_label : person.role === "coadvisor" ? details?.coadvisor_note_label : null, position: person.position })),
     subjects: (subjects ?? []).map((subject) => ({ labelPt: subject.label_pt_snapshot, labelEn: subject.label_en_snapshot, isPrimary: subject.is_primary, position: subject.position })),
     classification: { cdu: metadata?.cdu_code ?? "", cutter: metadata?.cutter_code ?? "" },
     technicalResponsibility: { name: staff?.professional_name ?? "", crb: staff?.crb ?? "" },

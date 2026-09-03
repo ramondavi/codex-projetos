@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { StudentRequestShortcut } from "@/components/student-request-shortcut";
 import { NadaConstaUpload } from "@/components/nada-consta-upload";
 import { BrowserPdfDelivery } from "@/components/browser-pdf-delivery";
 import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
@@ -12,7 +13,7 @@ export default async function StudentRequestPage({ searchParams }: { searchParam
   const supabase = await createClient();
   const { data: request } = await supabase.from("cataloging_requests").select("id, protocol, status, title, submitted_at, academic_enrollments(registration_number, academic_programs(name, level))").order("submitted_at", { ascending: false }).limit(1).maybeSingle();
   const params = await searchParams;
-  if (!request) return <main className="dashboard-main dashboard-main--narrow"><div className="page-heading"><div><p className="eyebrow">Minha solicitação</p><h1>Nenhum protocolo</h1></div></div><section className="panel"><p>Você ainda não abriu uma solicitação.</p><Link className="button button--primary" href="/painel/solicitacao/nova">Iniciar solicitação</Link></section></main>;
+  if (!request) return <main className="dashboard-main dashboard-main--narrow"><div className="page-heading"><div><p className="eyebrow">Minha solicitação</p><h1>Nenhum protocolo</h1></div></div><section className="panel"><p>Você ainda não enviou uma solicitação. Caso tenha iniciado um preenchimento neste dispositivo, poderá continuá-lo abaixo.</p><StudentRequestShortcut className="button button--primary" /></section></main>;
   const enrollment = Array.isArray(request.academic_enrollments) ? request.academic_enrollments[0] : request.academic_enrollments;
   const program = enrollment && (Array.isArray(enrollment.academic_programs) ? enrollment.academic_programs[0] : enrollment.academic_programs);
   const { data: revisionData } = await supabase.from("request_revision_rounds").select("id, round_number, returned_at, responded_at, issues:request_field_issues(field_key, field_label, justification, original_value), corrections:request_corrections(field_key, corrected_value, submitted_at)").eq("request_id", request.id).order("round_number", { ascending: false });
