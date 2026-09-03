@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { CatalogingCardPreview } from "@/components/cataloging-card-preview";
+import { AuthorBirthYearValidation } from "@/components/author-birth-year-validation";
 import { normalizeCutterCode, type CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 
 type Authority = { id: string; authorized_name: string };
 type ControlledTerm = { id: string; preferred_label_pt: string; preferred_label_en: string | null };
-type PersonEntry = { authorityId: string; role: string; transcribedName: string; authorizedName: string };
+type PersonEntry = { authorityId: string; role: string; transcribedName: string; authorizedName: string; birthYear?: number | null; birthYearValidated?: boolean };
 type TermEntry = { termId: string; labelPt: string; labelEn: string; isPrimary: boolean };
 type Suggestion = { cdu_code: string; score: number; primary_count: number; secondary_count: number; sheet_count: number };
 export type CardDetailsEntry = { depositYear: number; defenseYear: number; extentUnit: "pages" | "volumes"; extentCount: number; hasIllustrations: boolean; advisorNoteLabel: string; coadvisorNoteLabel: string };
@@ -84,7 +85,11 @@ export function AssistedCatalogingWorkspace({ requestId, editable, authorities, 
     updatePerson(index, { authorizedName, authorityId: match?.id ?? "" });
   }
   function updateTerm(index: number, patch: Partial<TermEntry>) {
-    setTerms((current) => current.map((entry, position) => position === index ? { ...entry, ...patch } : entry));
+    setTerms((current) => current.map((entry, position) => {
+      if (position !== index) return entry;
+      const isManualEnglishEdit = Boolean(entry.termId) && patch.termId === entry.termId && "labelEn" in patch && !("labelPt" in patch);
+      return isManualEnglishEdit ? entry : { ...entry, ...patch };
+    }));
   }
   function moveTerm(from: number, to: number) {
     if (from === to) return;
@@ -118,6 +123,7 @@ export function AssistedCatalogingWorkspace({ requestId, editable, authorities, 
 
     <fieldset><legend>Descrição da ficha</legend><p className="field-help">Confira estes dados na versão final e na página de rosto. A prévia e o PDF usarão exatamente estes valores.</p><div className="classification-grid"><label>Ano de depósito<input type="number" min="1900" max="9999" disabled={!editable} value={cardDetails.depositYear} onChange={(event) => setCardDetails((current) => ({ ...current, depositYear: Number(event.target.value) }))} /></label><label>Ano de defesa<input type="number" min="1900" max={cardDetails.depositYear} disabled={!editable} value={cardDetails.defenseYear} onChange={(event) => setCardDetails((current) => ({ ...current, defenseYear: Number(event.target.value) }))} /></label><label>{cardDetails.extentUnit === "volumes" ? "Quantidade de volumes" : "Quantidade de páginas"}<input type="number" min={cardDetails.extentUnit === "volumes" ? 2 : 1} max={cardDetails.extentUnit === "volumes" ? 3 : 99999} disabled={!editable} value={cardDetails.extentCount} onChange={(event) => setCardDetails((current) => ({ ...current, extentCount: Number(event.target.value) }))} /></label><label className="check"><input type="checkbox" disabled={!editable} checked={cardDetails.hasIllustrations} onChange={(event) => setCardDetails((current) => ({ ...current, hasIllustrations: event.target.checked }))} /> Possui ilustrações (`il.`)</label><label>Designação da orientação<input disabled={!editable} minLength={3} maxLength={60} value={cardDetails.advisorNoteLabel} onChange={(event) => setCardDetails((current) => ({ ...current, advisorNoteLabel: event.target.value }))} /></label><label>Designação da coorientação<input disabled={!editable} minLength={3} maxLength={60} value={cardDetails.coadvisorNoteLabel} onChange={(event) => setCardDetails((current) => ({ ...current, coadvisorNoteLabel: event.target.value }))} /></label></div></fieldset>
 
+    <AuthorBirthYearValidation requestId={requestId} year={people.find((person) => person.role === "author")?.birthYear} validated={people.find((person) => person.role === "author")?.birthYearValidated} editable={editable} onValidated={() => setPeople((current) => current.map((person) => person.role === "author" ? { ...person, birthYearValidated: true } : person))} />
     <CatalogingCardPreview snapshot={previewSnapshot} live />
 
     <div className="analysis-workspace__actions"><a className="button button--primary" href={`/painel/atendimento/${requestId}/ficha`}>Revisar ficha catalográfica</a></div>

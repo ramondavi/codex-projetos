@@ -135,10 +135,17 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 
 - Exige login, instruções/microcopy, validação clara e rascunho automático local.
 - Inclui link público multi-nuvem, Nada Consta na etapa definida e observação opcional.
-- Palavras-chave são tags individuais, em português e inglês quando aplicável.
-- Permite título, subtítulo, título em inglês, outros títulos, orientador, coorientador, cotutela, dupla titulação, título equivalente e múltiplos volumes quando aplicável.
+- Palavras-chave são tags individuais. São obrigatórios pelo menos três termos em português e pelo menos três no idioma original do trabalho; se o trabalho for originalmente em português, o segundo conjunto obrigatório é em inglês. Para trabalho originalmente em espanhol, alemão, francês ou italiano, o segundo conjunto usa esse idioma original.
+- O título equivalente é obrigatório e estruturado por idioma. Para trabalho originalmente em português, o estudante escolhe ao menos um equivalente em inglês, espanhol, alemão, francês ou italiano, nessa ordem de apresentação; equivalentes adicionais usam outro idioma estrangeiro ainda não escolhido. Para trabalho originalmente em idioma estrangeiro, o estudante identifica explicitamente o idioma original e informa obrigatoriamente o equivalente em português.
+- A abertura da solicitação é dividida em abas com avanço, retorno, acesso direto e uma tela final de revisão antes do envio. O rascunho automático informa claramente que o preenchimento pode ser interrompido e retomado. Rascunhos não enviados devem ser disponibilizados ao próprio estudante em outros dispositivos, sem gerar protocolo ou entrada na fila, e excluídos 60 dias após o último salvamento.
+- O campo do estudante é somente “Título”; o subtítulo, quando houver, é informado separadamente. Cada título equivalente reúne título e subtítulo no mesmo campo. “Outro título” é uso catalográfico excepcional e fica disponível somente na análise bibliotecária.
+- O formulário inicia com três campos obrigatórios para cada conjunto de palavras-chave; outros podem ser adicionados. Para título equivalente, inicia com um único campo: inglês para trabalho original em português e português, bloqueado para troca de idioma, para trabalho originalmente estrangeiro.
+- O estudante informa somente os nomes transcritos de orientador e coorientador. As designações de orientação são de decisão/preenchimento exclusivo do bibliotecário; a presença do coorientador já caracteriza a coorientação, sem marcação adicional.
+- A Especialização em Assistência Técnica, Habitação e Direito à Cidade (RAU+E) admite autoria compartilhada. O primeiro autor informado é a entrada principal da ficha; os demais são registrados como entradas secundárias. Os demais programas mantêm autoria única.
+- A orientação do link público deve citar Google Drive, OneDrive e serviços equivalentes e oferecer instruções curtas de compartilhamento público.
 - Permite formato/dimensão A4, A3, paisagem, livro/quadrado ou personalizado.
 - Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca, além de ano de depósito, ano de defesa/apresentação, quantidade física e escolha explícita sobre ilustrações.
+- O estudante pode informar opcionalmente seu ano de nascimento. O formulário explica que a informação diferencia homônimos na ficha, recomenda o preenchimento quando disponível e exige declaração expressa de ciência sobre seu uso na entrada catalográfica após validação profissional.
 
 ### 7.1. Níveis acadêmicos do MVP
 
@@ -167,9 +174,9 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 - Estudante fornece dados; bibliotecário valida, corrige e homologa; sistema gera a ficha com os dados homologados.
 - Parágrafos abaixo do autor seguem o padrão de recuo, incluindo referência à quarta letra do sobrenome.
-- Autor pode incluir ano de nascimento como `Sobrenome, Nome, YYYY-`; obrigatoriedade permanece pendente.
+- O ano de nascimento é opcional para o estudante. Após validação manual pelo bibliotecário no Pergamum, aparece na entrada do autor como `Sobrenome, Nome, YYYY-`; sem validação, não é exibido.
 - Usar `[recurso eletrônico]` e `p.` para versão digital conforme decisão baseada na Portaria 153/2023; usar “Traçados” com cedilha.
-- Suportar títulos equivalentes com `=`, coorientação, cotutela, dupla titulação, múltiplos volumes e notas institucionais.
+- Suportar títulos equivalentes com `=`, preservando idioma e ordem; para trabalho em língua estrangeira, o equivalente em português é obrigatório. Suportar também coorientação, cotutela, dupla titulação, múltiplos volumes e notas institucionais.
 - A ficha usa termos controlados em português definidos pelo bibliotecário.
 - O título recebe `[recurso eletrônico]` imediatamente antes de ` : subtítulo`, quando houver subtítulo, ou de ` / responsabilidade`, quando não houver.
 - A indicação de responsabilidade usa a forma transcrita do autor e é seguida de travessão, `Salvador` e ano de depósito da versão final.
@@ -187,7 +194,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 - Dados de autores, orientadores, coorientadores e demais pessoas devem ser armazenados, sanitizados e reutilizáveis para reduzir redigitação.
 - Distinguir forma transcrita (como consta na folha de rosto) e autorizada (pontos de acesso/entradas).
-- Para orientador/coorientador, a nota usa a forma transcrita e a entrada secundária, a autorizada.
+- Para orientador/coorientador, a nota usa a forma transcrita e a entrada secundária, a autorizada. As designações são preenchidas ou ajustadas exclusivamente pelo bibliotecário durante a análise.
 - As designações de orientação e coorientação são campos textuais editáveis e reproduzem fielmente a página de rosto, inclusive variantes como `co-orientador` e `coorientador`.
 - A forma autorizada parte da forma transcrita, aproxima registros existentes e apresenta opções progressivamente filtradas durante a digitação, sem retirar do bibliotecário a decisão final.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
@@ -240,6 +247,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 ### 10.2. Devolução por pendência
 
 - A conferência ocorre em tela única: cada valor informado pelo estudante aparece com ações adjacentes para validar, corrigir diretamente ou devolver especificamente ao estudante.
+- O bibliotecário valida manualmente o ano de nascimento opcional no Pergamum, consultando o registro acadêmico autorizado; o Pronto! não realiza integração, consulta automática ou armazenamento de credenciais desse sistema externo.
 - Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
@@ -335,6 +343,14 @@ O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de
 - Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto; até lá, usar textos operacionais provisórios identificados no código.
 - Priorizar SMTP institucional da biblioteca quando configuração e políticas da UFBA permitirem; serviço transacional externo gratuito é alternativa.
 
+### 16.1. Notificações autenticadas — incremento futuro
+
+- O sistema terá uma central persistente de notificações para pessoas logadas, com contador de itens não lidos e atualização em tempo real somente durante a sessão ativa.
+- Os avisos iniciais cobrem solicitação nova na fila, atendimento reatribuído, correção reenviada pelo estudante, Nada Consta enviado, liberação de ficha/Nada Consta e conta interna pendente de provisionamento.
+- E-mail permanece como canal para eventos relevantes quando a pessoa destinatária estiver fora do sistema; autosave e eventos rotineiros não geram notificação.
+- Cada aviso expõe somente o resumo operacional mínimo e fica protegido por RLS; não deve incluir CPF, documentos, comentários internos ou outros dados sensíveis além do necessário ao destinatário autorizado.
+- A central e o canal Realtime entram em incremento próprio, posterior aos refinamentos correntes.
+
 ## 17. Estatísticas, relatórios e backup
 
 - Admin: versão simples com volume por período, status, curso/programa e bibliotecário.
@@ -381,6 +397,8 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - Violeta `#3C3873` como acento no tema claro e variantes mais claras no tema escuro para preservar contraste; grafite `#1E293B`, concreto/prata `#E2E8F0`/`#F4F6F9`, linha `#CBD5E1` e vermelho `#991B1B` na paleta sugerida.
 - Interface: Inter ou Fira Sans; títulos: Cinzel ou Playfair, se adequado; técnica: JetBrains Mono ou Fira Code.
 - Temas claro, escuro e conforme sistema; preservar contraste, legibilidade, responsividade e identidade.
+- Controles internos de seleção devem ser acessíveis por teclado, com foco visível, navegação por setas, confirmação por Enter e fechamento por Escape; sua aparência deve permanecer coerente com o design system em vez de depender do menu nativo do sistema operacional.
+- Atalhos globais de produtividade para a análise bibliotecária são evolução posterior: devem ser descobríveis, não conflitar com navegador ou campos de texto e nunca executar ações críticas sem confirmação explícita.
 - Refinamento milimétrico da ficha e telas será feito depois.
 - O cabeçalho autenticado identifica o primeiro nome da pessoa logada com a saudação `Olá, [primeiro nome]`, ao lado do perfil operacional e da ação de saída.
 - Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, FAQ, ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.

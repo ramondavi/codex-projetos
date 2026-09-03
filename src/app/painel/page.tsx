@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminProvisioningAlert } from "@/components/admin-provisioning-alert";
+import { StudentRequestShortcut } from "@/components/student-request-shortcut";
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
@@ -21,12 +22,11 @@ export default async function StudentDashboardPage() {
 
       <section className="dashboard-grid">
         <article className="next-action">
-          <span className="next-action__index">01</span>
-          <div>
+          <div className="next-action__content">
             <p className="eyebrow">Sua próxima ação</p>
             <h2>{activeRequest ? activeRequest.protocol : "Inicie sua solicitação"}</h2>
             <p>{activeRequest ? `Seu trabalho “${activeRequest.title}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
-            <Link className="button button--primary" href={activeRequest ? "/painel/solicitacao" : "/painel/solicitacao/nova"}>{activeRequest ? "Acompanhar protocolo" : "Iniciar solicitação"}</Link>
+            {activeRequest ? <Link className="button button--primary" href="/painel/solicitacao">Acompanhar protocolo</Link> : <StudentRequestShortcut className="button button--primary" />}
           </div>
         </article>
         <aside className="dashboard-side">

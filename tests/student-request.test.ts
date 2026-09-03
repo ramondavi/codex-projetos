@@ -40,11 +40,12 @@ test("compacts repeatable draft fields without losing structured people", () => 
     ...emptyStudentRequestDraft,
     title: "  Um trabalho  ",
     keywordsPt: [" Arquitetura ", "", " Cidade "],
-    people: { author: "  Ana Silva ", advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+    people: { author: "  Ana Silva ", additionalAuthors: [], birthYear: "1998", birthYearAcknowledged: true, advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   });
   assert.equal(compact.title, "Um trabalho");
   assert.deepEqual(compact.keywordsPt, ["Arquitetura", "Cidade"]);
   assert.equal(compact.people.author, "Ana Silva");
+  assert.equal(compact.people.birthYear, 1998);
   assert.match(STUDENT_REQUEST_DRAFT_KEY, /^pronto:student-request-draft:/);
 });
 

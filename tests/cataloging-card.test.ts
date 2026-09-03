@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { buildCardContent, catalogedWorkFilename, normalizeCutterCode, type CatalogingCardSnapshot } from "../src/domain/cataloging-card/types.ts";
+import { buildCardContent, catalogedWorkFilename, normalizeCutterCode, prefixBeforeFourthAuthorLetter, type CatalogingCardSnapshot } from "../src/domain/cataloging-card/types.ts";
 
 const originalMigration = readFileSync("supabase/migrations/202608230004_cataloging_card.sql", "utf8");
 const institutionalMigration = readFileSync("supabase/migrations/202608260000_cataloging_card_institutional_models.sql", "utf8");
@@ -37,6 +37,11 @@ test("inicia subtítulo comum com minúscula e remove a inicial do título do Cu
   assert.match(content.titleStatement, / : estudo de caso \/ Mateus/);
   assert.equal(normalizeCutterCode("S237a"), "S237");
   assert.equal(normalizeCutterCode("S237"), "S237");
+});
+
+test("calcula a âncora abaixo da quarta letra da entrada autorizada", () => {
+  assert.equal(prefixBeforeFourthAuthorLetter("Santos, Mateus Gama."), "San");
+  assert.equal(prefixBeforeFourthAuthorLetter("D'Ávila, Joana."), "D'Áv");
 });
 
 test("nomeia o trabalho mesclado por autor, ano e tipo", () => {

@@ -174,6 +174,10 @@ export const requestPeople = pgTable("request_people", {
   role: personRole("role").notNull(),
   transcribedName: text("transcribed_name").notNull(),
   authorizedName: text("authorized_name"),
+  birthYear: integer("birth_year"),
+  birthYearAcknowledgedAt: timestamp("birth_year_acknowledged_at", { withTimezone: true }),
+  birthYearValidatedAt: timestamp("birth_year_validated_at", { withTimezone: true }),
+  birthYearValidatedBy: uuid("birth_year_validated_by").references(() => profiles.id, { onDelete: "restrict" }),
   position: integer("position").default(0).notNull(),
   ...timestamps,
 });

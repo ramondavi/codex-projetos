@@ -1,11 +1,10 @@
 import { type PDFFont, type PDFPage } from "pdf-lib";
-import { buildCardContent, type CatalogingCardSnapshot } from "./types.ts";
+import { buildCardContent, prefixBeforeFourthAuthorLetter, type CatalogingCardSnapshot } from "./types.ts";
 
 export const A4_PAGE: [number, number] = [595.28, 841.89];
 const CARD_LEFT = 126.25;
 const CARD_RIGHT = 497.75;
 const BODY_LEFT = 163.1;
-const FIRST_LINE_LEFT = 182.2;
 const FONT_SIZE = 10;
 const LINE_HEIGHT = 12.6;
 
@@ -20,12 +19,13 @@ export function drawCatalogingCard(page: PDFPage, snapshot: CatalogingCardSnapsh
   page.drawLine({ start: { x: CARD_LEFT, y: headerTop - 52.1 }, end: { x: CARD_RIGHT, y: headerTop - 52.1 }, thickness: 1.4 });
   page.drawText(snapshot.classification.cutter, { x: 127.7, y: headerTop - 75, size: FONT_SIZE, font: regular });
   let y = headerTop - 87.6;
+  const hangingOffset = regular.widthOfTextAtSize(prefixBeforeFourthAuthorLetter(content.authorizedAuthor), FONT_SIZE);
   y = drawWrapped(page, content.authorizedAuthor, BODY_LEFT, y, CARD_RIGHT - BODY_LEFT, FONT_SIZE, regular, LINE_HEIGHT);
-  y = drawHanging(page, content.titleStatement, y, regular);
-  if (content.physicalDescription) y = drawHanging(page, content.physicalDescription, y, regular);
-  if (content.academicNote) y = drawHanging(page, content.academicNote, y - LINE_HEIGHT, regular);
-  for (const note of content.notes) y = drawHanging(page, note, y, regular);
-  y = drawHanging(page, content.tracings, y - LINE_HEIGHT, regular);
+  y = drawHanging(page, content.titleStatement, y, regular, hangingOffset);
+  if (content.physicalDescription) y = drawHanging(page, content.physicalDescription, y, regular, hangingOffset);
+  if (content.academicNote) y = drawHanging(page, content.academicNote, y - LINE_HEIGHT, regular, hangingOffset);
+  for (const note of content.notes) y = drawHanging(page, note, y, regular, hangingOffset);
+  y = drawHanging(page, content.tracings, y - LINE_HEIGHT, regular, hangingOffset);
   const bottomLine = 72;
   const cduText = `CDU: ${snapshot.classification.cdu}`;
   page.drawText(cduText, { x: CARD_RIGHT - regular.widthOfTextAtSize(cduText, FONT_SIZE), y: bottomLine + 24, size: FONT_SIZE, font: regular });
@@ -48,9 +48,10 @@ function wrap(text: string, firstWidth: number, continuationWidth: number, size:
   return lines;
 }
 
-function drawHanging(page: PDFPage, text: string, y: number, font: PDFFont) {
-  const lines = wrap(text, CARD_RIGHT - FIRST_LINE_LEFT, CARD_RIGHT - BODY_LEFT, FONT_SIZE, font);
-  lines.forEach((line, index) => page.drawText(line, { x: index === 0 ? FIRST_LINE_LEFT : BODY_LEFT, y: y - index * LINE_HEIGHT, size: FONT_SIZE, font }));
+function drawHanging(page: PDFPage, text: string, y: number, font: PDFFont, offset: number) {
+  const firstLineLeft = BODY_LEFT + offset;
+  const lines = wrap(text, CARD_RIGHT - firstLineLeft, CARD_RIGHT - BODY_LEFT, FONT_SIZE, font);
+  lines.forEach((line, index) => page.drawText(line, { x: index === 0 ? firstLineLeft : BODY_LEFT, y: y - index * LINE_HEIGHT, size: FONT_SIZE, font }));
   return y - lines.length * LINE_HEIGHT;
 }
 

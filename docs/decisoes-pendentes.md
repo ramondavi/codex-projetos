@@ -2,10 +2,6 @@
 
 Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda não resolveu. Nenhuma opção abaixo deve ser inferida durante o desenvolvimento. Ao resolver uma pendência, atualizar também `docs/documento-mestre.md`.
 
-## Catalogação e ficha
-
-- **Ano de nascimento:** decidir obrigatoriedade e regra de exibição do ano do autor.
-
 ## Vocabulário, CDU, Cutter e MARC 21
 
 - **CDU:** após uso piloto, avaliar se a fórmula simples `2:1` precisa de curadoria ou refinamento, mantendo a ausência de IA.
@@ -30,6 +26,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 - Definir o tratamento/configuração do e-mail de pendência para a coordenação no MVP.
 - Cadastrar os e-mails oficiais das coordenações por curso/programa.
 - Confirmar a viabilidade e as políticas do SMTP institucional da biblioteca; se inviável, escolher o serviço transacional externo gratuito.
+- Definir retenção, preferências e a regra de arquivamento/leitura da central de notificações autenticadas, sem expor dados sensíveis.
 
 ## Atendimento e operação
 
@@ -39,6 +36,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 - Detalhar telas e componentes do MVP dentro do design system consolidado.
 - Escolher entre as alternativas tipográficas sugeridas quando necessário, sem descaracterizar a identidade da BIB/FA.
+- Definir a lista, a descoberta e as combinações de atalhos globais para acelerar a análise bibliotecária, respeitando a regra já aprovada de não executar ações críticas sem confirmação explícita.
 
 ## Lançamento
 

@@ -6,9 +6,11 @@ export type StudentRequestDraft = {
   title: string;
   subtitle: string;
   equivalentTitle: string;
+  originalLanguage: "pt" | "en" | "es" | "de" | "fr" | "it";
+  equivalentTitles: { language: "pt" | "en" | "es" | "de" | "fr" | "it"; title: string }[];
   otherTitles: string[];
   publicWorkUrl: string;
-  people: { author: string; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
+  people: { author: string; additionalAuthors: string[]; birthYear: string; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
   keywordsPt: string[];
   keywordsEn: string[];
   specialCases: string[];
@@ -30,11 +32,13 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   title: "",
   subtitle: "",
   equivalentTitle: "",
-  otherTitles: [""],
+  originalLanguage: "pt",
+  equivalentTitles: [{ language: "en", title: "" }],
+  otherTitles: [],
   publicWorkUrl: "",
-  people: { author: "", advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
-  keywordsPt: [""],
-  keywordsEn: [""],
+  people: { author: "", additionalAuthors: [], birthYear: "", birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+  keywordsPt: ["", "", ""],
+  keywordsEn: ["", "", ""],
   specialCases: [],
   volumeInformation: "",
   depositYear: String(new Date().getFullYear()),
@@ -56,16 +60,20 @@ export function compactDraft(draft: StudentRequestDraft) {
     title: draft.title.trim(),
     subtitle: draft.subtitle.trim(),
     equivalentTitle: draft.equivalentTitle.trim(),
+    equivalentTitles: draft.equivalentTitles.map((item) => ({ ...item, title: item.title.trim() })).filter((item) => item.title),
     publicWorkUrl: draft.publicWorkUrl.trim(),
     otherTitles: compact(draft.otherTitles),
     keywordsPt: compact(draft.keywordsPt),
     keywordsEn: compact(draft.keywordsEn),
     people: {
       author: draft.people.author.trim(),
+      additionalAuthors: compact(draft.people.additionalAuthors),
+      birthYear: draft.people.birthYear ? Number(draft.people.birthYear) : null,
+      birthYearAcknowledged: draft.people.birthYear ? draft.people.birthYearAcknowledged : false,
       advisor: draft.people.advisor.trim(),
-      advisorNoteLabel: draft.people.advisorNoteLabel,
+      advisorNoteLabel: "Orientador",
       coadvisor: draft.people.coadvisor.trim(),
-      coadvisorNoteLabel: draft.people.coadvisor ? draft.people.coadvisorNoteLabel : "",
+      coadvisorNoteLabel: draft.people.coadvisor ? "Coorientador" : "",
     },
     depositYear: Number(draft.depositYear),
     defenseYear: Number(draft.defenseYear),
