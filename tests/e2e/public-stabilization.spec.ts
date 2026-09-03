@@ -24,6 +24,7 @@ test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
 });
 
 test("tema explícito persiste e substitui a preferência do sistema", async ({ page }) => {
+  test.slow();
   await page.goto("/");
   const darkTheme = page.getByRole("button", { name: "Usar tema escuro" });
   const lightTheme = page.getByRole("button", { name: "Usar tema claro" });

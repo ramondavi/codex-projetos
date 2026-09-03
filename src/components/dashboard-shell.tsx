@@ -9,7 +9,7 @@ import { DashboardBreadcrumbs } from "./breadcrumbs";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
 
-export function DashboardShell({ children, fullName, role }: { children: React.ReactNode; fullName: string; role: string }) {
+export function DashboardShell({ children, fullName, role, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
   const isStaff = role === "cataloger" || role === "administrator";
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ export function DashboardShell({ children, fullName, role }: { children: React.R
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">
-          <div><span className="status-dot" /> Atendimento normal</div>
+          <div><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>
           <div className="dashboard-header__actions">
             <ThemeSwitcher />
             <div className="user-identity"><span className="user-greeting">Olá, {firstName}</span><span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span></div>

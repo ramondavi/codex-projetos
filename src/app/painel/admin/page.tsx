@@ -15,7 +15,7 @@ export default async function AdminPage() {
     supabase.from("issue_templates").select("id,code,label,message,active,position").order("position"),
     supabase.from("audit_logs").select("id,action,entity_type,entity_id,metadata,occurred_at,profiles:actor_id(full_name)").order("occurred_at", { ascending: false }).limit(200),
     supabase.from("nada_consta_documents").select("id,request_id,object_path,purge_after,cataloging_requests(protocol)").lte("purge_after", new Date().toISOString()).not("object_path", "is", null).order("purge_after"),
-    supabase.from("frequently_asked_questions").select("id,question,answer,position,active").order("position"),
+    supabase.from("frequently_asked_questions").select("id,question,answer,position,active,featured_position").order("position"),
   ]);
   return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} faqs={faqs.data ?? []} /></main>;
 }
