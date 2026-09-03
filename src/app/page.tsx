@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Geometry } from "@/components/geometry";
 import { Notice } from "@/components/notice";
+import { ClarityHeading } from "@/components/clarity-heading";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,6 +14,9 @@ const steps = [
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+  const { data: faqs } = await supabase.from("frequently_asked_questions").select("id,question,answer").eq("active", true).not("featured_position", "is", null).order("featured_position");
+  const now = new Date().toISOString();
+  const { data: announcements } = await supabase.from("library_announcements").select("title,message,type").eq("active", true).neq("type", "normal").lte("starts_at", now).or(`ends_at.is.null,ends_at.gte.${now}`).order("starts_at", { ascending: false }).limit(1);
   return (
     <>
       <SiteHeader />
@@ -27,7 +31,7 @@ export default async function HomePage() {
               {!user && <div className="actions"><Link className="button button--primary" href="/entrar">Entrar no Pronto!</Link><Link className="button button--secondary" href="/cadastro">Criar conta</Link></div>}
             </div>
             <div className="hero__aside">
-              <Notice />
+              <Notice announcement={announcements?.[0]} />
               <div className="requirements">
                 <p className="eyebrow">Antes de começar</p>
                 <h2>Seu trabalho precisa estar concluído.</h2>
@@ -44,7 +48,7 @@ export default async function HomePage() {
         <section id="como-funciona" className="section section--muted">
           <div className="container">
             <p className="eyebrow">Como funciona</p>
-            <h2 className="section__title">Menos repetição. Mais clareza.</h2>
+            <ClarityHeading />
             <div className="steps">
               {steps.map(([icon, title, description]) => (
                 <article className="step" key={icon}>
@@ -54,6 +58,17 @@ export default async function HomePage() {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="section home-faq">
+          <div className="container">
+            <p className="eyebrow">Dúvidas frequentes</p>
+            <h2 className="section__title section__title--single-line">Respostas antes de começar.</h2>
+            <div className="home-faq__list">
+              {(faqs ?? []).map((faq) => <article key={faq.id}><h3>{faq.question}</h3><p>{faq.answer}</p></article>)}
+            </div>
+            <Link className="button button--secondary" href="/perguntas-frequentes">Outras dúvidas</Link>
           </div>
         </section>
       </main>
