@@ -18,7 +18,8 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
     if (targetPath === "/painel/fila" && pathname.startsWith("/painel/atendimento/")) return targetQuery ? undefined : "is-active";
     if (pathname !== targetPath && !(targetPath !== "/painel" && pathname.startsWith(`${targetPath}/`))) return undefined;
     if (!targetQuery) return targetPath === "/painel/fila" && searchParams.get("responsavel") === "me" ? undefined : "is-active";
-    return new URLSearchParams(targetQuery).get("responsavel") === searchParams.get("responsavel") ? "is-active" : undefined;
+    const query = new URLSearchParams(targetQuery);
+    return [...query.entries()].every(([key, value]) => searchParams.get(key) === value) ? "is-active" : undefined;
   };
   const firstName = fullName.trim().split(/\s+/)[0] || fullName;
   return (
@@ -29,7 +30,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel")} href="/painel">Visão geral</Link>
           <Link className={activeClass("/painel/fila")} href="/painel/fila">Fila de solicitações</Link>
           <Link className={activeClass("/painel/fila?responsavel=me")} href="/painel/fila?responsavel=me">Meus atendimentos</Link>
-          {role === "administrator" && <Link className={activeClass("/painel/admin")} href="/painel/admin">Administração</Link>}
+          {role === "administrator" && <div className="dashboard-nav__admin"><Link className={activeClass("/painel/admin")} href="/painel/admin?area=operacao">Administração</Link>{pathname.startsWith("/painel/admin") && <div><Link className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">Operação</Link><Link className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">Conteúdo</Link><Link className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">Controle</Link></div>}</div>}
           <Link className={activeClass("/painel/conta")} href="/painel/conta">Minha conta</Link>
         </nav> : <nav aria-label="Área do estudante">
           <Link className={activeClass("/painel")} href="/painel">Visão geral</Link>

@@ -12,7 +12,7 @@ test("a análise mostra data do salvamento e oferece conclusão e restauração 
   const component = await readFile("src/components/request-analysis-workspace.tsx", "utf8");
   assert.match(component, /Alterações salvas há/);
   assert.match(component, /date\.getDate\(\)/);
-  assert.match(component, /Concluir revisão e prosseguir/);
+  assert.match(component, /Concluir revisão de metadados/);
   assert.match(component, /reset_direct_request_corrections/);
   assert.match(component, /savedText\.current/);
 });

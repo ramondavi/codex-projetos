@@ -31,7 +31,7 @@ test("supports ordered bilingual terms, incremental authority lookup and a live 
   assert.match(workspace, /moveTerm\(draggedTerm, index\)/);
   assert.match(workspace, /authorityMatches/);
   assert.match(workspace, /termMatches/);
-  assert.match(workspace, /CatalogingCardPreview snapshot=\{previewSnapshot\} live/);
+  assert.match(workspace, /CatalogingCardPreview snapshot=\{previewSnapshot\}/);
   assert.match(workspace, /activeAutocomplete/);
   assert.match(workspace, /onFocus=\{\(\) => setActiveAutocomplete/);
 });

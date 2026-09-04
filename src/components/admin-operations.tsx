@@ -29,6 +29,8 @@ type Announcement = {
   starts_at: string;
   ends_at: string | null;
   active: boolean;
+  calendar_source?: "manual" | "federal_mgi";
+  source_reference?: string | null;
 };
 type Template = {
   id: string;
@@ -91,6 +93,7 @@ const actionLabels: Record<string, string> = {
 };
 
 export function AdminOperations(props: {
+  area: "operacao" | "conteudo" | "controle";
   users: User[];
   staffCandidates: StaffCandidate[];
   programs: Program[];
@@ -113,7 +116,9 @@ export function AdminOperations(props: {
   const [announcementSearch, setAnnouncementSearch] = useState("");
   const [announcementType, setAnnouncementType] = useState("all");
   const [announcementActivity, setAnnouncementActivity] = useState("all");
-  const [activeTab, setActiveTab] = useState("users");
+  const [calendarDate, setCalendarDate] = useState(() => new Date());
+  const [selectedCalendarDay, setSelectedCalendarDay] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState(props.area === "conteudo" ? "service" : props.area === "controle" ? "stats" : "users");
   const [userType, setUserType] = useState("all");
   const [userStatus, setUserStatus] = useState("all");
   const supabase = createClient();
@@ -285,7 +290,7 @@ export function AdminOperations(props: {
     setBusy("announcement");
     setMessage("");
     const { data: id, error } = await supabase.rpc("admin_save_announcement", {
-      announcement_id: editingAnnouncement?.id ?? null,
+      announcement_id: editingAnnouncement?.id || null,
       announcement_type: type,
       announcement_title: title,
       announcement_message: messageText,
@@ -340,6 +345,26 @@ export function AdminOperations(props: {
       title: `${editingAnnouncement.title} (cópia)`,
       active: false,
     });
+  }
+  const calendarYear = calendarDate.getFullYear();
+  const calendarMonth = calendarDate.getMonth();
+  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  const formatNumericDate = (value: string) => {
+    const date = new Date(value);
+    return `${String(date.getUTCDate()).padStart(2, "0")}/${String(date.getUTCMonth() + 1).padStart(2, "0")}/${date.getUTCFullYear()}`;
+  };
+  const firstWeekday = new Date(calendarYear, calendarMonth, 1).getDay();
+  const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+  const eventsForDay = (day: number) => announcements.filter((item) => {
+    const date = new Date(item.starts_at);
+    return date.getUTCFullYear() === calendarYear && date.getUTCMonth() === calendarMonth && date.getUTCDate() === day;
+  });
+  function addClosure(day: number) {
+    setSelectedCalendarDay(day);
+    const existing = eventsForDay(day)[0];
+    if (existing) { setEditingAnnouncement(existing); return; }
+    const value = `${calendarYear}-${String(calendarMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}T08:00`;
+    setEditingAnnouncement({ id: "" as string, type: "other", title: "", message: "Biblioteca sem funcionamento.", starts_at: value, ends_at: null, active: true, calendar_source: "manual" });
   }
   async function saveTemplate(template: Template, form: FormData) {
     const label = String(form.get("label"));
@@ -529,6 +554,10 @@ export function AdminOperations(props: {
           : user.role !== "student")) &&
       (userStatus === "all" || user.status === userStatus),
   );
+  const adminTabs: Record<typeof props.area, [string, string][]> = { operacao: [["users", "Equipe e acessos"], ["programs", "Programas e SLA"], ["library", "Calendário e mural"]], conteudo: [["service", "Pendências"], ["faq", "Ajuda e FAQ"]], controle: [["stats", "Indicadores"], ["retention", "Arquivos e retenção"], ["audit", "Auditoria"]] };
+  useEffect(() => {
+    setActiveTab(props.area === "conteudo" ? "service" : props.area === "controle" ? "stats" : "users");
+  }, [props.area]);
   return (
     <div className="admin-operations" data-active-tab={activeTab}>
       {message && (
@@ -536,21 +565,8 @@ export function AdminOperations(props: {
           {message}
         </p>
       )}
-      <div
-        className="admin-tabs"
-        role="tablist"
-        aria-label="Seções da Administração"
-      >
-        {[
-          ["users", "Usuários"],
-          ["programs", "Programas"],
-          ["library", "Biblioteca"],
-          ["service", "Atendimento"],
-          ["faq", "Perguntas frequentes"],
-          ["stats", "Indicadores"],
-          ["retention", "Retenção"],
-          ["audit", "Auditoria"],
-        ].map(([id, label]) => (
+      <div className="admin-tabs" role="tablist" aria-label="Seções da área selecionada">
+          {adminTabs[props.area].map(([id, label]) => (
           <button
             type="button"
             role="tab"
@@ -561,11 +577,11 @@ export function AdminOperations(props: {
           >
             {label}
           </button>
-        ))}
+          ))}
       </div>
       <section className="panel admin-section">
         <p className="eyebrow">Usuários</p>
-        <h2>Contas e perfis</h2>
+        <h2>Equipe e acessos</h2>
         <p>
           Bloqueio e inativação interrompem a autorização imediatamente. Para
           incluir alguém na equipe, crie e confirme primeiro a conta
@@ -658,7 +674,7 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Programas</p>
-        <h2>Coordenações, Magic Link, guia e SLA</h2>
+        <h2>Programas, coordenações e SLA</h2>
         <div className="admin-list">
           {props.programs.map((p) => {
             const c = p.coordination_contacts.find((x) => x.active);
@@ -723,11 +739,36 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Biblioteca</p>
-        <h2>Mural, status e calendário</h2>
+        <h2>Calendário e comunicados da biblioteca</h2>
         <p>
-          Cadastre “Feriado” ou “Ponto facultativo” para que a data apareça
-          automaticamente no painel dos estudantes durante o mês correspondente.
+          Feriados e pontos facultativos federais entram no cálculo de dias úteis. Clique em uma data para registrar manualmente um dia sem funcionamento da biblioteca.
         </p>
+        <div className="operational-calendar" aria-label="Calendário operacional">
+          <div className="operational-calendar__header">
+            <button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth - 1, 1))}>Mês anterior</button>
+            <strong>{monthNames[calendarMonth]} {calendarYear}</strong>
+            <button type="button" onClick={() => setCalendarDate(new Date(calendarYear, calendarMonth + 1, 1))}>Próximo mês</button>
+          </div>
+          <div className="operational-calendar__legend" aria-label="Legenda do calendário">
+            <span><i className="is-holiday" />Feriado federal</span>
+            <span><i className="is-optional" />Ponto facultativo federal</span>
+            <span><i className="is-manual" />Ocorrência da biblioteca</span>
+            <span><i className="is-weekend" />Fim de semana</span>
+          </div>
+          <div className="operational-calendar__week">{["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map((day) => <span key={day}>{day}</span>)}</div>
+          <div className="operational-calendar__days">
+            {Array.from({ length: firstWeekday }, (_, index) => <span key={`blank-${index}`} />)}
+            {Array.from({ length: daysInMonth }, (_, index) => {
+              const day = index + 1;
+              const events = eventsForDay(day);
+              const weekend = [0, 6].includes(new Date(calendarYear, calendarMonth, day).getDay());
+              const source = events[0]?.calendar_source === "federal_mgi" ? "federal" : "manual";
+              const type = events[0]?.type === "holiday" ? "Feriado" : events[0]?.type === "optional_day" ? "Ponto facultativo" : "Biblioteca";
+              return <button type="button" key={day} aria-pressed={selectedCalendarDay === day} className={`${weekend ? "is-weekend " : ""}${events.length ? `has-event is-${source}` : ""}${selectedCalendarDay === day ? " is-selected" : ""}`} onClick={() => addClosure(day)}><b>{day}</b>{events.slice(0, 1).map((event) => <span className="calendar-event" key={event.id}><em>{type}</em><small>{event.title}</small></span>)}</button>;
+            })}
+            {Array.from({ length: (7 - ((firstWeekday + daysInMonth) % 7)) % 7 }, (_, index) => <span key={`after-${index}`} />)}
+          </div>
+        </div>
         <form
           className="admin-grid"
           key={editingAnnouncement?.id ?? "new"}
@@ -850,6 +891,8 @@ export function AdminOperations(props: {
             </select>
           </label>
         </div>
+        <div className="calendar-records" aria-label="Ocorrências cadastradas">
+          <div className="calendar-records__header" aria-hidden="true"><span>Data</span><span>Ocorrência</span><span>Tipo e origem</span><span>Situação</span><span>Ações</span></div>
         {announcements
           .filter(
             (a) =>
@@ -860,13 +903,14 @@ export function AdminOperations(props: {
                 .toLowerCase()
                 .includes(announcementSearch.toLowerCase()),
           )
-          .map((a) => (
-            <article className="admin-summary" key={a.id}>
-              <strong>{a.title}</strong>
-              <span>
-                {a.active ? "Ativo" : "Inativo"} · {a.type}
-              </span>
-              <p>{a.message}</p>
+          .map((a) => {
+            const typeLabel = a.type === "holiday" ? "Feriado" : a.type === "optional_day" ? "Ponto facultativo" : a.type === "recess" ? "Recesso" : a.type === "strike" ? "Paralisação/greve" : a.type === "normal" ? "Aviso normal" : "Ocorrência local";
+            const sourceLabel = a.calendar_source === "federal_mgi" ? "Calendário federal (MGI)" : "Cadastro manual da biblioteca";
+            return <article className="calendar-record" key={a.id}>
+              <time dateTime={a.starts_at}>{formatNumericDate(a.starts_at)}</time>
+              <div><strong>{a.title}</strong><p>{a.message}</p></div>
+              <div><span className={`calendar-badge is-${a.type}`}>{typeLabel}</span><small>{sourceLabel}</small></div>
+              <span className={`calendar-status ${a.active ? "is-active" : ""}`}>{a.active ? "Ativo" : "Inativo"}</span>
               <div className="actions">
                 <button
                   type="button"
@@ -884,12 +928,14 @@ export function AdminOperations(props: {
                   Excluir
                 </button>
               </div>
-            </article>
-          ))}
+            </article>;
+          })}
+          {!announcements.some((a) => (announcementType === "all" || a.type === announcementType) && (announcementActivity === "all" || (announcementActivity === "active") === a.active) && `${a.title} ${a.message}`.toLowerCase().includes(announcementSearch.toLowerCase())) && <p className="calendar-records__empty">Nenhuma ocorrência corresponde aos filtros.</p>}
+        </div>
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Atendimento</p>
-        <h2>Templates básicos de pendência</h2>
+        <h2>Pendências e respostas padrão</h2>
         {props.templates.map((t) => (
           <form
             className="admin-row admin-row--template"
@@ -921,7 +967,7 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Indicadores</p>
-        <h2>Estatísticas e exportação</h2>
+        <h2>Indicadores e exportação</h2>
         <form className="admin-grid" action={loadStats}>
           <label>
             De
@@ -975,7 +1021,7 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Retenção</p>
-        <h2>Expurgo do Nada Consta</h2>
+        <h2>Arquivos e retenção</h2>
         <p>
           Somente documentos cujo prazo de 60 dias venceu aparecem aqui. A
           remoção apaga o arquivo e preserva o registro textual da validação.
@@ -1002,7 +1048,7 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Auditoria</p>
-        <h2>Logs operacionais e administrativos</h2>
+        <h2>Auditoria operacional</h2>
         <div className="audit-table">
           {props.logs.map((l) => (
             <article key={l.id}>
@@ -1018,7 +1064,7 @@ export function AdminOperations(props: {
       </section>
       <section className="panel admin-section">
         <p className="eyebrow">Conteúdo público</p>
-        <h2>Perguntas frequentes</h2>
+        <h2>Ajuda e perguntas frequentes</h2>
         <p>
           Edite as respostas públicas, desative itens temporariamente ou
           acrescente novas perguntas.
