@@ -4,6 +4,7 @@ import { Notice } from "@/components/notice";
 import { ClarityHeading } from "@/components/clarity-heading";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
+import { isCurrentServiceAnnouncement } from "@/lib/service-announcements";
 
 const steps = [
   ["pencil", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
@@ -16,7 +17,8 @@ export default async function HomePage() {
   const { data: { user } } = await supabase.auth.getUser();
   const { data: faqs } = await supabase.from("frequently_asked_questions").select("id,question,answer").eq("active", true).not("featured_position", "is", null).order("featured_position");
   const now = new Date().toISOString();
-  const { data: announcements } = await supabase.from("library_announcements").select("title,message,type").eq("active", true).neq("type", "normal").lte("starts_at", now).or(`ends_at.is.null,ends_at.gte.${now}`).order("starts_at", { ascending: false }).limit(1);
+  const { data: announcements } = await supabase.from("library_announcements").select("title,message,type,starts_at,ends_at").eq("active", true).neq("type", "normal").lte("starts_at", now).or(`ends_at.is.null,ends_at.gte.${now}`).order("starts_at", { ascending: false });
+  const currentAnnouncement = announcements?.find((announcement) => isCurrentServiceAnnouncement(announcement, now));
   return (
     <>
       <SiteHeader />
@@ -31,7 +33,7 @@ export default async function HomePage() {
               {!user && <div className="actions"><Link className="button button--primary" href="/entrar">Entrar no Pronto!</Link><Link className="button button--secondary" href="/cadastro">Criar conta</Link></div>}
             </div>
             <div className="hero__aside">
-              <Notice announcement={announcements?.[0]} />
+              <Notice announcement={currentAnnouncement} />
               <div className="requirements">
                 <p className="eyebrow">Antes de começar</p>
                 <h2>Seu trabalho precisa estar concluído.</h2>
