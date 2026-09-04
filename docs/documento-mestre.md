@@ -227,8 +227,8 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 ### 9.3. Assistente Cutter-Sanborn/CAT
 
-- Campo manual com dropdown de sugestões por aproximação; nunca atribuir automaticamente.
-- Usar tabela estática local. O repositório público indicado para avaliação da listagem é `veralvx/cutter-sanborn-table`.
+- Campo manual com dropdown de sugestões progressivas pelo sobrenome da entrada autorizada do autor; nunca atribuir automaticamente.
+- Usar tabela estática local, incorporada do repositório público `veralvx/cutter-sanborn-table` sob licença MIT.
 - A decisão final é sempre do bibliotecário.
 
 ### 9.4. MARC 21
@@ -431,7 +431,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 ### 21.2. Pode ficar para Fase 2
 
 - QR Code, página pública por hash/UUID e ligação/redirecionamento com DSpace;
-- exportar/copiar MARC 21; Cutter completo; CDU refinado/explicável; vocabulário e merge avançados;
+- exportar/copiar MARC 21; CDU refinado/explicável; vocabulário e merge avançados;
 - mapeamento completo do DSpace; Magic Link avançado; relatórios completos; layout milimétrico;
 - gestão avançada de templates e estudo de SHA-256 client-side.
 

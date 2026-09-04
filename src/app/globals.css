@@ -830,6 +830,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .cataloging-autocomplete { position: absolute; z-index: 5; top: calc(100% + 4px); right: 0; left: 0; display: grid; max-height: 210px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); box-shadow: var(--shadow); }
 .cataloging-autocomplete button { padding: 9px 11px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); text-align: left; cursor: pointer; }
 .cataloging-autocomplete button:hover, .cataloging-autocomplete button:focus-visible { background: var(--surface-muted); }
+.cutter-suggestions small { display: block; padding: 8px 11px 4px; color: var(--text-muted); font-size: .68rem; font-weight: 700; }.cutter-suggestions button { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }.cutter-suggestions button strong { color: var(--institutional); }.cutter-suggestions button span { color: var(--text-muted); font-size: .7rem; }
 .radio-choice { align-self: center; grid-template-columns: auto 1fr !important; align-items: center; }
 .text-action { padding: 12px 4px; border: 0; background: transparent; color: var(--danger); text-decoration: underline; cursor: pointer; }
 .classification-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }

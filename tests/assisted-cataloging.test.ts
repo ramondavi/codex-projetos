@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { findCutterSuggestions } from "../src/domain/cutter-suggestions.ts";
 
 const migration = readFileSync("supabase/migrations/202608230003_assisted_cataloging.sql", "utf8");
 const reviewMigration = readFileSync("supabase/migrations/202608260001_cataloging_review_workflow.sql", "utf8");
@@ -41,6 +42,13 @@ test("normalizes Cutter and audits direct staff corrections in a new migration",
   assert.match(reviewMigration, /staff_correct_request_field/);
   assert.match(reviewMigration, /request_field_corrected_by_staff/);
   assert.match(reviewMigration, /assigned_to = auth\.uid\(\).*status = 'in_review'/);
+});
+
+test("sugere Cutter progressivamente pelo sobrenome autorizado, sem preenchimento automático", () => {
+  const suggestions = findCutterSuggestions({ San: 123, Sant: 124, Silva: 567 }, "Santos, Maria");
+  assert.deepEqual(suggestions.map((item) => item.code), ["S124", "S123"]);
+  assert.match(workspace, /findCutterSuggestions/);
+  assert.match(workspace, /setCutterCode\(suggestion\.code\)/);
 });
 
 test("scores CDU history with primary weight two and secondary weight one", () => {
