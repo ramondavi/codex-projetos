@@ -1029,3 +1029,4 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 /* Atalho de teclado visível somente quando recebe foco. */
 .skip-link { position: fixed; z-index: 1000; top: 12px; left: 12px; padding: 10px 14px; transform: translateY(-180%); background: var(--text); color: var(--bg); font-weight: 800; }
 .skip-link:focus { transform: translateY(0); }
+.protocol-copy-button { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; cursor: copy; text-decoration: underline dotted; }
