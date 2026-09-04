@@ -55,7 +55,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation }:
     <section className="request-analysis-section">{documentation}</section>
     <section className="request-analysis-section request-analysis-section--review"><div id="request-cataloging-preview-end" /><div id="request-analysis-actions-end" /></section>
     <div className="form-navigation request-analysis-sections__navigation">
-      <button className="button button--secondary button--small" type="button" disabled={isMetadata} onClick={() => setActive(steps[activeStep - 1].id)}>← Voltar</button>
+      <button className="button button--secondary button--small" type="button" disabled={isMetadata} onClick={() => setActive(steps[activeStep - 1].id)}>{isMetadata ? "← Voltar" : `← Voltar: ${steps[activeStep - 1].label}`}</button>
       {activeStep < steps.length - 1 && <button className="button button--secondary button--small" type="button" onClick={() => setActive(steps[activeStep + 1].id)}>Próxima: {steps[activeStep + 1].label} →</button>}
     </div>
   </div>;

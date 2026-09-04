@@ -49,6 +49,8 @@ test("sugere Cutter progressivamente pelo sobrenome autorizado, sem preenchiment
   assert.deepEqual(suggestions.map((item) => item.code), ["S124", "S123"]);
   assert.match(workspace, /findCutterSuggestions/);
   assert.match(workspace, /setCutterCode\(suggestion\.code\)/);
+  assert.match(workspace, /cutterSuggestionsOpen/);
+  assert.match(workspace, /setCutterSuggestionsOpen\(false\)/);
 });
 
 test("scores CDU history with primary weight two and secondary weight one", () => {
