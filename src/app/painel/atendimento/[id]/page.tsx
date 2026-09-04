@@ -5,7 +5,8 @@ import { RequestAnalysisSections } from "@/components/request-analysis-sections"
 import { AssistedCatalogingWorkspace } from "@/components/assisted-cataloging-workspace";
 import { NadaConstaReview } from "@/components/nada-consta-review";
 import { ProtocolClosure } from "@/components/protocol-closure";
-import { RequestTimeline, type TimelineEvent } from "@/components/request-timeline";`r`nimport { ProtocolCopyButton } from "@/components/protocol-copy-button";
+import { RequestTimeline, type TimelineEvent } from "@/components/request-timeline";
+import { ProtocolCopyButton } from "@/components/protocol-copy-button";
 import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 import { createClient } from "@/lib/supabase/server";
 
