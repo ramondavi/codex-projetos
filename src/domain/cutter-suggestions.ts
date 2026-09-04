@@ -14,9 +14,9 @@ export function findCutterSuggestions(table: Record<string, number>, authorizedN
   return Object.entries(table)
     .filter(([prefix]) => {
       const normalizedPrefix = normalize(prefix);
-      return normalizedPrefix.startsWith(surname) || surname.startsWith(normalizedPrefix);
+      return normalizedPrefix[0] === surname[0] && normalizedPrefix.localeCompare(surname) <= 0;
     })
-    .sort(([first], [second]) => normalize(second).length - normalize(first).length || first.localeCompare(second))
+    .sort(([first], [second]) => normalize(second).localeCompare(normalize(first)))
     .slice(0, 6)
     .map(([prefix, number]) => ({ prefix, code: `${prefix[0]?.toLocaleUpperCase("pt-BR")}${number}` }));
 }

@@ -47,6 +47,8 @@ test("normalizes Cutter and audits direct staff corrections in a new migration",
 test("sugere Cutter progressivamente pelo sobrenome autorizado, sem preenchimento automático", () => {
   const suggestions = findCutterSuggestions({ San: 123, Sant: 124, Silva: 567 }, "Santos, Maria");
   assert.deepEqual(suggestions.map((item) => item.code), ["S124", "S123"]);
+  const santana = findCutterSuggestions({ Sant: 231, Santag: 232, Santar: 233 }, "Santana, Joana");
+  assert.equal(santana[0]?.code, "S232");
   assert.match(workspace, /findCutterSuggestions/);
   assert.match(workspace, /setCutterCode\(suggestion\.code\)/);
   assert.match(workspace, /cutterSuggestionsOpen/);
