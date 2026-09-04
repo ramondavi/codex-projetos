@@ -224,6 +224,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Explicar a sugestão, por exemplo: “usado em X fichas com este termo”.
 - Versão simples no MVP se possível; ranking refinado e curadoria termo-CDU depois.
 - No MVP, a pontuação é `2 × fichas com o termo principal + 1 × fichas com cada termo secundário`, considerando somente fichas homologadas ou concluídas e contando cada ficha uma vez por componente. Exibir até três sugestões, com as contagens separadas, sem preenchimento automático.
+- Cada código CDU pode manter uma descrição técnica, memória de composição, auxiliares empregados, códigos relacionados, fonte consultada e observação. O catalogador registra um código inédito como pendente; o administrador revisa, edita e valida o repertório. Em novo atendimento, o sistema reutiliza o registro existente, mas nunca monta ou atribui automaticamente o código final.
 
 ### 9.3. Assistente Cutter-Sanborn/CAT
 

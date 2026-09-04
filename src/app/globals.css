@@ -835,7 +835,9 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .text-action { padding: 12px 4px; border: 0; background: transparent; color: var(--danger); text-decoration: underline; cursor: pointer; }
 .classification-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .classification-grid > div { min-width: 0; }
-.classification-grid__action { width: 100%; margin-top: 8px; }
+.field-label-with-tooltip { display: inline-flex; align-items: center; gap: 6px; }
+.classification-description { display: grid; gap: 8px; padding: 0 2px; }
+.classification-description label { display: grid; gap: 6px; font-size: .78rem; font-weight: 800; }
 .classification-grid .check { display: flex; align-self: end; align-items: center; gap: 8px; min-height: 42px; padding-bottom: 10px; }
 .classification-grid .check input { flex: 0 0 auto; width: auto; margin: 0; }
 .cdu-suggestions { display: grid; gap: 8px; }
