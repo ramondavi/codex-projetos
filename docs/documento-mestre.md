@@ -367,7 +367,7 @@ O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de
 - O projeto Supabase Free usa a organização `BIB/FAUFBA`, o nome `Pronto!` e a região `South America (São Paulo)` (`sa-east-1`).
 - O projeto usa o Postgres padrão estável, com Data API habilitada, exposição automática de novas tabelas desabilitada e RLS automático habilitado.
 - No Supabase Auth, cadastro por e-mail e confirmação obrigatória estão habilitados; cadastros anônimos e vinculação manual de identidades estão desabilitados.
-- Para desenvolvimento, a Site URL é `http://localhost:3000` e a lista de redirecionamentos permite `http://localhost:3000/**`; a URL de produção será adicionada posteriormente sem remover a local.
+- Para desenvolvimento, a Site URL é `http://localhost:3000` e a lista de redirecionamentos permite `http://localhost:3000/**`. A URL pública de produção é `https://prontobib.vercel.app`, a ser adicionada aos redirecionamentos do Supabase sem remover a local.
 - Storage somente para Nada Consta e arquivos leves permitidos; fontes personalizadas são selecionadas localmente.
 - E-mail por SMTP institucional, se viável, ou serviço externo gratuito.
 - PDF com `pdf-lib` ou equivalente no navegador; UI com Tailwind CSS e componentes leves.
