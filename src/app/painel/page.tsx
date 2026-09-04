@@ -83,4 +83,3 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
     <section className="overview-announcements"><div><p className="eyebrow">Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{announcementLabels[item.type] ?? "Aviso"}</span><strong>{item.title}</strong><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
   </main>;
 }
-
