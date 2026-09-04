@@ -139,8 +139,8 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .site-header__submenu a { padding: 9px 10px; color: var(--text); text-decoration: none; font-size: .8rem; }
 .site-header__submenu a:hover { background: var(--surface); color: var(--institutional); }
 .site-header__submenu form { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
-.site-header__logout { width: 100%; padding: 9px 10px; border: 1px solid #991b1b; border-radius: calc(var(--radius) - 2px); background: #991b1b; color: #fff; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 800; text-align: left; transition: background .18s ease, transform .18s ease; }
-.site-header__logout:hover { background: #7f1d1d; transform: translateY(-1px); }
+.site-header__logout { width: 100%; padding: 9px 10px; border: 0; background: transparent; color: #b91c1c; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 800; text-align: left; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.site-header__logout:hover { color: #7f1d1d; background: color-mix(in srgb, #b91c1c 8%, transparent); }
 .logout-icon { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1px solid var(--institutional); border-radius: var(--radius); background: color-mix(in srgb, var(--institutional) 12%, var(--surface-raised)); color: var(--institutional); cursor: pointer; transition: transform .18s ease, background .18s ease, color .18s ease; }
 .logout-icon:hover { background: var(--institutional); color: var(--bg); transform: translateY(-1px); }
 .logout-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
