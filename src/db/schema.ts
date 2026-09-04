@@ -336,7 +336,9 @@ export const libraryAnnouncements = pgTable("library_announcements", {
   startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
   endsAt: timestamp("ends_at", { withTimezone: true }),
   active: boolean("active").default(true).notNull(),
-  createdBy: uuid("created_by").references(() => profiles.id).notNull(),
+  createdBy: uuid("created_by").references(() => profiles.id),
+  calendarSource: text("calendar_source").default("manual").notNull(),
+  sourceReference: text("source_reference"),
   ...timestamps,
 });
 

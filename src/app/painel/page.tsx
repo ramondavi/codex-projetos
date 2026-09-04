@@ -69,6 +69,7 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
   const changes = all.filter((request) => request.status === "changes_requested").length;
   const approved = all.filter((request) => request.status === "approved").length;
   const administrator = role === "administrator";
+  const announcementLabels: Record<string, string> = { normal: "Aviso", recess: "Recesso", strike: "Paralisação/greve", other: "Ocorrência", holiday: "Feriado", optional_day: "Ponto facultativo" };
   return <main className="dashboard-main dashboard-main--staff-overview">
     <div className="page-heading"><div><p className="eyebrow">Visão geral</p><h1>{administrator ? "Operação administrativa" : "Atendimento bibliotecário"}</h1><p>{administrator ? "Acompanhe acessos, fila e informações operacionais em um só lugar." : "Acompanhe sua carga de atendimento e o que precisa de ação agora."}</p></div></div>
     <section className="overview-stats" aria-label="Indicadores rápidos">
@@ -79,6 +80,6 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
     </section>
     {administrator && <section className="overview-context"><article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article><article className="panel"><p className="eyebrow">Prioridade da fila</p><h2>{unassigned ? `${unassigned} solicitações aguardam responsável` : "Fila distribuída"}</h2><p>{unassigned ? "Reveja a fila para distribuir ou assumir os atendimentos disponíveis." : "No momento, não há solicitações sem responsável."}</p><Link className="button button--secondary button--small" href="/painel/fila">Gerenciar fila</Link></article></section>}
     {administrator && <AdminProvisioningAlert candidates={candidates ?? []} />}
-    <section className="overview-announcements"><div><p className="eyebrow">Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{item.type}</span><strong>{item.title}</strong><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
+    <section className="overview-announcements"><div><p className="eyebrow">Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{announcementLabels[item.type] ?? "Aviso"}</span><strong>{item.title}</strong><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
   </main>;
 }

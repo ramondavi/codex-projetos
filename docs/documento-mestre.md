@@ -178,6 +178,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Usar `[recurso eletrônico]` e `p.` para versão digital conforme decisão baseada na Portaria 153/2023; usar “Traçados” com cedilha.
 - Suportar títulos equivalentes com `=`, preservando idioma e ordem; para trabalho em língua estrangeira, o equivalente em português é obrigatório. Suportar também coorientação, cotutela, dupla titulação, múltiplos volumes e notas institucionais.
 - A ficha usa termos controlados em português definidos pelo bibliotecário.
+- A homologação da ficha exige ao menos três assuntos controlados em português, com exatamente um deles marcado como assunto principal.
 - O título recebe `[recurso eletrônico]` imediatamente antes de ` : subtítulo`, quando houver subtítulo, ou de ` / responsabilidade`, quando não houver.
 - A indicação de responsabilidade usa a forma transcrita do autor e é seguida de travessão, `Salvador` e ano de depósito da versão final.
 - O ano de defesa/apresentação aparece ao final da nota acadêmica e é distinto do ano de depósito.
@@ -496,7 +497,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - A própria conta administrativa não pode remover seu perfil de administrador nem deixar de estar ativa por essa operação.
 - Programas concentram SLA em dias úteis, ativação do guia do RI/UFBA, coordenação institucional e Magic Link; alterações preservam histórico de SLA e log administrativo.
 - O mural usa os estados normal, recesso, paralisação/greve e outro, com período e ativação explícitos.
-- Feriados e pontos facultativos são cadastrados pelo administrador como avisos datados; o painel do estudante apresenta somente os eventos ativos do mês corrente.
+- O calendário operacional da Administração permite navegar por mês e ano, registra finais de semana e considera feriados e pontos facultativos federais como dias não úteis para o SLA. As datas federais são incorporadas a partir da portaria anual do MGI; ocorrências locais e dias sem funcionamento da BIB/FA são registrados manualmente pelo administrador. O painel do estudante apresenta somente os eventos ativos do mês corrente.
 - Os seis templates básicos de pendência podem ter rótulo, texto, ordem e ativação ajustados, sem criar um construtor avançado de templates.
 - Indicadores simples apresentam volume por período, status, curso/programa e bibliotecário, com exportação local em CSV e JSON.
 - O expurgo operacional lista somente Nada Consta com retenção vencida, remove o objeto privado e preserva o registro textual e o log da ação.

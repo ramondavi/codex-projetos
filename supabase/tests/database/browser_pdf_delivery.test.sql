@@ -12,6 +12,10 @@ insert into public.staff_profiles(profile_id,professional_name,crb) values('9700
 set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
 select lives_ok($$select * from public.open_student_request(jsonb_build_object('academicProgramId',(select id from public.academic_programs limit 1),'registrationNumber','PDF2026','title','Trabalho PDF','publicWorkUrl','https://example.org/work.pdf','people',jsonb_build_object('author','Ana','advisor','Bia'),'keywordsPt',jsonb_build_array('Arquitetura'),'keywordsEn',jsonb_build_array('Architecture'),'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
 reset role;
+with created_terms as (
+  insert into public.controlled_terms(preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by)
+  values ('arquitetura','arquitetura','architecture','architecture','97000000-0000-4000-8000-000000000003','97000000-0000-4000-8000-000000000003'),('habitação','habitação','housing','housing','97000000-0000-4000-8000-000000000003','97000000-0000-4000-8000-000000000003'),('urbanismo','urbanismo','urbanism','urbanism','97000000-0000-4000-8000-000000000003','97000000-0000-4000-8000-000000000003') returning id,preferred_label_pt,preferred_label_en
+) insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position) select (select id from public.cataloging_requests),id,preferred_label_pt,preferred_label_en,preferred_label_pt='arquitetura',row_number() over(order by preferred_label_pt)-1 from created_terms;
 update public.cataloging_requests set status='approved',assigned_to='97000000-0000-4000-8000-000000000003';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot) select id,'{}','97000000-0000-4000-8000-000000000003','Catalogador PDF','CRB-5/3333' from public.cataloging_requests;
 

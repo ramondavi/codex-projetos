@@ -32,7 +32,8 @@ select lives_ok($$select public.save_assisted_cataloging((select id from public.
   jsonb_build_object('role','advisor','transcribedName','Bruno Souza','authorizedName','Souza, Bruno')),
  'terms',jsonb_build_array(
   jsonb_build_object('labelPt','Arquitetura','labelEn','Architecture','isPrimary',true),
-  jsonb_build_object('labelPt','Habitação','labelEn','Housing','isPrimary',false)),
+  jsonb_build_object('labelPt','Habitação','labelEn','Housing','isPrimary',false),
+  jsonb_build_object('labelPt','Urbanismo','labelEn','Urbanism','isPrimary',false)),
  'cduCode','72','cutterCode',''))$$,'catalogação incompleta é salva como rascunho');
 select throws_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'P0001','classification_required','homologação exige CDU e Cutter');
 select lives_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1),jsonb_build_object(

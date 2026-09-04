@@ -30,6 +30,10 @@ select lives_ok($$select * from public.open_student_request(jsonb_build_object(
 select throws_ok($$select public.start_repository_deposit((select id from public.cataloging_requests limit 1))$$,'P0001','repository_deposit_not_available','não inicia antes da liberação completa');
 reset role;
 
+with created_terms as (
+  insert into public.controlled_terms(preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by)
+  values ('arquitetura','arquitetura','architecture','architecture','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('habitação','habitação','housing','housing','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('urbanismo','urbanismo','urbanism','urbanism','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003') returning id,preferred_label_pt,preferred_label_en
+) insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position) select (select id from public.cataloging_requests),id,preferred_label_pt,preferred_label_en,preferred_label_pt='arquitetura',row_number() over(order by preferred_label_pt)-1 from created_terms;
 update public.cataloging_requests set status='approved',assigned_to='98000000-0000-4000-8000-000000000003';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
  select id,'{}','98000000-0000-4000-8000-000000000003','Catalogador Depósito','CRB-5/4001' from public.cataloging_requests;
