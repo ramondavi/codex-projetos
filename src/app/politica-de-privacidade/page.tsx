@@ -1,4 +1,11 @@
 import { SiteHeader } from "@/components/site-header";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Política de privacidade",
+  description: "Entenda como o Pronto! trata e protege os dados necessários ao atendimento da BIB/FAUFBA.",
+  alternates: { canonical: "/politica-de-privacidade" },
+};
 
 const summary = [
   ["shield", "Só o necessário", "Dados indispensáveis para sua conta e para o atendimento."],

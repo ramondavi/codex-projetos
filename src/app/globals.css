@@ -139,8 +139,8 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .site-header__submenu a { padding: 9px 10px; color: var(--text); text-decoration: none; font-size: .8rem; }
 .site-header__submenu a:hover { background: var(--surface); color: var(--institutional); }
 .site-header__submenu form { margin-top: 4px; padding-top: 8px; border-top: 1px solid var(--line); }
-.site-header__logout { width: 100%; padding: 9px 10px; border: 1px solid #991b1b; border-radius: calc(var(--radius) - 2px); background: #991b1b; color: #fff; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 800; text-align: left; transition: background .18s ease, transform .18s ease; }
-.site-header__logout:hover { background: #7f1d1d; transform: translateY(-1px); }
+.site-header__logout { width: 100%; padding: 9px 10px; border: 0; background: transparent; color: #b91c1c; cursor: pointer; font: inherit; font-size: .8rem; font-weight: 800; text-align: left; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.site-header__logout:hover { color: #7f1d1d; background: color-mix(in srgb, #b91c1c 8%, transparent); }
 .logout-icon { display: grid; place-items: center; width: 38px; height: 38px; padding: 0; border: 1px solid var(--institutional); border-radius: var(--radius); background: color-mix(in srgb, var(--institutional) 12%, var(--surface-raised)); color: var(--institutional); cursor: pointer; transition: transform .18s ease, background .18s ease, color .18s ease; }
 .logout-icon:hover { background: var(--institutional); color: var(--bg); transform: translateY(-1px); }
 .logout-icon svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
@@ -564,6 +564,14 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .overview-announcements__list span { color: var(--institutional); font-size: .7rem; font-weight: 850; text-transform: uppercase; }
 .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 36px; margin-bottom: 32px; }
 .page-heading h1 { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: clamp(2.8rem, 5.4vw, 4.8rem); letter-spacing: -0.035em; line-height: 1; }
+.not-found-page { display: grid; min-height: calc(100vh - 200px); place-items: center; padding: 72px 0; background: linear-gradient(135deg, var(--institutional-soft), transparent 58%); }
+.not-found-card { position: relative; max-width: 760px; overflow: hidden; padding: clamp(32px, 7vw, 72px); border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); box-shadow: 0 24px 60px color-mix(in srgb, var(--institutional) 14%, transparent); }
+.not-found-card::after { position: absolute; top: -76px; right: -62px; width: 220px; height: 220px; border: 28px solid var(--gold); content: ""; opacity: .26; transform: rotate(28deg); }
+.not-found-card h1 { max-width: 580px; margin: 12px 0 18px; font-size: clamp(2.5rem, 6vw, 5rem); letter-spacing: -.05em; line-height: .94; }
+.not-found-card > p { max-width: 540px; color: var(--text-muted); font-size: 1.06rem; line-height: 1.65; }
+.not-found-stamp { width: max-content; color: var(--institutional); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: clamp(3.4rem, 10vw, 7rem); font-weight: 900; letter-spacing: -.1em; line-height: .8; opacity: .92; }
+.not-found-card .not-found-note { color: var(--text); font-weight: 750; }
+.not-found-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
 .sla-card { min-width: 170px; padding: 16px; border-top: 3px solid var(--gold); border-radius: var(--radius); background: var(--surface-raised); color: var(--text-muted); font-size: 0.74rem; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.05em; }
 .sla-card strong { color: var(--text); font: 800 2rem/1 ui-monospace, monospace; }
 .dashboard-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.7fr); gap: 24px; }
@@ -822,9 +830,14 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .cataloging-autocomplete { position: absolute; z-index: 5; top: calc(100% + 4px); right: 0; left: 0; display: grid; max-height: 210px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); box-shadow: var(--shadow); }
 .cataloging-autocomplete button { padding: 9px 11px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); text-align: left; cursor: pointer; }
 .cataloging-autocomplete button:hover, .cataloging-autocomplete button:focus-visible { background: var(--surface-muted); }
+.cutter-suggestions small { display: block; padding: 8px 11px 4px; color: var(--text-muted); font-size: .68rem; font-weight: 700; }.cutter-suggestions button { display: grid; grid-template-columns: auto 1fr; gap: 8px; align-items: baseline; }.cutter-suggestions button strong { color: var(--institutional); }.cutter-suggestions button span { color: var(--text-muted); font-size: .7rem; }
 .radio-choice { align-self: center; grid-template-columns: auto 1fr !important; align-items: center; }
 .text-action { padding: 12px 4px; border: 0; background: transparent; color: var(--danger); text-decoration: underline; cursor: pointer; }
 .classification-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.classification-grid > div { min-width: 0; }
+.field-label-with-tooltip { display: inline-flex; align-items: center; gap: 6px; }
+.classification-description { display: grid; gap: 8px; padding: 0 2px; }
+.classification-description label { display: grid; gap: 6px; font-size: .78rem; font-weight: 800; }
 .classification-grid .check { display: flex; align-self: end; align-items: center; gap: 8px; min-height: 42px; padding-bottom: 10px; }
 .classification-grid .check input { flex: 0 0 auto; width: auto; margin: 0; }
 .cdu-suggestions { display: grid; gap: 8px; }
@@ -1016,3 +1029,4 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 /* Atalho de teclado visível somente quando recebe foco. */
 .skip-link { position: fixed; z-index: 1000; top: 12px; left: 12px; padding: 10px 14px; transform: translateY(-180%); background: var(--text); color: var(--bg); font-weight: 800; }
 .skip-link:focus { transform: translateY(0); }
+.protocol-copy-button { padding: 0; border: 0; background: transparent; color: inherit; font: inherit; font-weight: inherit; cursor: copy; text-decoration: underline dotted; }

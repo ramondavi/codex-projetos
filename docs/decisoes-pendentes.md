@@ -6,8 +6,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 - **CDU:** após uso piloto, avaliar se a fórmula simples `2:1` precisa de curadoria ou refinamento, mantendo a ausência de IA.
 - **Vocabulário:** definir futuramente o fluxo administrativo de mesclagem de termos; o cadastro bilíngue, a normalização inicial e a prevenção de novas duplicidades já estão decididos.
-- **Cutter:** avaliar a confiabilidade e adequação da listagem do repositório público `veralvx/cutter-sanborn-table` antes de incorporá-la.
-- **Cutter:** explicitar se o dropdown de aproximação entra no MVP ou se, no MVP, permanece apenas o campo manual, pois a implementação completa está classificada para a Fase 2.
 - **MARC 21:** na fase posterior, mapear campos/subcampos e o formato útil ao fluxo real do Pergamum.
 
 ## DSpace/RI-UFBA
@@ -40,6 +38,6 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 
 ## Lançamento
 
-- Confirmar os domínios definitivos da Vercel e as URLs de callback do Supabase.
+- Confirmar as URLs de callback de produção do Supabase para `https://prontobib.vercel.app`.
 - Aprovar o aviso de privacidade, o canal do titular, o SMTP institucional e os textos finais antes do lançamento público.
 - Executar a validação assistida com estudantes e bibliotecários e registrar o aceite sem dados pessoais.

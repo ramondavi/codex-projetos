@@ -1,5 +1,12 @@
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Perguntas frequentes",
+  description: "Tire dúvidas sobre ficha catalográfica, análise bibliotecária, Nada Consta e autodepósito no RI/UFBA.",
+  alternates: { canonical: "/perguntas-frequentes" },
+};
 
 type Faq = { id: string; question: string; answer: string };
 const fallbackFaqs: Faq[] = [

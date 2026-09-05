@@ -36,6 +36,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   const [error, setError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
+  const steps = ["Vínculo acadêmico", "Descrição do trabalho", "Palavras-chave", "Arquivo e declarações", "Revisão"];
   const selectedProgram = programs.find((program) => program.id === draft.academicProgramId);
   const isMpCecre = selectedProgram?.code === "mp-cecre-master";
   const isRaue = selectedProgram?.code === "athdc-specialization";
@@ -86,7 +87,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   return (
     <form className="request-form" onSubmit={submit} data-active-step={activeStep}>
       {error && <div className="auth-feedback auth-feedback--error" role="alert">{error}</div>}
-      <div className="admin-tabs request-steps" role="tablist" aria-label="Etapas do formulário">{["Vínculo acadêmico", "Descrição do trabalho", "Palavras-chave", "Arquivo e declarações", "Revisão"].map((label, index) => <button key={label} type="button" role="tab" aria-selected={activeStep === index + 1} className={activeStep === index + 1 ? "is-active" : ""} onClick={() => setActiveStep(index + 1)}>{label}</button>)}</div>
+      <div className="admin-tabs request-steps" role="tablist" aria-label="Etapas do formulário">{steps.map((label, index) => <button key={label} type="button" role="tab" aria-selected={activeStep === index + 1} className={activeStep === index + 1 ? "is-active" : ""} onClick={() => setActiveStep(index + 1)}>{label}</button>)}</div>
 
       <fieldset className="form-section form-step form-step--1">
         <legend className="sr-only">Vínculo acadêmico</legend>
@@ -138,7 +139,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
       </fieldset>
 
       <section className="form-section form-step form-step--5 review-panel" aria-label="Revisão antes do envio"><h2>Revise seus dados</h2><p>Confira as informações antes de enviar. Você poderá voltar a qualquer aba para corrigi-las.</p><dl><div><dt>Título</dt><dd>{draft.title || "Não informado"}{draft.subtitle ? `: ${draft.subtitle}` : ""}</dd></div><div><dt>Idioma original</dt><dd>{languageLabels[draft.originalLanguage]}</dd></div><div><dt>Títulos equivalentes</dt><dd>{draft.equivalentTitles.filter((item) => item.title).map((item) => `${languageLabels[item.language]}: ${item.title}`).join(" · ") || "Não informado"}</dd></div><div><dt>Link público</dt><dd>{draft.publicWorkUrl || "Não informado"}</dd></div></dl></section>
-      <div className="form-navigation"><button className="button button--secondary" type="button" disabled={activeStep === 1} onClick={() => setActiveStep((current) => current - 1)}>Voltar</button><div className="draft-status" role="status">{savedAt ? <>Rascunho salvo neste dispositivo às {savedAt}.<br />Você pode continuar depois: seus dados são salvos automaticamente.</> : "Você pode iniciar agora e terminar depois: seus dados são salvos automaticamente neste dispositivo."}</div>{activeStep < 5 ? <button className="button button--primary" type="button" onClick={() => setActiveStep((current) => current + 1)}>Avançar</button> : <button className="button button--primary" type="submit" disabled={submitting}>{submitting ? "Enviando…" : "Enviar solicitação"}</button>}</div>
+      <div className="form-navigation"><button className="button button--secondary" type="button" disabled={activeStep === 1} onClick={() => setActiveStep((current) => current - 1)}>{activeStep === 1 ? "← Voltar" : `← Voltar: ${steps[activeStep - 2]}`}</button><div className="draft-status" role="status">{savedAt ? <>Rascunho salvo neste dispositivo às {savedAt}.<br />Você pode continuar depois: seus dados são salvos automaticamente.</> : "Você pode iniciar agora e terminar depois: seus dados são salvos automaticamente neste dispositivo."}</div>{activeStep < 5 ? <button className="button button--primary" type="button" onClick={() => setActiveStep((current) => current + 1)}>Próximo: {steps[activeStep]} →</button> : <button className="button button--primary" type="submit" disabled={submitting}>{submitting ? "Enviando…" : "Enviar solicitação"}</button>}</div>
     </form>
   );
 }

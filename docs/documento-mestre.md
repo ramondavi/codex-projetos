@@ -224,11 +224,12 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Explicar a sugestão, por exemplo: “usado em X fichas com este termo”.
 - Versão simples no MVP se possível; ranking refinado e curadoria termo-CDU depois.
 - No MVP, a pontuação é `2 × fichas com o termo principal + 1 × fichas com cada termo secundário`, considerando somente fichas homologadas ou concluídas e contando cada ficha uma vez por componente. Exibir até três sugestões, com as contagens separadas, sem preenchimento automático.
+- Cada código CDU pode manter uma descrição técnica, memória de composição, auxiliares empregados, códigos relacionados, fonte consultada e observação. O catalogador registra um código inédito como pendente; o administrador revisa, edita e valida o repertório. Em novo atendimento, o sistema reutiliza o registro existente, mas nunca monta ou atribui automaticamente o código final.
 
 ### 9.3. Assistente Cutter-Sanborn/CAT
 
-- Campo manual com dropdown de sugestões por aproximação; nunca atribuir automaticamente.
-- Usar tabela estática local. O repositório público indicado para avaliação da listagem é `veralvx/cutter-sanborn-table`.
+- Campo manual com dropdown de sugestões progressivas pelo sobrenome da entrada autorizada do autor; nunca atribuir automaticamente.
+- Usar tabela estática local, incorporada do repositório público `veralvx/cutter-sanborn-table` sob licença MIT.
 - A decisão final é sempre do bibliotecário.
 
 ### 9.4. MARC 21
@@ -367,7 +368,7 @@ O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de
 - O projeto Supabase Free usa a organização `BIB/FAUFBA`, o nome `Pronto!` e a região `South America (São Paulo)` (`sa-east-1`).
 - O projeto usa o Postgres padrão estável, com Data API habilitada, exposição automática de novas tabelas desabilitada e RLS automático habilitado.
 - No Supabase Auth, cadastro por e-mail e confirmação obrigatória estão habilitados; cadastros anônimos e vinculação manual de identidades estão desabilitados.
-- Para desenvolvimento, a Site URL é `http://localhost:3000` e a lista de redirecionamentos permite `http://localhost:3000/**`; a URL de produção será adicionada posteriormente sem remover a local.
+- Para desenvolvimento, a Site URL é `http://localhost:3000` e a lista de redirecionamentos permite `http://localhost:3000/**`. A URL pública de produção é `https://prontobib.vercel.app`, a ser adicionada aos redirecionamentos do Supabase sem remover a local.
 - Storage somente para Nada Consta e arquivos leves permitidos; fontes personalizadas são selecionadas localmente.
 - E-mail por SMTP institucional, se viável, ou serviço externo gratuito.
 - PDF com `pdf-lib` ou equivalente no navegador; UI com Tailwind CSS e componentes leves.
@@ -431,7 +432,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 ### 21.2. Pode ficar para Fase 2
 
 - QR Code, página pública por hash/UUID e ligação/redirecionamento com DSpace;
-- exportar/copiar MARC 21; Cutter completo; CDU refinado/explicável; vocabulário e merge avançados;
+- exportar/copiar MARC 21; CDU refinado/explicável; vocabulário e merge avançados;
 - mapeamento completo do DSpace; Magic Link avançado; relatórios completos; layout milimétrico;
 - gestão avançada de templates e estudo de SHA-256 client-side.
 
