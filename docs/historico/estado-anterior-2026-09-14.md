@@ -80,4 +80,3 @@ A suíte pgTAP em `supabase/tests/database` contém 209 testes integrados contra
 ## Próximo passo de produto
 
 Concluir os testes com PDFs institucionais anonimizados, executar a validação assistida e resolver os bloqueadores institucionais de lançamento. O Preview da Vercel e o Supabase remoto estão implantados; a promoção pública ainda depende desses aceites.
-
