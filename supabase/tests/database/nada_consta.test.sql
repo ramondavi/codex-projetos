@@ -1,6 +1,6 @@
 begin;
 create extension if not exists pgtap with schema extensions;
-select plan(20);
+select plan(21);
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
  ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Nada","cpf":"81000000770"}'),
@@ -33,7 +33,12 @@ select lives_ok($$select public.validate_nada_consta((select id from public.nada
 select is((select status from public.nada_consta_documents),'approved'::public.nada_consta_status,'documento fica aprovado');
 select ok((select validated_at is not null and validated_by='94000000-0000-4000-8000-000000000002' from public.nada_consta_documents),'validação registra data e bibliotecário');
 reset role;
-select is((select count(*)::integer from public.email_outbox where event_type='request_released'),1,'aprovação gera aviso de liberação');
+select is((select count(*)::integer from public.email_outbox where event_type='request_released'),0,'Nada Consta aprovado sem ficha homologada não libera');
+insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
+  values ((select id from public.cataloging_requests limit 1),'{}'::jsonb,'94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111');
+update public.cataloging_requests set status='in_review';
+update public.cataloging_requests set status='approved';
+select is((select count(*)::integer from public.email_outbox where event_type='request_released'),1,'ficha homologada e Nada Consta aprovado geram aviso de liberação');
 select is((select count(*)::integer from public.audit_logs where action='nada_consta_approved'),1,'aprovação gera log');
 update public.cataloging_requests set status='completed';
 select ok((select purge_after between now()+interval '59 days' and now()+interval '61 days' from public.nada_consta_documents),'encerramento programa expurgo em 60 dias');
