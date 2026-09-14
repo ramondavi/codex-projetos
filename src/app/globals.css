@@ -702,7 +702,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .analysis-case-header__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .analysis-case-header__top .eyebrow { margin: 0; }
 .analysis-case-header__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
-.timeline-dialog { width: min(700px, calc(100vw - 32px)); max-height: min(760px, calc(100vh - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); color: var(--text); background: var(--surface-raised); box-shadow: 0 24px 80px rgb(0 0 0 / .32); }
+.timeline-dialog { position: fixed; inset: 0; width: min(700px, calc(100vw - 32px)); max-height: min(760px, calc(100vh - 32px)); margin: auto; padding: 0; border: 0; border-radius: var(--radius-lg); color: var(--text); background: var(--surface-raised); box-shadow: 0 24px 80px rgb(0 0 0 / .32); }
 .timeline-dialog::backdrop { background: rgb(0 0 0 / .5); }
 .timeline-dialog__header { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 24px 24px 0; }
 .timeline-dialog__header .eyebrow { margin: 0 0 6px; }
