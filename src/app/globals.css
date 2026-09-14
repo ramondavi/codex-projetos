@@ -684,6 +684,12 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .status-badge { padding: 6px 9px; border-radius: var(--radius-sm); background: var(--surface); color: var(--text); }
 .status-badge--submitted { background: var(--institutional-soft); color: var(--institutional); }
 .status-badge--in_review { background: color-mix(in srgb, var(--gold) 20%, transparent); }
+.progress-badge { padding: 6px 9px; border-radius: var(--radius-sm); text-transform: none; letter-spacing: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-weight: 700; }
+.progress-badge--waiting { background: var(--surface); color: var(--text-muted); }
+.progress-badge--active { background: color-mix(in srgb, var(--gold) 20%, transparent); color: var(--text); }
+.progress-badge--ready { background: color-mix(in srgb, #1a7f4b 16%, transparent); color: #12623a; }
+.progress-badge--done { background: color-mix(in srgb, #1a7f4b 20%, transparent); color: #12623a; }
+.progress-badge--attention { background: color-mix(in srgb, #b42318 14%, transparent); color: #8b1c13; }
 .queue-item__actions { display: grid; align-content: center; gap: 10px; }
 .queue-item__actions > span { color: var(--text-muted); font-size: 0.76rem; }
 .button--small { min-height: 40px; padding: 8px 13px; font-size: 0.8rem; }
@@ -696,6 +702,12 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .analysis-case-header__top { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .analysis-case-header__top .eyebrow { margin: 0; }
 .analysis-case-header__actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; }
+.timeline-dialog { width: min(700px, calc(100vw - 32px)); max-height: min(760px, calc(100vh - 32px)); padding: 0; border: 0; border-radius: var(--radius-lg); color: var(--text); background: var(--surface-raised); box-shadow: 0 24px 80px rgb(0 0 0 / .32); }
+.timeline-dialog::backdrop { background: rgb(0 0 0 / .5); }
+.timeline-dialog__header { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 24px 24px 0; }
+.timeline-dialog__header .eyebrow { margin: 0 0 6px; }
+.timeline-dialog__header h2 { margin: 0; }
+.timeline-dialog .protocol-timeline { margin: 20px 24px 24px; max-height: 60vh; overflow: auto; }
 .analysis-case-header__protocol { color: var(--institutional); font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 .analysis-case-header h1 { max-width: 900px; margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: clamp(1.65rem, 3.3vw, 2.7rem); letter-spacing: -.03em; line-height: 1.12; }
 .analysis-case-header__details { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(260px, 1.6fr); gap: 12px 26px; margin: 8px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }

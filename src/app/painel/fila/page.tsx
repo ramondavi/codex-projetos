@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { StaffQueue } from "@/components/staff-queue";
 import { createClient } from "@/lib/supabase/server";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
+import { describeRequestProgress } from "@/domain/request-progress";
 
 type RawQueueRequest = {
   id: string; protocol: string; status: string; title: string; submitted_at: string; assigned_to: string | null;
@@ -10,6 +11,10 @@ type RawQueueRequest = {
   enrollment: { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
   analysis: { internal_note: string }[] | { internal_note: string } | null;
+  nadaConsta: { status: string }[] | null;
+  homologation: { id: string }[] | null;
+  repositoryProgress: { started_at: string }[] | null;
+  publication: { verified_at: string }[] | null;
 };
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
@@ -31,7 +36,11 @@ export default async function StaffQueuePage() {
         program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
       ),
       people:request_people(role, transcribed_name),
-      analysis:request_analyses(internal_note)
+      analysis:request_analyses(internal_note),
+      nadaConsta:nada_consta_documents(status),
+      homologation:cataloging_card_homologations(id),
+      repositoryProgress:repository_deposit_progress(started_at),
+      publication:repository_publications(verified_at)
     `).order("submitted_at", { ascending: true }),
     supabase.from("profiles").select("id, full_name").in("role", ["cataloger", "administrator"]).eq("status", "active").order("full_name"),
   ]);
@@ -42,6 +51,7 @@ export default async function StaffQueuePage() {
     const program = first(enrollment?.program);
     const assignee = first(item.assignee);
     const analysis = first(item.analysis);
+    const progress = describeRequestProgress({ status: item.status, assignedTo: item.assigned_to, nadaConstaStatus: first(item.nadaConsta)?.status, hasHomologation: Boolean(first(item.homologation)), hasRepositoryDeposit: Boolean(first(item.repositoryProgress)), hasPublication: Boolean(first(item.publication)) });
     return {
       id: item.id, protocol: item.protocol, status: item.status, title: item.title,
       submittedAt: item.submitted_at, assignedTo: item.assigned_to,
@@ -50,6 +60,7 @@ export default async function StaffQueuePage() {
       programId: program?.id ?? "", programName: program?.name ?? "Programa não identificado",
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       hasInternalNote: Boolean(analysis?.internal_note.trim()),
+      progressLabel: progress.label, progressTone: progress.tone,
     };
   });
   const staff: StaffOption[] = (staffData ?? []).map((item) => ({ id: item.id, fullName: item.full_name }));
