@@ -142,6 +142,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 - O formulário inicia com três campos obrigatórios para cada conjunto de palavras-chave; outros podem ser adicionados. Para título equivalente, inicia com um único campo: inglês para trabalho original em português e português, bloqueado para troca de idioma, para trabalho originalmente estrangeiro.
 - O estudante informa somente os nomes transcritos de orientador e coorientador. As designações de orientação são de decisão/preenchimento exclusivo do bibliotecário; a presença do coorientador já caracteriza a coorientação, sem marcação adicional.
 - A Especialização em Assistência Técnica, Habitação e Direito à Cidade (RAU+E) admite autoria compartilhada. O primeiro autor informado é a entrada principal da ficha; os demais são registrados como entradas secundárias. Os demais programas mantêm autoria única.
+- A ordem das pessoas relacionadas é explícita nos formulários do estudante e da análise: autor(es), orientador, coorientador quando houver e, por fim, demais membros da banca. O autor é fixo na primeira posição; no RAU+E, autores podem ser reordenados somente entre si. Orientador e coorientador são fixos após os autores. Na banca, orientador é obrigatoriamente o primeiro membro e coorientador, quando houver, o segundo; somente os demais membros podem ser reordenados por arrastar e soltar.
 - A orientação do link público deve citar Google Drive, OneDrive e serviços equivalentes e oferecer instruções curtas de compartilhamento público.
 - Permite formato/dimensão A4, A3, paisagem, livro/quadrado ou personalizado.
 - Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca, além de ano de depósito, ano de defesa/apresentação, quantidade física e escolha explícita sobre ilustrações.
@@ -200,6 +201,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - A forma autorizada parte da forma transcrita, aproxima registros existentes e apresenta opções progressivamente filtradas durante a digitação, sem retirar do bibliotecário a decisão final.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
 - Correções de forma autorizada não sobrescrevem automaticamente registros históricos; preservar rastreabilidade.
+- A ordem de pessoas relacionadas é validada também no armazenamento: autores antecedem obrigatoriamente a orientação; orientador e coorientador não podem ser deslocados por membros da banca.
 
 ## 9. Vocabulário controlado, CDU, Cutter e MARC 21
 

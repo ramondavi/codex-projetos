@@ -5,6 +5,7 @@ import { compactDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY } fro
 
 const migration = readFileSync(new URL("../supabase/migrations/202608230000_student_requests.sql", import.meta.url), "utf8");
 const requiredDetailsMigration = readFileSync(new URL("../supabase/migrations/202608310005_require_student_cataloging_details.sql", import.meta.url), "utf8");
+const relatedPeopleMigration = readFileSync(new URL("../supabase/migrations/202609140001_related_people_order.sql", import.meta.url), "utf8");
 
 test("keeps registration numbers on reusable academic enrollments", () => {
   assert.match(migration, /create table public\.academic_enrollments/);
@@ -40,12 +41,13 @@ test("compacts repeatable draft fields without losing structured people", () => 
     ...emptyStudentRequestDraft,
     title: "  Um trabalho  ",
     keywordsPt: [" Arquitetura ", "", " Cidade "],
-    people: { author: "  Ana Silva ", additionalAuthors: [], birthYear: "1998", birthYearAcknowledged: true, advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+    people: { author: "  Ana Silva ", additionalAuthors: [], committeeMembers: [" Prof.ª Lia "], birthYear: "1998", birthYearAcknowledged: true, advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   });
   assert.equal(compact.title, "Um trabalho");
   assert.deepEqual(compact.keywordsPt, ["Arquitetura", "Cidade"]);
   assert.equal(compact.people.author, "Ana Silva");
   assert.equal(compact.people.birthYear, 1998);
+  assert.deepEqual(compact.people.committeeMembers, ["Prof.ª Lia"]);
   assert.match(STUDENT_REQUEST_DRAFT_KEY, /^pronto:student-request-draft:/);
 });
 
@@ -53,4 +55,10 @@ test("exige a escolha explícita sobre ilustrações", () => {
   assert.match(requiredDetailsMigration, /illustrations_choice_required/);
   assert.match(requiredDetailsMigration, /payload \? 'hasIllustrations'/);
   assert.equal(emptyStudentRequestDraft.hasIllustrations, "");
+});
+
+test("preserva membros da banca e a ordem das pessoas relacionadas", () => {
+  assert.match(relatedPeopleMigration, /committeeMembers/);
+  assert.match(relatedPeopleMigration, /committee_member/);
+  assert.match(relatedPeopleMigration, /open_student_request_v7/);
 });

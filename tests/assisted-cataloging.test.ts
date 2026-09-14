@@ -5,6 +5,7 @@ import { findCutterSuggestions } from "../src/domain/cutter-suggestions.ts";
 
 const migration = readFileSync("supabase/migrations/202608230003_assisted_cataloging.sql", "utf8");
 const reviewMigration = readFileSync("supabase/migrations/202608260001_cataloging_review_workflow.sql", "utf8");
+const relatedPeopleMigration = readFileSync("supabase/migrations/202609140001_related_people_order.sql", "utf8");
 const workspace = readFileSync("src/components/assisted-cataloging-workspace.tsx", "utf8");
 
 test("stores reusable authorities without overwriting request snapshots", () => {
@@ -64,4 +65,13 @@ test("scores CDU history with primary weight two and secondary weight one", () =
 test("restricts assisted cataloging writes to the ticket owner", () => {
   assert.match(migration, /assigned_to = auth\.uid\(\) and status in \('in_review', 'changes_requested'\)/);
   assert.match(migration, /revoke all on table public\.person_authorities[\s\S]*from anon, authenticated/);
+});
+
+test("restringe a ordem de pessoas relacionadas e mantém orientação à frente da banca", () => {
+  assert.match(workspace, /movePerson/);
+  assert.match(workspace, /withinAuthors/);
+  assert.match(workspace, /withinMovablePeople/);
+  assert.match(workspace, /orientador é o 1º membro/);
+  assert.match(relatedPeopleMigration, /invalid_related_people_order/);
+  assert.match(relatedPeopleMigration, /save_assisted_cataloging_v2/);
 });

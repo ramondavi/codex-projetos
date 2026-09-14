@@ -10,7 +10,7 @@ export type StudentRequestDraft = {
   equivalentTitles: { language: "pt" | "en" | "es" | "de" | "fr" | "it"; title: string }[];
   otherTitles: string[];
   publicWorkUrl: string;
-  people: { author: string; additionalAuthors: string[]; birthYear: string; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
+  people: { author: string; additionalAuthors: string[]; committeeMembers: string[]; birthYear: string; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
   keywordsPt: string[];
   keywordsEn: string[];
   specialCases: string[];
@@ -36,7 +36,7 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   equivalentTitles: [{ language: "en", title: "" }],
   otherTitles: [],
   publicWorkUrl: "",
-  people: { author: "", additionalAuthors: [], birthYear: "", birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+  people: { author: "", additionalAuthors: [], committeeMembers: [], birthYear: "", birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   keywordsPt: ["", "", ""],
   keywordsEn: ["", "", ""],
   specialCases: [],
@@ -68,6 +68,7 @@ export function compactDraft(draft: StudentRequestDraft) {
     people: {
       author: draft.people.author.trim(),
       additionalAuthors: compact(draft.people.additionalAuthors),
+      committeeMembers: compact(draft.people.committeeMembers),
       birthYear: draft.people.birthYear ? Number(draft.people.birthYear) : null,
       birthYearAcknowledged: draft.people.birthYear ? draft.people.birthYearAcknowledged : false,
       advisor: draft.people.advisor.trim(),

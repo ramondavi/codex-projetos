@@ -626,6 +626,8 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .request-form .field-help { margin: -10px 0 4px; padding-left: 10px; border-left: 2px solid var(--line); color: var(--text-muted); font-size: .78rem; line-height: 1.5; }
 .dynamic-fields { padding-top: 4px; }
 .dynamic-field { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
+.dynamic-field--draggable { grid-template-columns: auto minmax(0, 1fr) auto; padding: 8px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.dynamic-field--draggable .drag-handle { cursor: grab; }
 .dynamic-field .text-button { color: var(--danger); font-size: 0.75rem; }
 .text-button--remove { justify-self: start; color: var(--danger) !important; font-size: .75rem; font-weight: 750; }
 .equivalent-titles { display: grid; gap: 16px; }
@@ -825,6 +827,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .cataloging-row label, .classification-grid label { display: grid; gap: 6px; font-size: .78rem; font-weight: 800; }
 .cataloging-row input, .cataloging-row select, .classification-grid input { width: 100%; }
 .cataloging-row--term { grid-template-columns: auto minmax(130px, .6fr) 1fr 1fr auto; }
+.cataloging-row--person { grid-template-columns: auto minmax(130px, .6fr) 1fr 1fr auto; }
 .drag-handle { align-self: center; color: var(--text-muted); cursor: grab; font-weight: 900; letter-spacing: -3px; }
 .autocomplete-field { position: relative; }
 .cataloging-autocomplete { position: absolute; z-index: 5; top: calc(100% + 4px); right: 0; left: 0; display: grid; max-height: 210px; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); box-shadow: var(--shadow); }
