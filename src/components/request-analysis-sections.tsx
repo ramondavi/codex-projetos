@@ -8,7 +8,7 @@ const steps = [
   { id: "documentation", label: "Nada Consta e liberação", guidance: "O documento pode ser validado em paralelo. A ficha só é liberada quando ela estiver homologada e o Nada Consta, aprovado." },
 ] as const;
 
-export function RequestAnalysisSections({ metadata, cataloging, documentation }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode }) {
+export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode }) {
   const [active, setActive] = useState<"metadata" | "cataloging" | "documentation">("metadata");
   const activeStep = steps.findIndex((step) => step.id === active);
   const currentStep = steps[activeStep];
@@ -51,7 +51,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation }:
     </aside>
     <section className="request-analysis-section">{metadata}<div id="request-analysis-actions-end" /></section>
     <section className="request-analysis-section">{cataloging}</section>
-    <section className="request-analysis-section">{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" /></section>
+    <section className="request-analysis-section">{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" />{finalAction}</section>
     <div className="form-navigation request-analysis-sections__navigation">
       <button className="button button--secondary button--small" type="button" disabled={isMetadata} onClick={() => setActive(steps[activeStep - 1].id)}>{isMetadata ? "← Voltar" : `← Voltar: ${steps[activeStep - 1].label}`}</button>
       {activeStep < steps.length - 1 && <button className="button button--secondary button--small" type="button" onClick={() => setActive(steps[activeStep + 1].id)}>Próxima: {steps[activeStep + 1].label} →</button>}
