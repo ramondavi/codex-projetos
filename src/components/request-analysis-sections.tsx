@@ -3,14 +3,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 const steps = [
-  { id: "metadata", label: "Metadados", guidance: "Confira os dados enviados e registre somente as correções necessárias." },
-  { id: "cataloging", label: "Catalogação", guidance: "Complete autoridades, assuntos, CDU e Cutter para preparar o registro." },
-  { id: "documentation", label: "Documentação e encerramento", guidance: "Valide a documentação, consulte o histórico e conclua a revisão quando estiver tudo certo." },
-  { id: "review", label: "Revisão do atendimento", guidance: "Confira o conjunto do atendimento e escolha se ele segue no fluxo ou volta ao estudante para ajuste." },
+  { id: "metadata", label: "Metadados", guidance: "Confira os dados enviados. Com pendências, devolva ao estudante; sem pendências, valide e siga para a catalogação." },
+  { id: "cataloging", label: "Catalogação e ficha", guidance: "Complete autoridades, assuntos, CDU e Cutter; confira a prévia e homologue a ficha." },
+  { id: "documentation", label: "Nada Consta e liberação", guidance: "O documento pode ser validado em paralelo. A ficha só é liberada quando ela estiver homologada e o Nada Consta, aprovado." },
 ] as const;
 
 export function RequestAnalysisSections({ metadata, cataloging, documentation }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode }) {
-  const [active, setActive] = useState<"metadata" | "cataloging" | "documentation" | "review">("metadata");
+  const [active, setActive] = useState<"metadata" | "cataloging" | "documentation">("metadata");
   const activeStep = steps.findIndex((step) => step.id === active);
   const currentStep = steps[activeStep];
   const isMetadata = active === "metadata";
@@ -50,10 +49,9 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation }:
       <span>Etapa {activeStep + 1} de {steps.length}</span>
       <div><strong>{currentStep.label}</strong><p>{currentStep.guidance}</p></div>
     </aside>
-    <section className="request-analysis-section">{metadata}</section>
-    <section className="request-analysis-section">{cataloging}</section>
+    <section className="request-analysis-section">{metadata}<div id="request-analysis-actions-end" /></section>
+    <section className="request-analysis-section">{cataloging}<div id="request-cataloging-preview-end" /></section>
     <section className="request-analysis-section">{documentation}</section>
-    <section className="request-analysis-section request-analysis-section--review"><div id="request-cataloging-preview-end" /><div id="request-analysis-actions-end" /></section>
     <div className="form-navigation request-analysis-sections__navigation">
       <button className="button button--secondary button--small" type="button" disabled={isMetadata} onClick={() => setActive(steps[activeStep - 1].id)}>{isMetadata ? "← Voltar" : `← Voltar: ${steps[activeStep - 1].label}`}</button>
       {activeStep < steps.length - 1 && <button className="button button--secondary button--small" type="button" onClick={() => setActive(steps[activeStep + 1].id)}>Próxima: {steps[activeStep + 1].label} →</button>}

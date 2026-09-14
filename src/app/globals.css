@@ -742,7 +742,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .analysis-return-confirmation__note { padding-left: 10px; border-left: 3px solid var(--gold); font-size: .78rem; }
 .analysis-return-confirmation__card > div { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .request-analysis-sections { display: grid; gap: 18px; margin-top: 22px; }
-.analysis-stepper { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.analysis-stepper { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
 .analysis-stepper button { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; min-height: 58px; padding: 10px 14px; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--text-muted); font: inherit; font-size: .78rem; font-weight: 850; text-align: left; cursor: pointer; }
 .analysis-stepper button:last-child { border-right: 0; }
 .analysis-stepper button:hover { color: var(--text); background: var(--surface-raised); }
@@ -754,10 +754,9 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .analysis-next-action strong { font-size: .84rem; }
 .analysis-next-action p { margin: 0; color: var(--text-muted); font-size: .78rem; line-height: 1.45; }
 .request-analysis-sections > .request-analysis-section { display: none; }
-.request-analysis-sections[data-active-section="metadata"] > .request-analysis-section:nth-of-type(1), .request-analysis-sections[data-active-section="cataloging"] > .request-analysis-section:nth-of-type(2), .request-analysis-sections[data-active-section="documentation"] > .request-analysis-section:nth-of-type(3), .request-analysis-sections[data-active-section="review"] > .request-analysis-section:nth-of-type(4) { display: grid; }
+.request-analysis-sections[data-active-section="metadata"] > .request-analysis-section:nth-of-type(1), .request-analysis-sections[data-active-section="cataloging"] > .request-analysis-section:nth-of-type(2), .request-analysis-sections[data-active-section="documentation"] > .request-analysis-section:nth-of-type(3) { display: grid; }
 .request-analysis-section { display: grid; gap: 22px; }
 .request-analysis-section > .analysis-workspace, .request-analysis-section > .assisted-cataloging, .request-analysis-section > .panel { margin-top: 0; }
-.request-analysis-section--review { min-height: 210px; }
 .analysis-workspace__action--completed { border-color: #247447; background: #247447; color: #fff; }
 .analysis-workspace__action--completed:hover { border-color: #185a35; background: #185a35; color: #fff; }
 .issue-builder { display: grid; gap: 16px; margin: 4px 0; padding: 20px; border: 1px solid var(--line); background: var(--surface); }

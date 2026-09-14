@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const migration = readFileSync("supabase/migrations/202608230005_nada_consta_release.sql", "utf8");
+const parallelMigration = readFileSync("supabase/migrations/202609140002_parallel_nada_consta_release.sql", "utf8");
 const route = readFileSync("src/app/api/nada-consta/route.ts", "utf8");
 
 test("reserves a private five-megabyte PDF bucket for Nada Consta", () => {
@@ -23,6 +24,13 @@ test("gates release on librarian validation and records retention", () => {
   assert.match(migration, /nada_consta_approved/);
   assert.match(migration, /interval '60 days'/);
   assert.match(migration, /object_path=null,status='purged'/);
+});
+
+test("allows document validation in parallel and releases only after both approvals", () => {
+  assert.match(parallelMigration, /'submitted', 'in_review', 'changes_requested', 'approved'/);
+  assert.match(parallelMigration, /release_when_card_and_document_are_ready/);
+  assert.match(parallelMigration, /cataloging_card_homologations/);
+  assert.match(parallelMigration, /after update of status on public\.cataloging_requests/);
 });
 
 test("never handles the complete academic work", () => {
