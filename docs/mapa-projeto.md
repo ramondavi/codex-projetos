@@ -19,4 +19,4 @@ Busque nomes/símbolos nesses caminhos; não leia todos os arquivos da linha. Co
 
 Operação: operacao-mvp.md. Aceites: validacao-mvp.md. Segurança: revisao-seguranca-lgpd.md. Configuração/diagnóstico: configuracao-codex-app.md, configuracao-supabase.md. Histórico: historico/.
 
-Economize contexto irrelevante e saída repetida, sem reduzir cobertura. Redução de caracteres não equivale a percentual de tokens ou cota.
+Verificações resumidas: npm run verify. Operação desse executor e evidências de economia: economia-operacional.md (somente quando necessário). Redução de caracteres não equivale a percentual de tokens ou cota.

@@ -1,12 +1,12 @@
 # Pronto! — agentes
 
 ## Contexto e economia
-- Inicie por docs/estado-atual.md e docs/decisoes-pendentes.md uma vez por tarefa; não releia conteúdo disponível e inalterado.
+- Retomada/planejamento: docs/estado-atual.md. Regras de negócio: docs/decisoes-pendentes.md e mestre. Correções pontuais não exigem ler toda a documentação. Não releia instruções já presentes e inalteradas.
 - Antes de propor/alterar regras, leia as seções pertinentes de docs/documento-mestre.md, fonte da verdade, incluindo premissas, escopo e cautelas. Nunca implemente pendências como aprovadas. Atualize o mestre para decisões novas; pergunte em português sobre ambiguidades de negócio.
 - Localize referências em docs/mapa-projeto.md. Histórico e guias de configuração somente por necessidade.
 - Use rg --files e rg -n em caminhos específicos; leia trechos relevantes completos e amplie conforme dependências. Evite despejar arquivos grandes, gerados, tabelas, lockfiles ou logs.
-- Agrupe leituras independentes. Não repita buscas, testes ou capturas sem mudança, falha ou dúvida concreta; não delegue por garantia.
-- Responda em português simples e conciso: resultado, verificações e bloqueios. Faça o trabalho seguro autorizado; intervenção humana indispensável: uma instrução por vez, com botão exato, sem pedir segredos.
+- Agrupe leituras independentes na mesma chamada, com saída delimitada; não abra cada arquivo em uma rodada. Em snapshots use git grep no ref, sem percorrer todos os arquivos com git show. Não repita buscas/testes/capturas sem mudança, falha ou dúvida; não delegue por garantia.
+- Responda em português simples e conciso: resultado, verificações e bloqueios. O usuário não programa: execute, diagnostique, corrija e revalide o trabalho autorizado; não transfira revisão de código, comandos ou testes para ele. Intervenção humana indispensável: uma instrução, botão exato, sem pedir segredos.
 - Preserve fluxos e escopo. Nunca economize removendo segurança, testes, tipos, legibilidade ou evidências necessárias.
 
 ## Segurança
@@ -19,9 +19,9 @@
 ## Git e validação
 - No App, use a raiz do clone GitHub com .git, nunca ZIP/cópia Cloud. Antes de editar: árvore limpa, master atualizada e branch nova.
 - Revise diff/segredos antes do commit; faça commit claro e PR. Sem merge automático, force push, reescrita da master ou exclusão de branches não solicitada.
-- Durante o trabalho, testes direcionados. Antes de concluir: npm test, npm run typecheck, npm run lint e npm run build, uma vez; repita somente o afetado por novas mudanças/falhas. Preserve os checks do CI.
+- Antes de concluir alterações: npm run verify (test, typecheck, lint e build). Use -- --only test typecheck lint build selecionando apenas os afetados para revalidar. Leia o resumo; investigue trechos dos logs de falhas/avisos, nunca despeje todos. Análise somente leitura não exige rodar testes. Preserve o CI.
 - Build sem configuração local: valores públicos/fictícios. Resuma saídas; diferencie falhas de código de limitações do ambiente.
-- Mudança visual: aplicação em execução e captura consolidada antes do PR; siga as aprovações da seção 27 do mestre. Não reabra autorização já concedida.
+- Mudança visual: execute a aplicação, verifique os fluxos afetados e registre captura consolidada antes do PR. Testes locais seguros e correções do escopo estão autorizados; não peça confirmação técnica repetida. Banco remoto e decisões institucionais continuam exigindo confirmação.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

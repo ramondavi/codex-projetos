@@ -7,6 +7,7 @@ Atualizado em 14/09/2026. Regras: documento-mestre.md; pendências: decisoes-pen
 - Catalogação assistida, ficha institucional homologada, Nada Consta privado, PDF/mesclagem no navegador, guia RI/UFBA, encerramento e coordenação.
 - Administração, provisionamento de equipe, calendário/SLA, FAQ, privacidade e metadados públicos.
 - Testes unitários, pgTAP e E2E; CI verifica aplicação, acessibilidade pública e banco local. Resultados antigos não comprovam a branch atual.
+- Verificação resumida: npm run verify; logs completos locais, falhas explícitas e limite automático para o contexto inicial. Detalhes sob demanda em economia-operacional.md.
 
 ## Operação e próximo passo
 - O registro anterior relata Preview Vercel e Supabase remoto implantados; lançamento público depende dos aceites institucionais.

@@ -169,7 +169,7 @@ A integração principal da Vercel continua sendo pelo GitHub:
 1. o Codex abre o PR;
 2. a Vercel cria a Preview automaticamente;
 3. o Codex consulta os checks e logs disponíveis;
-4. você abre o link da Preview e confere visualmente;
+4. o Codex verifica tecnicamente os fluxos afetados e a interface, corrigindo falhas do escopo; você pode conferir o resultado visual se desejar;
 5. você faz o merge;
 6. a Vercel publica a `master` conforme a configuração do projeto.
 
@@ -179,13 +179,13 @@ Não é necessário instalar Vercel CLI agora. Se uma investigação futura exig
 
 Abra uma conversa nova no Codex App e envie:
 
-> Atualize a master e crie uma branch nova para o Incremento N. Siga AGENTS.md e consulte somente os documentos e trechos pertinentes ao escopo abaixo. Mostre um plano curto, execute test, typecheck, lint e build, revise o diff para segredos, faça commit e abra um PR. Não faça merge e não altere serviços remotos sem minha confirmação.
+> Atualize a master e crie uma branch nova para o Incremento N. Siga AGENTS.md e implemente o escopo abaixo. Execute npm run verify, investigue e corrija falhas do escopo e revalide o afetado. Valide tecnicamente a interface quando houver mudanças visuais. Revise o diff, faça commit e abra um PR. Não transfira testes ou diagnóstico para mim. Não faça merge nem aplique migrações remotas sem minha confirmação.
 
 Ao final, você fará apenas:
 
 1. abrir o link do PR;
 2. aguardar os checks verdes;
-3. testar a Preview da Vercel;
+3. conferir o resumo da validação técnica feita pelo Codex; visualizar a Preview é opcional e não substitui seus testes;
 4. clicar em **Squash and merge**;
 5. atualizar a `master` no GitHub antes do incremento seguinte.
 
@@ -200,13 +200,15 @@ Nunca aprove comandos contendo `--force`, `reset --hard`, `clean -fd`, `push --f
 ## Como reduzir trabalho e tokens
 
 - use uma conversa nova por incremento;
-- mande o Codex ler os documentos, sem colá-los novamente;
+- descreva o resultado desejado; o Codex deve consultar apenas as referências necessárias, sem você colar documentos;
 - mantenha decisões duráveis no Documento-Mestre;
 - mantenha `docs/estado-atual.md` curto;
-- teste banco e Auth localmente;
+- deixe o Codex executar testes e correções locais, incluindo banco e Auth quando afetados;
 - use o remoto somente na validação final;
 - peça uma instrução humana por vez;
 - evite solicitar logs completos quando um resumo e as linhas do erro bastarem.
+
+O fluxo automático e suas evidências estão em `docs/economia-operacional.md`. Você não precisa operar o executor nem interpretar os logs.
 
 ## Referências oficiais
 
