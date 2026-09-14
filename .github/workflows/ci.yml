@@ -28,20 +28,19 @@ jobs:
       - name: Instalar dependências
         run: npm ci --no-audit --no-fund
 
-      - name: Executar testes
-        run: npm test
-
-      - name: Verificar tipos
-        run: npm run typecheck
-
-      - name: Verificar padrões do código
-        run: npm run lint
-
-      - name: Gerar build de produção
-        run: npm run build
+      - name: Verificar aplicação com resumo e logs completos
+        run: npm run verify
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: public-anon-key-for-build-validation
+
+      - name: Preservar diagnóstico das verificações
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-logs
+          path: tmp/verification/
+          retention-days: 7
 
       - name: Instalar Chromium para os testes públicos
         run: npx playwright install --with-deps chromium

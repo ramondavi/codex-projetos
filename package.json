@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "node --test --experimental-strip-types tests/**/*.test.ts",
+    "verify": "node --experimental-strip-types scripts/verify.ts",
     "test:e2e": "playwright test",
     "test:e2e:public": "playwright test tests/e2e/public-stabilization.spec.ts",
     "test:e2e:auth": "playwright test tests/e2e/authenticated-profiles.spec.ts",
