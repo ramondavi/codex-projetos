@@ -142,6 +142,7 @@ Antes da mesclagem, mostrar nome e tamanho do PDF selecionado localmente e exigi
 - O formulário inicia com três campos obrigatórios para cada conjunto de palavras-chave; outros podem ser adicionados. Para título equivalente, inicia com um único campo: inglês para trabalho original em português e português, bloqueado para troca de idioma, para trabalho originalmente estrangeiro.
 - O estudante informa somente os nomes transcritos de orientador e coorientador. As designações de orientação são de decisão/preenchimento exclusivo do bibliotecário; a presença do coorientador já caracteriza a coorientação, sem marcação adicional.
 - A Especialização em Assistência Técnica, Habitação e Direito à Cidade (RAU+E) admite autoria compartilhada. O primeiro autor informado é a entrada principal da ficha; os demais são registrados como entradas secundárias. Os demais programas mantêm autoria única.
+- A ordem das pessoas relacionadas é explícita nos formulários do estudante e da análise: autor(es), orientador, coorientador quando houver e, por fim, demais membros da banca. O autor é fixo na primeira posição; no RAU+E, autores podem ser reordenados somente entre si. Orientador e coorientador são fixos após os autores. Na banca, orientador é obrigatoriamente o primeiro membro e coorientador, quando houver, o segundo; somente os demais membros podem ser reordenados por arrastar e soltar.
 - A orientação do link público deve citar Google Drive, OneDrive e serviços equivalentes e oferecer instruções curtas de compartilhamento público.
 - Permite formato/dimensão A4, A3, paisagem, livro/quadrado ou personalizado.
 - Inclui declaração explícita de que o trabalho foi apresentado/defendido e aprovado por banca, além de ano de depósito, ano de defesa/apresentação, quantidade física e escolha explícita sobre ilustrações.
@@ -200,6 +201,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - A forma autorizada parte da forma transcrita, aproxima registros existentes e apresenta opções progressivamente filtradas durante a digitação, sem retirar do bibliotecário a decisão final.
 - Para autor, a indicação de responsabilidade após `/` usa a forma transcrita e a entrada principal, a autorizada.
 - Correções de forma autorizada não sobrescrevem automaticamente registros históricos; preservar rastreabilidade.
+- A ordem de pessoas relacionadas é validada também no armazenamento: autores antecedem obrigatoriamente a orientação; orientador e coorientador não podem ser deslocados por membros da banca.
 
 ## 9. Vocabulário controlado, CDU, Cutter e MARC 21
 
@@ -248,10 +250,16 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 ### 10.2. Devolução por pendência
 
-- A conferência ocorre em tela única: cada valor informado pelo estudante aparece com ações adjacentes para validar, corrigir diretamente ou devolver especificamente ao estudante.
+- A conferência de metadados cobre título, subtítulo, título em outro idioma, link público e, quando preenchida, a mensagem opcional do estudante. Matrícula pertence ao vínculo acadêmico e não é objeto de validação, edição ou devolução nessa etapa. Autor, orientação, coorientação e palavras-chave são tratados exclusivamente na catalogação, onde recebem a validação técnica definitiva.
 - O bibliotecário valida manualmente o ano de nascimento opcional no Pergamum, consultando o registro acadêmico autorizado; o Pronto! não realiza integração, consulta automática ou armazenamento de credenciais desse sistema externo.
-- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
+- Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas e exibem o valor anterior como informação corrigida e sem validade, com ação para restaurar individualmente aquele campo. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
+- Ao final da análise, o bibliotecário escolhe um único encaminhamento: quando houver campos marcados, envia o atendimento ao estudante para correção; sem pendências, registra a revisão e segue para a catalogação. A liberação para a fila é uma ação separada de troca de responsável, não uma etapa de revisão.
+- Decisões finais do bibliotecário durante a análise exigem confirmação em janela modal antes de serem executadas: devolver ao estudante, validar metadados, aprovar ou devolver Nada Consta, homologar ficha e encerrar protocolo.
+- A análise organiza-se em três etapas: metadados, catalogação e ficha, e Nada Consta e liberação. O estudante pode enviar o Nada Consta desde a abertura do protocolo; o bibliotecário pode validá-lo em paralelo. A liberação ocorre imediatamente quando coexistirem ficha homologada e Nada Consta aprovado, independentemente de qual foi concluído primeiro.
+- A terceira etapa reúne uma conferência operacional dos metadados, da ficha e do Nada Consta, mostrando explicitamente bloqueios e atalhos para os campos pendentes; ela não cria uma segunda decisão de revisão.
+- Ao final da terceira etapa, quando a ficha ainda não foi homologada, o responsável pelo atendimento recebe uma ação explícita para revisar e homologar a ficha. Após a homologação, a mesma área esclarece a dependência restante do Nada Consta.
+- Nas listas "Fila de solicitações" e "Meus atendimentos", exibir o estado operacional atual calculado pelos marcos registrados (análise, Nada Consta, ficha, autodepósito, publicação ou encerramento), além do status técnico. No atendimento da biblioteca, o histórico completo abre em janela pelo cabeçalho, sem ocupar uma etapa do fluxo.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
 - Templates iniciais: campo obrigatório não preenchido; informação divergente do trabalho; nome divergente da folha de rosto; link público indisponível ou sem permissão; informação incompleta; formatação ou padronização a ajustar. O bibliotecário pode complementar ou substituir por justificativa livre.

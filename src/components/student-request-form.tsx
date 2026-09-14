@@ -24,6 +24,7 @@ const errorLabels: Record<string, string> = {
   valid_orientation_labels_required: "Confira as designações de orientação e coorientação.",
   three_keywords_required: "Informe pelo menos três palavras-chave em português e três no idioma complementar.",
   shared_authorship_not_allowed: "A autoria compartilhada é permitida somente no RAU+E.",
+  valid_committee_members_required: "Confira os nomes dos membros da banca.",
   valid_birth_year_required: "Informe um ano de nascimento válido.",
   birth_year_acknowledgement_required: "Para informar o ano de nascimento, confirme sua ciência sobre o uso na ficha.",
 };
@@ -71,7 +72,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
     setError(undefined);
     const payload = compactDraft(draft);
     const supabase = createClient();
-    const { data, error: rpcError } = await supabase.rpc("open_student_request_v6", { payload });
+    const { data, error: rpcError } = await supabase.rpc("open_student_request_v7", { payload });
     if (rpcError) {
       const known = Object.keys(errorLabels).find((code) => rpcError.message.includes(code));
       setError(known ? errorLabels[known] : "Não foi possível enviar a solicitação. Revise os campos e tente novamente.");
@@ -101,8 +102,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
       <fieldset className="form-section form-step form-step--2">
         <legend className="sr-only">Trabalho</legend>
         <p className="form-section__intro">Todas as informações devem corresponder exatamente ao que está escrito no próprio trabalho.</p>
-        <label>Autor — como aparece na folha de rosto <input required minLength={3} value={draft.people.author} onChange={(e) => set("people", { ...draft.people, author: e.target.value })} /></label>
-        {isRaue && <DynamicFields label="Autor adicional — como aparece na folha de rosto" values={draft.people.additionalAuthors} onChange={(index, value) => set("people", { ...draft.people, additionalAuthors: draft.people.additionalAuthors.map((item, position) => position === index ? value : item) })} onAdd={() => set("people", { ...draft.people, additionalAuthors: [...draft.people.additionalAuthors, ""] })} onRemove={(index) => set("people", { ...draft.people, additionalAuthors: draft.people.additionalAuthors.filter((_, position) => position !== index) })} />}
+        {isRaue ? <AuthorFields values={[draft.people.author, ...draft.people.additionalAuthors]} onChange={(authors) => set("people", { ...draft.people, author: authors[0] ?? "", additionalAuthors: authors.slice(1) })} /> : <label>Autor — 1º na ordem das pessoas relacionadas<input required minLength={3} value={draft.people.author} onChange={(e) => set("people", { ...draft.people, author: e.target.value })} /></label>}
         <label>Ano de nascimento do autor <input type="number" min="1900" max={new Date().getFullYear()} value={draft.people.birthYear} onChange={(e) => set("people", { ...draft.people, birthYear: e.target.value, birthYearAcknowledged: e.target.value ? draft.people.birthYearAcknowledged : false })} placeholder="Opcional" /></label>
         <p className="field-help">O ano ajuda a diferenciar pessoas com o mesmo nome na ficha catalográfica. Se você o informar, a biblioteca o conferirá no Pergamum antes de exibi-lo.</p>
         {draft.people.birthYear && <label className="check check--birth-year"><input required type="checkbox" checked={draft.people.birthYearAcknowledged} onChange={(e) => set("people", { ...draft.people, birthYearAcknowledged: e.target.checked })} /><span>Estou ciente de que o ano informado poderá aparecer na ficha após validação pela biblioteca.</span></label>}
@@ -110,7 +110,8 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
         <p className="field-help">Informe somente o título. Use o campo próprio abaixo quando houver subtítulo.</p>
         <label>Subtítulo <input value={draft.subtitle} onChange={(e) => set("subtitle", e.target.value)} /></label>
         <EquivalentTitlesFields draft={draft} onChange={(equivalentTitles, originalLanguage) => setDraft((current) => ({ ...current, equivalentTitles, originalLanguage }))} />
-        <div className="form-row"><label>Nome do orientador <input required minLength={3} value={draft.people.advisor} onChange={(e) => set("people", { ...draft.people, advisor: e.target.value })} /></label><label>Nome do coorientador <input value={draft.people.coadvisor} onChange={(e) => set("people", { ...draft.people, coadvisor: e.target.value })} placeholder="Quando houver" /></label></div>
+        <div className="form-row"><label>Nome do orientador — {isRaue ? draft.people.additionalAuthors.length + 2 : 2}º na ordem das pessoas relacionadas <input required minLength={3} value={draft.people.advisor} onChange={(e) => set("people", { ...draft.people, advisor: e.target.value })} /></label><label>Nome do coorientador — quando houver, {isRaue ? draft.people.additionalAuthors.length + 3 : 3}º na ordem <input value={draft.people.coadvisor} onChange={(e) => set("people", { ...draft.people, coadvisor: e.target.value })} placeholder="Quando houver" /></label></div>
+        <CommitteeFields values={draft.people.committeeMembers} authorCount={isRaue ? draft.people.additionalAuthors.length + 1 : 1} hasCoadvisor={Boolean(draft.people.coadvisor.trim())} onChange={(committeeMembers) => set("people", { ...draft.people, committeeMembers })} />
         <div className="special-cases"><span>Casos especiais, quando aplicáveis</span>{[["cotutelle", "Cotutela", "Regime de orientação compartilhada entre instituições, conforme indicado no trabalho."], ["double_degree", "Dupla titulação", "Trabalho vinculado à obtenção de dois títulos, conforme indicado no trabalho."]].map(([value, label, help]) => <label className="check special-case-label" key={value}><input type="checkbox" checked={draft.specialCases.includes(value)} onChange={(e) => set("specialCases", e.target.checked ? [...draft.specialCases, value] : draft.specialCases.filter((item) => item !== value))} /><span>{label}</span><span className="tooltip" tabIndex={0} aria-label={`Sobre ${label}`}>i<span role="tooltip">{help}</span></span></label>)}</div>
         <div className="form-row"><label>Ano de depósito da versão final <input required type="number" min="1900" max="9999" value={draft.depositYear} onChange={(e) => set("depositYear", e.target.value)} /></label><label>Ano de defesa ou apresentação <input required type="number" min="1900" max={draft.depositYear || "9999"} value={draft.defenseYear} onChange={(e) => set("defenseYear", e.target.value)} /></label></div>
         <div className="form-row">
@@ -146,6 +147,19 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
 
 function DynamicFields({ label, values, requiredCount = 0, onChange, onAdd, onRemove }: { label: string; values: string[]; requiredCount?: number; onChange: (index: number, value: string) => void; onAdd: () => void; onRemove: (index: number) => void }) {
   return <div className="dynamic-fields"><span>{label}</span>{values.map((value, index) => <div className="dynamic-field" key={index}><input aria-label={`${label} ${index + 1}`} required={index < requiredCount} minLength={index < requiredCount ? 2 : undefined} value={value} onChange={(e) => onChange(index, e.target.value)} />{values.length > requiredCount && <button type="button" className="text-button text-button--remove" onClick={() => onRemove(index)} aria-label={`Remover ${label.toLowerCase()} ${index + 1}`}>Remover</button>}</div>)}<button type="button" className="add-field" onClick={onAdd}>+ Adicionar campo</button></div>;
+}
+
+function AuthorFields({ values, onChange }: { values: string[]; onChange: (authors: string[]) => void }) {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const move = (from: number, to: number) => { if (from === to) return; const next = [...values]; const [author] = next.splice(from, 1); next.splice(to, 0, author); onChange(next); };
+  return <section className="dynamic-fields"><span>Autores — como aparecem na folha de rosto</span><p className="field-help">No RAU+E, arraste somente entre autores para definir a ordem. O 1º autor é a entrada principal da ficha.</p>{values.map((value, index) => <div className="dynamic-field dynamic-field--draggable" key={`${value}-${index}`} draggable onDragStart={() => setDraggedIndex(index)} onDragOver={(event) => event.preventDefault()} onDrop={() => { if (draggedIndex !== null) move(draggedIndex, index); setDraggedIndex(null); }}><span className="drag-handle" aria-hidden="true">⋮⋮</span><label>{index + 1}º autor<input required minLength={3} value={value} onChange={(event) => onChange(values.map((author, position) => position === index ? event.target.value : author))} /></label>{values.length > 1 && <button type="button" className="text-button text-button--remove" onClick={() => onChange(values.filter((_, position) => position !== index))}>Remover</button>}</div>)}<button type="button" className="add-field" onClick={() => onChange([...values, ""])}>+ Adicionar autor</button></section>;
+}
+
+function CommitteeFields({ values, authorCount, hasCoadvisor, onChange }: { values: string[]; authorCount: number; hasCoadvisor: boolean; onChange: (members: string[]) => void }) {
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const firstMemberPosition = authorCount + (hasCoadvisor ? 3 : 2);
+  const move = (from: number, to: number) => { if (from === to) return; const next = [...values]; const [member] = next.splice(from, 1); next.splice(to, 0, member); onChange(next); };
+  return <section className="dynamic-fields"><span>Membros da banca</span><p className="field-help">Na banca, o orientador é obrigatoriamente o 1º membro e, quando houver, o coorientador é o 2º. Arraste apenas os demais membros para ajustar a ordem.</p>{values.map((value, index) => <div className="dynamic-field dynamic-field--draggable" key={`${value}-${index}`} draggable onDragStart={() => setDraggedIndex(index)} onDragOver={(event) => event.preventDefault()} onDrop={() => { if (draggedIndex !== null) move(draggedIndex, index); setDraggedIndex(null); }}><span className="drag-handle" aria-hidden="true">⋮⋮</span><label>{index + 1}º membro adicional da banca — {firstMemberPosition + index}º na ordem das pessoas relacionadas<input minLength={3} value={value} onChange={(event) => onChange(values.map((member, position) => position === index ? event.target.value : member))} /></label><button type="button" className="text-button text-button--remove" onClick={() => onChange(values.filter((_, position) => position !== index))}>Remover</button></div>)}<button type="button" className="add-field" onClick={() => onChange([...values, ""])}>+ Adicionar membro da banca</button></section>;
 }
 
 type TitleLanguage = "pt" | "en" | "es" | "de" | "fr" | "it";

@@ -7,6 +7,7 @@ import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 import { A4_PAGE, drawCatalogingCard } from "@/domain/cataloging-card/pdf";
 import { createClient } from "@/lib/supabase/client";
 import { CatalogingCardPreview } from "@/components/cataloging-card-preview";
+import { FinalDecisionDialog } from "@/components/final-decision-dialog";
 
 export function CatalogingCardReview({ requestId, snapshot, homologatedAt, canHomologate }: {
   requestId: string; snapshot: CatalogingCardSnapshot; homologatedAt: string | null; canHomologate: boolean;
@@ -15,6 +16,7 @@ export function CatalogingCardReview({ requestId, snapshot, homologatedAt, canHo
   const [confirmed, setConfirmed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [confirmingHomologation, setConfirmingHomologation] = useState(false);
 
   async function homologate() {
     setBusy(true); setError("");
@@ -40,6 +42,6 @@ export function CatalogingCardReview({ requestId, snapshot, homologatedAt, canHo
   return <>
     <section className="panel final-review"><div><p className="eyebrow">Revisão final</p><h1>Ficha catalográfica</h1><p>Confira o conteúdo e a disposição conforme os modelos institucionais validados.</p></div><span className={`request-status ${homologatedAt ? "request-status--done" : ""}`}>{homologatedAt ? `Homologada em ${new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(homologatedAt))}` : "Aguardando homologação"}</span></section>
     <CatalogingCardPreview snapshot={snapshot} />
-    <section className="panel homologation-panel"><div><strong>Modelo institucional</strong><p>A prévia e o PDF usam o mesmo conteúdo homologável e as regras validadas para TCC, dissertação e tese.</p></div>{!homologatedAt && canHomologate && <label className="check"><input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} /> Revisei formas de nome, anos, descrição física, termos, CDU, Cutter e conteúdo da ficha.</label>}{error && <p className="form-error" role="alert">{error}</p>}<div className="homologation-actions">{!homologatedAt && <button className="button button--primary" type="button" disabled={!canHomologate || !confirmed || busy} onClick={homologate}>{busy ? "Homologando…" : "Homologar ficha"}</button>}<button className="button button--secondary" type="button" disabled={!homologatedAt} onClick={downloadPdf}>Baixar ficha isolada em PDF</button></div></section>
+    <section className="panel homologation-panel"><div><strong>Modelo institucional</strong><p>A prévia e o PDF usam o mesmo conteúdo homologável e as regras validadas para TCC, dissertação e tese.</p></div>{!homologatedAt && canHomologate && <label className="check"><input type="checkbox" checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} /> Revisei formas de nome, anos, descrição física, termos, CDU, Cutter e conteúdo da ficha.</label>}{error && <p className="form-error" role="alert">{error}</p>}<div className="homologation-actions">{!homologatedAt && <button className="button button--primary" type="button" disabled={!canHomologate || !confirmed || busy} onClick={() => setConfirmingHomologation(true)}>{busy ? "Homologando…" : "Homologar ficha"}</button>}<button className="button button--secondary" type="button" disabled={!homologatedAt} onClick={downloadPdf}>Baixar ficha isolada em PDF</button></div></section>{confirmingHomologation && <FinalDecisionDialog title="Homologar esta ficha?" description="A ficha será registrada como homologada e seguirá para a etapa de Nada Consta e liberação." confirmLabel="Confirmar homologação" busy={busy} onCancel={() => setConfirmingHomologation(false)} onConfirm={homologate} />}
   </>;
 }

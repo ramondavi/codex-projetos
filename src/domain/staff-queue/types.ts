@@ -12,6 +12,8 @@ export type QueueRequest = {
   level: string;
   advisorName: string;
   hasInternalNote: boolean;
+  progressLabel: string;
+  progressTone: "waiting" | "active" | "ready" | "done" | "attention";
 };
 
 export type StaffOption = { id: string; fullName: string };
