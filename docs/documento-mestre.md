@@ -254,6 +254,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - O bibliotecário valida manualmente o ano de nascimento opcional no Pergamum, consultando o registro acadêmico autorizado; o Pronto! não realiza integração, consulta automática ou armazenamento de credenciais desse sistema externo.
 - Templates e justificativas aparecem somente para campos devolvidos. Correções diretas feitas pelo bibliotecário responsável são auditadas. Durante a análise em edição, o responsável pode restaurar apenas as correções diretas registradas naquela revisão aos valores enviados pelo estudante; o estorno também é auditado e nunca apaga o histórico.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
+- Ao final da análise, o bibliotecário escolhe um único encaminhamento: quando houver campos marcados, envia o atendimento ao estudante para correção; sem pendências, registra a revisão e segue para a catalogação. A liberação para a fila é uma ação separada de troca de responsável, não uma etapa de revisão.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
 - Templates iniciais: campo obrigatório não preenchido; informação divergente do trabalho; nome divergente da folha de rosto; link público indisponível ou sem permissão; informação incompleta; formatação ou padronização a ajustar. O bibliotecário pode complementar ou substituir por justificativa livre.
