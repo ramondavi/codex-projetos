@@ -15,3 +15,14 @@ test("expõe valores anteriores apenas para a equipe autorizada", async () => {
   assert.match(migration, /current_user_role\(\) in \('cataloger', 'administrator'\)/);
   assert.match(migration, /request_direct_correction_baselines/);
 });
+
+test("restaura individualmente uma correção direta", async () => {
+  const [workspace, migration] = await Promise.all([
+    readFile("src/components/request-analysis-workspace.tsx", "utf8"),
+    readFile("supabase/migrations/202609140004_restore_single_direct_correction.sql", "utf8"),
+  ]);
+  assert.match(workspace, /Restaurar esta informação/);
+  assert.match(workspace, /restore_direct_request_correction/);
+  assert.match(migration, /delete from public\.request_direct_correction_baselines/);
+  assert.match(migration, /request_direct_correction_restored/);
+});

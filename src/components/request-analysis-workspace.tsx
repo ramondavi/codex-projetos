@@ -15,6 +15,12 @@ function formatPreviousValue(value: unknown) {
   return String(value);
 }
 
+function valueForInput(value: unknown) {
+  if (Array.isArray(value)) return value.join("\n");
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
 function savedAtLabel(savedAt: string | null, now: number) {
   if (!savedAt) return "Alterações salvas";
   const date = new Date(savedAt); const seconds = Math.max(0, Math.floor((now - date.getTime()) / 1000));
@@ -39,6 +45,7 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(initialSavedAt);
   const [reviewCompletedAt, setReviewCompletedAt] = useState<string | null>(initialReviewCompletedAt);
   const [resetting, setResetting] = useState(false);
+  const [restoringField, setRestoringField] = useState<string | null>(null);
   const [completing, setCompleting] = useState(false);
   const [confirmingReturn, setConfirmingReturn] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -88,6 +95,18 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
     if (error) { setState("error"); setResetting(false); return; }
     router.refresh();
   }
+  async function restoreCorrection(fieldKey: string) {
+    if (!window.confirm("Restaurar este campo ao valor informado originalmente pelo estudante?")) return;
+    setRestoringField(fieldKey); setState("saving");
+    const { error } = await createClient().rpc("restore_direct_request_correction", { target_request_id: requestId, field_key_value: fieldKey });
+    if (error) { setState("error"); setRestoringField(null); return; }
+    const originalValue = originalValues[fieldKey];
+    setValues((current) => ({ ...current, [fieldKey]: valueForInput(originalValue) }));
+    setCorrected((current) => current.filter((key) => key !== fieldKey));
+    setValidated((current) => current.filter((key) => key !== fieldKey));
+    setOriginalValues((current) => { const next = { ...current }; delete next[fieldKey]; return next; });
+    setLastSavedAt(new Date().toISOString()); setRestoringField(null); setState("saved");
+  }
   async function completeReview() {
     setCompleting(true); setState("saving");
     const { data, error } = await createClient().rpc("complete_request_analysis", { target_request_id: requestId });
@@ -123,7 +142,7 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
     <div className="field-review-list">{fields.map((field) => {
       const isEditing = editing.includes(field.key); const isPending = selectedFields.includes(field.key); const isValidated = validated.includes(field.key); const isCorrected = corrected.includes(field.key); const detail = issueDetails[field.key] ?? { templateId: "", freeJustification: "" };
       return <article id={`review-field-${field.key}`} tabIndex={-1} className={`field-review ${isValidated ? "field-review--valid" : ""} ${isCorrected ? "field-review--corrected" : ""} ${isPending ? "field-review--invalid" : ""}`} key={field.key}>
-        <div className="field-review__value"><span>{field.label}</span>{isEditing ? field.multiline ? <textarea rows={3} value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <input value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <strong>{values[field.key] || "—"}</strong>}{isCorrected && <p className="field-review__previous-value"><strong>Informação anterior — corrigida e sem validade:</strong> {formatPreviousValue(originalValues[field.key])}</p>}</div>
+        <div className="field-review__value"><span>{field.label}</span>{isEditing ? field.multiline ? <textarea rows={3} value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <input value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <strong>{values[field.key] || "—"}</strong>}{isCorrected && <div className="field-review__previous-value"><p><strong>Informação anterior — corrigida e sem validade:</strong> {formatPreviousValue(originalValues[field.key])}</p>{editable && <button className="button button--secondary button--small" type="button" disabled={restoringField === field.key} onClick={() => restoreCorrection(field.key)}>{restoringField === field.key ? "Restaurando…" : "Restaurar esta informação"}</button>}</div>}</div>
         {editable && <div className="field-review__actions">{isEditing ? <><button className="button button--small field-review__action--editing" type="button" onClick={() => correct(field.key)}>Salvar alteração</button><button className="text-action" type="button" onClick={() => setEditing((current) => current.filter((key) => key !== field.key))}>Descartar</button></> : <><button className={`button button--secondary button--small ${isCorrected ? "field-review__action--corrected" : isValidated ? "field-review__action--valid" : ""}`} type="button" onClick={() => { setValidated((current) => current.includes(field.key) ? current : [...current, field.key]); setSelectedFields((current) => current.filter((key) => key !== field.key)); }}>{isCorrected ? "✓ Alterado" : "✓ Está correto"}</button><button className="button button--secondary button--small" type="button" onClick={() => setEditing((current) => [...current, field.key])}>Editar dado</button><button className={`button button--secondary button--small ${isPending ? "field-review__action--invalid" : ""}`} type="button" onClick={() => { setSelectedFields((current) => current.includes(field.key) ? current : [...current, field.key]); setValidated((current) => current.filter((key) => key !== field.key)); }}>Pedir ajuste</button></>}</div>}
         {isPending && <div className="field-review__issue"><p>O estudante verá esta orientação para ajustar <strong>{field.label.toLocaleLowerCase("pt-BR")}</strong>.</p><label>Modelo de mensagem<select value={detail.templateId} onChange={(event) => setIssueDetails((current) => ({ ...current, [field.key]: { ...detail, templateId: event.target.value } }))}><option value="">Escrever uma mensagem</option>{templates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><label>Orientação complementar<textarea rows={2} maxLength={2000} value={detail.freeJustification} onChange={(event) => setIssueDetails((current) => ({ ...current, [field.key]: { ...detail, freeJustification: event.target.value } }))} placeholder={detail.templateId ? "Opcional: informe detalhes específicos" : "Obrigatório: explique o ajuste necessário"} /></label></div>}
       </article>;
