@@ -34,6 +34,14 @@ select is((select status from public.nada_consta_documents),'approved'::public.n
 select ok((select validated_at is not null and validated_by='94000000-0000-4000-8000-000000000002' from public.nada_consta_documents),'validação registra data e bibliotecário');
 reset role;
 select is((select count(*)::integer from public.email_outbox where event_type='request_released'),0,'Nada Consta aprovado sem ficha homologada não libera');
+insert into public.controlled_terms(id,preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by) values
+  ('94000000-0000-4000-8000-000000000010','Arquitetura','arquitetura-nada','Architecture','architecture-nada','94000000-0000-4000-8000-000000000002','94000000-0000-4000-8000-000000000002'),
+  ('94000000-0000-4000-8000-000000000011','Habitação','habitacao-nada','Housing','housing-nada','94000000-0000-4000-8000-000000000002','94000000-0000-4000-8000-000000000002'),
+  ('94000000-0000-4000-8000-000000000012','Urbanismo','urbanismo-nada','Urbanism','urbanism-nada','94000000-0000-4000-8000-000000000002','94000000-0000-4000-8000-000000000002');
+insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position) values
+  ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000010','Arquitetura','Architecture',true,0),
+  ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000011','Habitação','Housing',false,1),
+  ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000012','Urbanismo','Urbanism',false,2);
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
   values ((select id from public.cataloging_requests limit 1),'{}'::jsonb,'94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111');
 update public.cataloging_requests set status='in_review';
