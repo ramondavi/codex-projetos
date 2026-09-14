@@ -690,6 +690,8 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .progress-badge--ready { background: color-mix(in srgb, #1a7f4b 16%, transparent); color: #12623a; }
 .progress-badge--done { background: color-mix(in srgb, #1a7f4b 20%, transparent); color: #12623a; }
 .progress-badge--attention { background: color-mix(in srgb, #b42318 14%, transparent); color: #8b1c13; }
+.field-review__previous-value { margin: 10px 0 0; padding: 9px 10px; border-left: 3px solid #a24a1c; background: color-mix(in srgb, #a24a1c 10%, transparent); color: var(--text-muted); font-size: .84rem; }
+.field-review__previous-value strong { color: #8b3d15; }
 .queue-item__actions { display: grid; align-content: center; gap: 10px; }
 .queue-item__actions > span { color: var(--text-muted); font-size: 0.76rem; }
 .button--small { min-height: 40px; padding: 8px 13px; font-size: 0.8rem; }

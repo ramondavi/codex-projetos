@@ -9,6 +9,12 @@ type IssueTemplate = { id: string; label: string; message: string };
 export type ReviewField = { key: string; label: string; value: string; multiline?: boolean };
 type IssueDetail = { templateId: string; freeJustification: string };
 
+function formatPreviousValue(value: unknown) {
+  if (Array.isArray(value)) return value.length ? value.join(" · ") : "não informado";
+  if (value === null || value === undefined || value === "") return "não informado";
+  return String(value);
+}
+
 function savedAtLabel(savedAt: string | null, now: number) {
   if (!savedAt) return "Alterações salvas";
   const date = new Date(savedAt); const seconds = Math.max(0, Math.floor((now - date.getTime()) / 1000));
@@ -16,13 +22,14 @@ function savedAtLabel(savedAt: string | null, now: number) {
   return `${seconds < 60 ? `Alterações salvas há ${seconds} ${seconds === 1 ? "segundo" : "segundos"}` : "Alterações salvas"} (${exact})`;
 }
 
-export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, initialInternalNote, initialSavedAt, initialReviewCompletedAt, editable, templates, fields }: { requestId: string; initialAnalysisNotes: string; initialInternalNote: string; initialSavedAt: string | null; initialReviewCompletedAt: string | null; editable: boolean; templates: IssueTemplate[]; fields: ReviewField[] }) {
+export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, initialInternalNote, initialSavedAt, initialReviewCompletedAt, initialCorrectionBaselines, editable, templates, fields }: { requestId: string; initialAnalysisNotes: string; initialInternalNote: string; initialSavedAt: string | null; initialReviewCompletedAt: string | null; initialCorrectionBaselines: Record<string, unknown>; editable: boolean; templates: IssueTemplate[]; fields: ReviewField[] }) {
   const router = useRouter();
   const [analysisNotes, setAnalysisNotes] = useState(initialAnalysisNotes);
   const [internalNote, setInternalNote] = useState(initialInternalNote);
   const [values, setValues] = useState(() => Object.fromEntries(fields.map((field) => [field.key, field.value])));
   const [validated, setValidated] = useState<string[]>([]);
-  const [corrected, setCorrected] = useState<string[]>([]);
+  const [corrected, setCorrected] = useState<string[]>(() => Object.keys(initialCorrectionBaselines));
+  const [originalValues, setOriginalValues] = useState<Record<string, unknown>>(initialCorrectionBaselines);
   const [editing, setEditing] = useState<string[]>([]);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [issueDetails, setIssueDetails] = useState<Record<string, IssueDetail>>({});
@@ -70,6 +77,7 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
     setEditing((current) => current.filter((key) => key !== fieldKey));
     setValidated((current) => current.includes(fieldKey) ? current : [...current, fieldKey]);
     setCorrected((current) => current.includes(fieldKey) ? current : [...current, fieldKey]);
+    setOriginalValues((current) => current[fieldKey] === undefined ? { ...current, [fieldKey]: originalValue } : current);
     setLastSavedAt(new Date().toISOString());
     setState("saved");
   }
@@ -115,8 +123,8 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
     <div className="field-review-list">{fields.map((field) => {
       const isEditing = editing.includes(field.key); const isPending = selectedFields.includes(field.key); const isValidated = validated.includes(field.key); const isCorrected = corrected.includes(field.key); const detail = issueDetails[field.key] ?? { templateId: "", freeJustification: "" };
       return <article id={`review-field-${field.key}`} tabIndex={-1} className={`field-review ${isValidated ? "field-review--valid" : ""} ${isCorrected ? "field-review--corrected" : ""} ${isPending ? "field-review--invalid" : ""}`} key={field.key}>
-        <div className="field-review__value"><span>{field.label}</span>{isEditing ? field.multiline ? <textarea rows={3} value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <input value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <strong>{values[field.key] || "—"}</strong>}</div>
-        {editable && <div className="field-review__actions">{isEditing ? <><button className="button button--small field-review__action--editing" type="button" onClick={() => correct(field.key)}>Salvar alteração</button><button className="text-action" type="button" onClick={() => setEditing((current) => current.filter((key) => key !== field.key))}>Descartar</button></> : <><button className={`button button--secondary button--small ${isCorrected ? "field-review__action--corrected" : isValidated ? "field-review__action--valid" : ""}`} type="button" onClick={() => { setValidated((current) => current.includes(field.key) ? current : [...current, field.key]); setCorrected((current) => current.filter((key) => key !== field.key)); setSelectedFields((current) => current.filter((key) => key !== field.key)); }}>{isCorrected ? "✓ Alterado" : "✓ Está correto"}</button><button className="button button--secondary button--small" type="button" onClick={() => setEditing((current) => [...current, field.key])}>Editar dado</button><button className={`button button--secondary button--small ${isPending ? "field-review__action--invalid" : ""}`} type="button" onClick={() => { setSelectedFields((current) => current.includes(field.key) ? current : [...current, field.key]); setValidated((current) => current.filter((key) => key !== field.key)); setCorrected((current) => current.filter((key) => key !== field.key)); }}>Pedir ajuste</button></>}</div>}
+        <div className="field-review__value"><span>{field.label}</span>{isEditing ? field.multiline ? <textarea rows={3} value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <input value={values[field.key]} onChange={(event) => setValues((current) => ({ ...current, [field.key]: event.target.value }))} /> : <strong>{values[field.key] || "—"}</strong>}{isCorrected && <p className="field-review__previous-value"><strong>Informação anterior — corrigida e sem validade:</strong> {formatPreviousValue(originalValues[field.key])}</p>}</div>
+        {editable && <div className="field-review__actions">{isEditing ? <><button className="button button--small field-review__action--editing" type="button" onClick={() => correct(field.key)}>Salvar alteração</button><button className="text-action" type="button" onClick={() => setEditing((current) => current.filter((key) => key !== field.key))}>Descartar</button></> : <><button className={`button button--secondary button--small ${isCorrected ? "field-review__action--corrected" : isValidated ? "field-review__action--valid" : ""}`} type="button" onClick={() => { setValidated((current) => current.includes(field.key) ? current : [...current, field.key]); setSelectedFields((current) => current.filter((key) => key !== field.key)); }}>{isCorrected ? "✓ Alterado" : "✓ Está correto"}</button><button className="button button--secondary button--small" type="button" onClick={() => setEditing((current) => [...current, field.key])}>Editar dado</button><button className={`button button--secondary button--small ${isPending ? "field-review__action--invalid" : ""}`} type="button" onClick={() => { setSelectedFields((current) => current.includes(field.key) ? current : [...current, field.key]); setValidated((current) => current.filter((key) => key !== field.key)); }}>Pedir ajuste</button></>}</div>}
         {isPending && <div className="field-review__issue"><p>O estudante verá esta orientação para ajustar <strong>{field.label.toLocaleLowerCase("pt-BR")}</strong>.</p><label>Modelo de mensagem<select value={detail.templateId} onChange={(event) => setIssueDetails((current) => ({ ...current, [field.key]: { ...detail, templateId: event.target.value } }))}><option value="">Escrever uma mensagem</option>{templates.map((template) => <option value={template.id} key={template.id}>{template.label}</option>)}</select></label><label>Orientação complementar<textarea rows={2} maxLength={2000} value={detail.freeJustification} onChange={(event) => setIssueDetails((current) => ({ ...current, [field.key]: { ...detail, freeJustification: event.target.value } }))} placeholder={detail.templateId ? "Opcional: informe detalhes específicos" : "Obrigatório: explique o ajuste necessário"} /></label></div>}
       </article>;
     })}</div>
