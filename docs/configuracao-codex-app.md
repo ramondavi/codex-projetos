@@ -58,7 +58,7 @@ Não abra no Codex uma cópia ZIP nem a pasta antiga do Codex Cloud. Abra a past
 
 Envie exatamente:
 
-> Sou um usuário não-programador. Leia AGENTS.md, docs/estado-atual.md, docs/documento-mestre.md e docs/decisoes-pendentes.md. Não altere nada ainda. Verifique se este é o clone Git correto, se a branch master está atualizada e se Git, Node.js, npm e Docker estão disponíveis. Não leia nem exiba arquivos .env. Faça sozinho tudo o que for seguro; quando precisar de login, clique ou confirmação minha, pare e mostre somente uma instrução simples por vez.
+> Sou um usuário não-programador. Siga AGENTS.md e leia docs/estado-atual.md e docs/decisoes-pendentes.md. Consulte os demais documentos conforme o assunto. Não altere nada ainda. Verifique se este é o clone Git correto, se a branch master está atualizada e se Git, Node.js, npm e Docker estão disponíveis. Não leia nem exiba arquivos .env. Faça sozinho tudo o que for seguro; quando precisar de login, clique ou confirmação minha, pare e mostre somente uma instrução simples por vez.
 
 ## Etapa 4 — executar a preparação automática
 
@@ -179,7 +179,7 @@ Não é necessário instalar Vercel CLI agora. Se uma investigação futura exig
 
 Abra uma conversa nova no Codex App e envie:
 
-> Atualize a master e crie uma branch nova para o Incremento N. Leia os documentos do repositório e implemente somente o escopo abaixo. Mostre um plano curto, execute test, typecheck, lint e build, revise o diff para segredos, faça commit e abra um PR. Não faça merge e não altere serviços remotos sem minha confirmação.
+> Atualize a master e crie uma branch nova para o Incremento N. Siga AGENTS.md e consulte somente os documentos e trechos pertinentes ao escopo abaixo. Mostre um plano curto, execute test, typecheck, lint e build, revise o diff para segredos, faça commit e abra um PR. Não faça merge e não altere serviços remotos sem minha confirmação.
 
 Ao final, você fará apenas:
 

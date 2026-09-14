@@ -1,53 +1,27 @@
-# Instruções para agentes — Pronto!
+# Pronto! — agentes
 
-Estas instruções valem para todo o repositório e devem ser seguidas no Codex App, CLI, IDE ou Cloud. O ambiente local recomendado para este usuário é o Codex App no Windows, operando as ferramentas locais em seu nome.
+## Contexto e economia
+- Inicie por docs/estado-atual.md e docs/decisoes-pendentes.md uma vez por tarefa; não releia conteúdo disponível e inalterado.
+- Antes de propor/alterar regras, leia as seções pertinentes de docs/documento-mestre.md, fonte da verdade, incluindo premissas, escopo e cautelas. Nunca implemente pendências como aprovadas. Atualize o mestre para decisões novas; pergunte em português sobre ambiguidades de negócio.
+- Localize referências em docs/mapa-projeto.md. Histórico e guias de configuração somente por necessidade.
+- Use rg --files e rg -n em caminhos específicos; leia trechos relevantes completos e amplie conforme dependências. Evite despejar arquivos grandes, gerados, tabelas, lockfiles ou logs.
+- Agrupe leituras independentes. Não repita buscas, testes ou capturas sem mudança, falha ou dúvida concreta; não delegue por garantia.
+- Responda em português simples e conciso: resultado, verificações e bloqueios. Faça o trabalho seguro autorizado; intervenção humana indispensável: uma instrução por vez, com botão exato, sem pedir segredos.
+- Preserve fluxos e escopo. Nunca economize removendo segurança, testes, tipos, legibilidade ou evidências necessárias.
 
-## Fonte da verdade
+## Segurança
+- Nunca leia, exiba, registre ou versione .env, .env.local, senhas, tokens, chaves ou connection strings.
+- No navegador, somente chave pública/publishable Supabase; nunca service_role.
+- Autorização no banco por RLS; contas blocked/inactive perdem acesso operacional.
+- Migrações incorporadas são imutáveis; alterações em nova migração em supabase/migrations.
+- Migração remota exige explicação do impacto e confirmação explícita.
 
-1. Leia `docs/documento-mestre.md` antes de propor regras de negócio.
-2. Consulte `docs/decisoes-pendentes.md`; nunca implemente uma opção ainda pendente como se estivesse aprovada.
-3. Leia `docs/estado-atual.md` ao iniciar uma nova conversa ou incremento.
-4. Em caso de ambiguidade, pergunte ao usuário em português antes de inferir.
-
-## Segurança e banco
-
-- Nunca leia, exiba, registre ou versione `.env`, `.env.local`, senhas, tokens, chaves ou connection strings.
-- Use somente a chave pública/publishable do Supabase no navegador. Nunca use `service_role` em código cliente.
-- Migrações incorporadas são imutáveis. Toda alteração de banco deve ser uma nova migração em `supabase/migrations`.
-- Não aplique migrações no Supabase remoto sem explicar o impacto e obter confirmação explícita do usuário.
-- Políticas de acesso devem ser impostas no banco com RLS, não apenas escondendo elementos da interface.
-- Contas `blocked` ou `inactive` não podem conservar autorização operacional.
-
-## Fluxo Git
-
-- Antes de editar, confirme que a tarefa parte da `master` atualizada e que `git status` está limpo.
-- No Codex App, trabalhe somente na raiz do repositório clonado pelo GitHub, nunca em ZIP, cópia do Cloud ou pasta sem `.git`.
-- Trabalhe em uma branch nova por incremento ou correção.
-- Não force push, não reescreva a `master` e não apague branches sem solicitação.
-- Faça um commit claro e abra um PR; não faça merge automaticamente.
-- Antes do commit, revise `git diff` e confirme que nenhum segredo entrou no patch.
-
-## Verificações obrigatórias
-
-Execute antes de concluir uma alteração:
-
-```bash
-npm test
-npm run typecheck
-npm run lint
-npm run build
-```
-
-- Para o build, use apenas valores públicos/fictícios quando o ambiente local ainda não estiver configurado.
-- Se houver alteração visual perceptível, inicie a aplicação e registre uma captura de tela.
-- Informe separadamente falhas do código e limitações do ambiente.
-
-## Comunicação
-
-- Explique procedimentos ao usuário como a uma pessoa não-programadora: passos numerados, nomes exatos dos botões e indicação clara do que não deve ser compartilhado.
-- Faça sozinho tudo o que for seguro e automatizável. Quando login, clique ou confirmação humana forem indispensáveis, pare e apresente somente uma instrução simples por vez.
-- Responda em português, salvo solicitação diferente.
-- Preserve os fluxos e decisões existentes; faça somente as alterações pedidas.
+## Git e validação
+- No App, use a raiz do clone GitHub com .git, nunca ZIP/cópia Cloud. Antes de editar: árvore limpa, master atualizada e branch nova.
+- Revise diff/segredos antes do commit; faça commit claro e PR. Sem merge automático, force push, reescrita da master ou exclusão de branches não solicitada.
+- Durante o trabalho, testes direcionados. Antes de concluir: npm test, npm run typecheck, npm run lint e npm run build, uma vez; repita somente o afetado por novas mudanças/falhas. Preserve os checks do CI.
+- Build sem configuração local: valores públicos/fictícios. Resuma saídas; diferencie falhas de código de limitações do ambiente.
+- Mudança visual: aplicação em execução e captura consolidada antes do PR; siga as aprovações da seção 27 do mestre. Não reabra autorização já concedida.
 
 <!-- BEGIN:nextjs-agent-rules -->
 
