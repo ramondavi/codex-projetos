@@ -13,8 +13,11 @@ test("a análise mostra data do salvamento e oferece um único encaminhamento cl
   assert.match(component, /Alterações salvas há/);
   assert.match(component, /date\.getDate\(\)/);
   assert.match(component, /Enviar ao estudante para correção/);
-  assert.match(component, /Seguir para catalogação/);
+  assert.match(component, /Validar metadados e ir para catalogação/);
   assert.match(component, /hasRequestedAdjustments/);
+  assert.match(component, /Metadados validados/);
+  assert.match(component, /Aguardando validação/);
+  assert.match(component, /Antes de liberar a ficha/);
   assert.doesNotMatch(component, /Revisar devolução/);
   assert.match(component, /reset_direct_request_corrections/);
   assert.match(component, /savedText\.current/);

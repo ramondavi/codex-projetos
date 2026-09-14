@@ -256,6 +256,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 - Marcar exatamente os campos incorretos, com template ou texto livre; gerar e-mail com campos e justificativas.
 - Ao final da análise, o bibliotecário escolhe um único encaminhamento: quando houver campos marcados, envia o atendimento ao estudante para correção; sem pendências, registra a revisão e segue para a catalogação. A liberação para a fila é uma ação separada de troca de responsável, não uma etapa de revisão.
 - A análise organiza-se em três etapas: metadados, catalogação e ficha, e Nada Consta e liberação. O estudante pode enviar o Nada Consta desde a abertura do protocolo; o bibliotecário pode validá-lo em paralelo. A liberação ocorre imediatamente quando coexistirem ficha homologada e Nada Consta aprovado, independentemente de qual foi concluído primeiro.
+- A terceira etapa reúne uma conferência operacional dos metadados, da ficha e do Nada Consta, mostrando explicitamente bloqueios e atalhos para os campos pendentes; ela não cria uma segunda decisão de revisão.
 - Destacar pendências para o estudante; após a devolução, os campos corretos ficam bloqueados e somente os campos marcados podem ser reenviados.
 - Tratar especificamente pendência de Nada Consta.
 - Templates iniciais: campo obrigatório não preenchido; informação divergente do trabalho; nome divergente da folha de rosto; link público indisponível ou sem permissão; informação incompleta; formatação ou padronização a ajustar. O bibliotecário pode complementar ou substituir por justificativa livre.
