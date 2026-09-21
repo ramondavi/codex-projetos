@@ -15,11 +15,9 @@ Revisão técnica do Incremento 13. Ela não substitui parecer jurídico ou vali
 
 ## Riscos residuais antes do lançamento
 
-1. **Bloqueador institucional:** aviso de privacidade, canal de direitos do titular e textos finais ainda não foram aprovados.
-2. **Bloqueador operacional:** transporte SMTP de produção e domínio/remetente ainda não foram definidos.
-3. **Alto:** testes com PDFs institucionais reais e validação assistida ainda precisam de execução humana.
-4. **Médio:** a retenção de logs e metadados após expurgo precisa de prazo institucional explícito.
-5. **Médio:** limites de autenticação, monitoração e resposta a incidentes devem ser confirmados no projeto hospedado.
+1. **Bloqueador operacional:** transporte SMTP de produção e domínio/remetente ainda não foram definidos.
+2. **Alto:** testes com PDFs institucionais reais e validação assistida ainda precisam de execução humana.
+3. **Médio:** as configurações de limites de autenticação, monitoração e resposta a incidentes devem ser confirmadas no projeto hospedado antes do lançamento.
 
 ## Critérios para aceite
 
@@ -28,4 +26,4 @@ Revisão técnica do Incremento 13. Ela não substitui parecer jurídico ou vali
 - URLs de callback limitadas aos domínios usados.
 - Primeiro Administrador provisionado pelo procedimento controlado; demais contas pela função administrativa.
 - SMTP com TLS, remetente institucional e testes de entrega/repetição aprovados.
-- Aviso de privacidade, canal do titular, retenções e responsáveis aprovados pela instituição.
+- Aviso de privacidade, canal do titular, retenções, responsáveis e política interna de operação aprovados pela instituição.
