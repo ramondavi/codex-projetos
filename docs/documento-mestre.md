@@ -340,9 +340,9 @@ O fluxo observado e confirmado é: coleção; tipo de documento; cinco grupos de
 ## 16. E-mails transacionais
 
 - Abertura ao estudante; abertura à coordenação se Magic Link estiver ativo.
-- Pendência ao estudante com campos/justificativas; para coordenação, opcional/configurável.
+- Pendência ao estudante com campos/justificativas; a coordenação não recebe e-mail de pendência no MVP, para evitar ruído operacional e exposição desnecessária. Ela acompanha o protocolo pelo Magic Link quando esse recurso estiver ativo.
 - Liberação da ficha e encerramento ao estudante; encerramento à coordenação com dados básicos e URL/Handle.
-- Canal: e-mail; WhatsApp descartado. Textos finais serão redigidos em conjunto; até lá, usar textos operacionais provisórios identificados no código.
+- Canal: e-mail; WhatsApp descartado. Os textos transacionais aprovados estão em `docs/textos-emails-transacionais.md`. A coordenação recebe, nos eventos de abertura e encerramento, título, nome completo do estudante, protocolo, prazo de referência e, no encerramento, URL/Handle; não recebe CPF, documentos ou observações internas.
 - Priorizar SMTP institucional da biblioteca quando configuração e políticas da UFBA permitirem; serviço transacional externo gratuito é alternativa.
 
 ### 16.1. Notificações autenticadas — incremento futuro
