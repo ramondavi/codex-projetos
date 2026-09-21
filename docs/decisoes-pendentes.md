@@ -39,5 +39,5 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 ## Lançamento
 
 - Confirmar as URLs de callback de produção do Supabase para `https://prontobib.vercel.app`.
-- Aprovar o aviso de privacidade, o canal do titular, o SMTP institucional e os textos finais antes do lançamento público.
+- Confirmar o SMTP institucional antes do lançamento público.
 - Executar a validação assistida com estudantes e bibliotecários e registrar o aceite sem dados pessoais.
