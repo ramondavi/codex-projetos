@@ -14,6 +14,8 @@ test("a marca compartilhada alterna os logos oficiais por tema", async () => {
 test("exibe a barra institucional do Governo Brasileiro", async () => {
   const [layout, bar] = await Promise.all([readFile("src/app/layout.tsx", "utf8"), readFile("src/components/government-bar.tsx", "utf8")]);
   assert.match(layout, /GovernmentBar/);
+  assert.match(layout, /barra\.brasil\.gov\.br\/barra_2\.0\.js/);
+  assert.match(bar, /id="barra-brasil"/);
   assert.match(bar, /Portal do Governo Brasileiro/);
-  assert.match(bar, /https:\/\/brasil\.gov\.br\//);
+  assert.match(bar, /https:\/\/www\.gov\.br\//);
 });

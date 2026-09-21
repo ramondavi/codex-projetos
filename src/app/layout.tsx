@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme-script";
 import { SiteFooter } from "@/components/site-footer";
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <GovernmentBar />
+        <Script id="barra-brasil-oficial" src="https://barra.brasil.gov.br/barra_2.0.js" strategy="afterInteractive" />
         <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
         <div id="conteudo" tabIndex={-1}>{children}</div>
         <SiteFooter version={packageInfo.version} />
