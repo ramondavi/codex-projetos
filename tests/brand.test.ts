@@ -16,6 +16,7 @@ test("exibe a barra institucional do Governo Brasileiro", async () => {
   assert.match(layout, /GovernmentBar/);
   assert.match(layout, /barra\.brasil\.gov\.br\/barra_2\.0\.js/);
   assert.match(bar, /id="barra-brasil"/);
+  assert.doesNotMatch(bar, /government-bar/);
   assert.match(bar, /Portal do Governo Brasileiro/);
   assert.match(bar, /https:\/\/www\.gov\.br\//);
 });
