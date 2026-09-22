@@ -22,7 +22,7 @@ export async function SiteHeader() {
         <div className="shell-brand"><Brand compact /></div>
         <nav id="menu-principal" aria-label="Navegação principal" className="site-header__nav" tabIndex={-1}>
           <Link href="/#como-funciona"><AppIcon name="review" />Como funciona</Link>
-          <Link href="/perguntas-frequentes"><AppIcon name="help" />Perguntas frequentes</Link>
+          <Link href="/ajuda"><AppIcon name="help" />Central de ajuda</Link>
           {user ? <div className="site-header__account"><Link className="site-header__access" href={accessHref} aria-label={`${accessLabel}. ${accessGreeting}`}><AppIcon name="account" /><span className="site-header__access-label">{accessLabel}</span><span className="site-header__access-greeting" aria-hidden="true">{accessGreeting}</span></Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />Sair da conta</button></form></div></div> : <Link className="site-header__access" href={accessHref}><AppIcon name="account" />Entrar</Link>}
           <LibrarySocialLinks />
         </nav>

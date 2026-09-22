@@ -14,7 +14,7 @@ export default async function NotFound() {
           <p className="not-found-note">A boa notícia: o Pronto! continua no lugar certo.</p>
           <div className="not-found-actions">
             <Link className="button button--primary" href="/">Voltar ao início</Link>
-            <Link className="button button--secondary" href="/perguntas-frequentes">Consultar perguntas frequentes</Link>
+            <Link className="button button--secondary" href="/ajuda">Consultar a Central de ajuda</Link>
           </div>
         </section>
       </main>

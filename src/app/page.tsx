@@ -78,7 +78,7 @@ export default async function HomePage() {
             <div className="home-faq__list">
               {homeFaqs.map((faq) => <article key={faq.id}><h3>{faq.question}</h3><p>{faq.answer}</p></article>)}
             </div>
-            <Link className="button button--secondary" href="/perguntas-frequentes">Outras dúvidas</Link>
+            <Link className="button button--secondary" href="/ajuda">Central de ajuda</Link>
           </div>
         </section>
       </main>

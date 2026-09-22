@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas-frequentes"]) {
+for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/ajuda"]) {
   test(`${path} não tem violações críticas ou sérias`, async ({ page }) => {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).analyze();
@@ -22,7 +22,7 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
 });
 
 test("busca de ajuda sugere respostas", async ({ page }) => {
-  await page.goto("/perguntas-frequentes");
+  await page.goto("/ajuda");
   await page.waitForTimeout(300);
   await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("correcao");
   await expect(page.getByRole("link", { name: /Artigo de ajuda.*correção/ })).toBeVisible();
