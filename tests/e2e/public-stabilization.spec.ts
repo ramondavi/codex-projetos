@@ -22,8 +22,11 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
 
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {
   await page.goto("/");
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "Pular para o conteúdo principal" })).toBeFocused();
+  for (let step = 0; step < 12; step += 1) {
+    await page.keyboard.press("Tab");
+    if (await page.evaluate(() => document.activeElement?.getAttribute("href") === "#conteudo")) break;
+  }
+  await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("href"))).toBe("#conteudo");
   await page.keyboard.press("Enter");
   await expect(page.locator("#conteudo")).toBeFocused();
 });

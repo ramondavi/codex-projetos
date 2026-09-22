@@ -48,7 +48,7 @@ export function AccessibilityControls() {
     <nav className="accessibility-bar" aria-label="Recursos de acessibilidade">
       <div className="container accessibility-bar__inner">
         <div className="accessibility-bar__links">
-          <a href="#conteudo" accessKey="1">Ir para o conteúdo <span aria-hidden="true">[1]</span></a>
+          <a href="#conteudo">Ir para o conteúdo <span aria-hidden="true">[1]</span></a>
           <a href="#menu-principal" accessKey="2">Ir para o menu <span aria-hidden="true">[2]</span></a>
           <a href="/acessibilidade" accessKey="5">Acessibilidade <span aria-hidden="true">[5]</span></a>
         </div>
