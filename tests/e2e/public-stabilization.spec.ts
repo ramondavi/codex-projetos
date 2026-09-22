@@ -9,6 +9,17 @@ for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas
   });
 }
 
+test("recursos de acessibilidade preservam as preferências", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Aumentar tamanho do texto" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await page.getByRole("button", { name: "Alternar alto contraste" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+});
+
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {
   await page.goto("/");
   await page.keyboard.press("Tab");

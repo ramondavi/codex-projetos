@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme-script";
+import { AccessibilityControls } from "@/components/accessibility-controls";
 import { SiteFooter } from "@/components/site-footer";
 import packageInfo from "../../package.json";
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body>
         <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+        <AccessibilityControls />
         <div id="conteudo" tabIndex={-1}>{children}</div>
         <SiteFooter version={packageInfo.version} />
       </body>

@@ -19,7 +19,7 @@ export async function SiteHeader() {
       <header className="site-header">
         <div className="container site-header__inner">
         <div className="shell-brand"><Brand compact /></div>
-        <nav aria-label="Navegação principal" className="site-header__nav">
+        <nav id="menu-principal" aria-label="Navegação principal" className="site-header__nav" tabIndex={-1}>
           <Link href="/#como-funciona">Como funciona</Link>
           <Link href="/perguntas-frequentes">Perguntas frequentes</Link>
           {user ? <div className="site-header__account"><Link className="site-header__access" href={accessHref}>{accessLabel}</Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit">↗ Sair da conta</button></form></div></div> : <Link className="site-header__access" href={accessHref}>{accessLabel}</Link>}

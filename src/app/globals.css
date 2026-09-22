@@ -98,6 +98,8 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+html[data-text-scale="large"] { font-size: 112.5%; }
+html[data-text-scale="larger"] { font-size: 125%; }
 body {
   margin: 0;
   background: var(--bg);
@@ -112,6 +114,34 @@ button, input, select, textarea { font: inherit; }
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .text-button { padding: 0; border: 0; background: transparent; color: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: 0.2em; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+.accessibility-bar { border-bottom: 1px solid var(--line); background: var(--surface); color: var(--text); font-size: .76rem; font-weight: 700; }
+.accessibility-bar__inner { display: flex; min-height: 38px; align-items: center; justify-content: space-between; gap: 16px; }
+.accessibility-bar__links,.accessibility-bar__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; }
+.accessibility-bar a { color: var(--text); text-decoration: underline; text-underline-offset: .18em; }
+.accessibility-bar a:hover { color: var(--institutional); }
+.accessibility-bar button { min-height: 28px; padding: 3px 7px; border: 1px solid var(--line); border-radius: 4px; background: var(--field); color: var(--text); font-size: inherit; font-weight: 800; cursor: pointer; }
+.accessibility-bar button:hover:not(:disabled),.accessibility-bar button[aria-pressed="true"] { border-color: var(--institutional); background: var(--institutional); color: #fff; }
+.accessibility-bar button:disabled { opacity: .48; cursor: not-allowed; }
+
+.accessibility-page { padding-bottom: 72px; }
+.accessibility-page__hero { max-width: 900px; padding-top: clamp(48px, 8vw, 88px); padding-bottom: 28px; }
+.accessibility-page__hero h1 { max-width: 16ch; margin: 0; font-size: clamp(2.2rem, 6vw, 4.8rem); line-height: 1.02; letter-spacing: -.045em; }
+.accessibility-page__hero > p:last-child { max-width: 66ch; margin: 22px 0 0; color: var(--text-muted); font-size: 1.08rem; }
+.accessibility-page__content { max-width: 900px; display: grid; gap: 8px; padding: 30px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.accessibility-page__content h2 { margin: 20px 0 0; font-size: 1.22rem; }
+.accessibility-page__content p,.accessibility-page__content ul { max-width: 70ch; margin: 0; }
+.accessibility-page__content ul { display: grid; gap: 8px; padding-left: 22px; }
+
+:root[data-contrast="high"] { --bg: #000; --surface: #000; --surface-raised: #000; --surface-strong: #000; --field: #000; --text: #fff; --text-muted: #fff; --line: #fff; --institutional: #ff0; --institutional-soft: #000; --gold: #ff0; --gold-dark: #ff0; --danger: #ff8080; --success: #8cff8c; --focus: #ff0; --nav-bg: #000; --nav-text: #fff; }
+:root[data-contrast="high"] body { background: #000; color: #fff; }
+:root[data-contrast="high"] :is(a, button, input, select, textarea, summary) { border-color: #fff !important; color: #fff !important; background-color: #000 !important; }
+:root[data-contrast="high"] a { color: #ff0 !important; text-decoration: underline !important; }
+:root[data-contrast="high"] button:hover:not(:disabled),:root[data-contrast="high"] button[aria-pressed="true"] { background-color: #ff0 !important; color: #000 !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,*::before,*::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
