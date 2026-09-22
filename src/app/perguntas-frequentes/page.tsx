@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
@@ -22,5 +23,5 @@ export default async function FrequentlyAskedQuestionsPage() {
   const supabase = await createClient();
   const { data } = await supabase.from("frequently_asked_questions").select("id,question,answer").eq("active", true).order("position");
   const faqs = data?.length ? data as Faq[] : fallbackFaqs;
-  return <><SiteHeader /><main className="faq-page"><header className="container faq-heading"><p className="eyebrow">Informação e orientação</p><h1>Perguntas frequentes</h1><p>Respostas rápidas sobre solicitação, análise, liberação da ficha e autodepósito.</p></header><section className="container faq-list">{faqs.map((faq) => <details key={faq.id}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section><section className="container help-preview" id="ajuda"><p className="eyebrow">Ajuda</p><h2>Precisa de outra orientação?</h2><p>Consulte primeiro as perguntas acima. Uma página dedicada de ajuda, com canais de atendimento, solução de problemas e orientações por etapa, será estruturada após aprovação do conteúdo.</p></section></main></>;
+  return <><SiteHeader /><main className="faq-page"><header className="container faq-heading"><p className="eyebrow">Informação e orientação</p><h1>Perguntas frequentes</h1><p>Respostas rápidas sobre solicitação, análise, liberação da ficha e autodepósito.</p></header><section className="container faq-list">{faqs.map((faq) => <details key={faq.id}><summary>{faq.question}</summary><p>{faq.answer}</p></details>)}</section><section className="container help-preview"><p className="eyebrow">Ajuda</p><h2>Precisa de outra orientação?</h2><p>Consulte a <Link href="/ajuda">página de Ajuda</Link> para seguir cada etapa e falar com a Biblioteca.</p></section></main></>;
 }

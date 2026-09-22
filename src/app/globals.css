@@ -430,6 +430,22 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .faq-list details p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
 .help-preview { margin-top: 46px; padding: 28px; border-left: 4px solid var(--gold); background: var(--surface); }
 .help-preview h2 { margin: 0; }
+.help-preview a,.help-faq-link a { color: var(--institutional); font-weight: 800; }
+.help-page { padding-bottom: 72px; }
+.help-heading { padding-block: 26px 34px; }
+.help-heading h1 { margin: 0; font-size: clamp(2.8rem,7vw,5.4rem); letter-spacing: -.05em; line-height: .95; }
+.help-heading > p:last-child { max-width: 620px; color: var(--text-muted); font-size: 1.05rem; }
+.help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.help-grid article { min-height: 220px; padding: 28px; border: 1px solid var(--line); background: var(--surface-raised); }
+.help-grid article span { color: var(--gold); font-size: .75rem; font-weight: 900; letter-spacing: .12em; }
+.help-grid h2,.help-contact h2 { margin: 24px 0 10px; font-size: 1.3rem; }
+.help-grid p,.help-contact p,.help-faq-link { color: var(--text-muted); }
+.help-contact { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 46px; padding: 28px; border-left: 4px solid var(--gold); background: var(--surface); }
+.help-contact h2 { margin-top: 0; }
+.help-contact address { display: grid; gap: 8px; min-width: 190px; font-style: normal; }
+.help-contact a { color: var(--institutional); font-weight: 850; text-decoration: none; }
+.help-contact a:hover { text-decoration: underline; }
+.help-faq-link { margin-top: 24px; }
 
 .privacy-page { padding-bottom: 72px; }
 .privacy-hero { padding-block: 26px 34px; }
@@ -534,6 +550,8 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
   .site-header__inner { min-height: 84px; }
   .site-header__nav { gap: 10px; }
   .site-header__nav > a { display: none; }
+  .help-grid { grid-template-columns: 1fr; }
+  .help-contact { align-items: flex-start; flex-direction: column; }
   .hero { min-height: auto; }
   .hero h1 { font-size: 5rem; }
   .hero__grid { gap: 40px; padding-block: 46px 50px; }
