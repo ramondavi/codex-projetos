@@ -41,13 +41,16 @@ test("barras públicas compartilham as mesmas margens", async ({ page }) => {
   expect(offsets.every(({ left, right }) => left === offsets[0].left && right === offsets[0].right)).toBe(true);
 });
 
-test("links do rodapé público ocupam uma linha no desktop", async ({ page }) => {
+test("links do rodapé público formam uma coluna no desktop", async ({ page }) => {
   if ((page.viewportSize()?.width ?? 0) < 900) return;
   await page.goto("/");
   const footerLinks = page.locator(".global-footer__nav a");
   await footerLinks.first().waitFor({ state: "visible" });
-  const rows = await footerLinks.evaluateAll((links) => new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size);
-  expect(rows).toBe(1);
+  const alignment = await footerLinks.evaluateAll((links) => ({
+    columns: new Set(links.map((link) => Math.round(link.getBoundingClientRect().left))).size,
+    rows: new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size,
+  }));
+  expect(alignment).toEqual({ columns: 1, rows: 5 });
 });
 
 test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
