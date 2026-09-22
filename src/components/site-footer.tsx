@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Brand } from "@/components/brand";
 import { OfficialLibraryLogo } from "@/components/official-library-logo";
+import { AppIcon } from "@/components/app-icon";
 import styles from "./site-footer.module.css";
 
 export function SiteFooter({ version }: { version: string }) {
@@ -9,7 +9,6 @@ export function SiteFooter({ version }: { version: string }) {
     <footer className={styles.footer} id="creditos">
       <div className={styles.inner}>
         <div className={styles.signature}>
-          <div className={styles.publicBrand}><Brand compact /></div>
           <div className={styles.libraryBrand}><OfficialLibraryLogo variant="footer" /></div>
           <p>Fichas catalográficas e autodepósito</p>
         </div>
@@ -27,7 +26,7 @@ export function SiteFooter({ version }: { version: string }) {
         <p className={styles.credit}>Feito pelos bibliotecários da BIB/FAUFBA com <a href="https://openai.com/pt-BR/codex/" target="_blank" rel="noreferrer">vibe coding</a> e <span aria-label="amor" role="img">♥</span>.</p>
         <div className={styles.meta}>
           <span>2026 · v{version} · Beta</span>
-          <a href="https://github.com/ramondavi/codex-projetos" target="_blank" rel="noreferrer">Código aberto no GitHub ↗</a>
+          <a href="https://github.com/ramondavi/codex-projetos" target="_blank" rel="noreferrer"><AppIcon name="github" />Código aberto no GitHub ↗</a>
           <span>Licença AGPL-3.0</span>
         </div>
       </div>
