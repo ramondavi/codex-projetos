@@ -47,7 +47,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel/autodeposito")} href="/painel/autodeposito" aria-label="Autodepósito" title="Autodepósito"><SidebarIcon name="deposit" /><span className="dashboard-nav__label">Autodepósito</span></Link>
           <Link className={activeClass("/painel/conta")} href="/painel/conta" aria-label="Minha conta" title="Minha conta"><SidebarIcon name="account" /><span className="dashboard-nav__label">Minha conta</span></Link>
         </nav>}
-        <Link className="dashboard-nav__public-link" href="/" title="Abrir site público"><AppIcon name="home" /><span className="dashboard-nav__label">Site público</span></Link>
+        <Link className="dashboard-nav__public-link" href="/" title="Abrir site público"><AppIcon name="external" /><span className="dashboard-nav__label">Site público</span></Link>
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">

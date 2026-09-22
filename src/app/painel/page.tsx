@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminProvisioningAlert } from "@/components/admin-provisioning-alert";
 import { StudentRequestShortcut } from "@/components/student-request-shortcut";
+import { AppIcon } from "@/components/app-icon";
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
@@ -26,12 +27,12 @@ export default async function StudentDashboardPage() {
             <p className="eyebrow">Sua próxima ação</p>
             <h2>{activeRequest ? activeRequest.protocol : "Inicie sua solicitação"}</h2>
             <p>{activeRequest ? `Seu trabalho “${activeRequest.title}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
-            {activeRequest ? <Link className="button button--primary" href="/painel/solicitacao">Acompanhar protocolo</Link> : <StudentRequestShortcut className="button button--primary" />}
+            {activeRequest ? <Link className="button button--primary button--with-icon" href="/painel/solicitacao"><AppIcon name="request" />Acompanhar protocolo</Link> : <StudentRequestShortcut className="button button--primary" />}
           </div>
         </article>
         <aside className="dashboard-side">
           <section className="panel">
-            <p className="eyebrow">Antes de solicitar</p>
+            <p className="eyebrow"><AppIcon name="check" /> Antes de solicitar</p>
             <ul className="check-list">
               <li>Trabalho defendido e aprovado</li>
               <li>Versão final concluída</li>
@@ -40,7 +41,7 @@ export default async function StudentDashboardPage() {
             </ul>
           </section>
           <section className="panel panel--institutional calendar-panel">
-            <strong>Avisos e prazos</strong>
+            <strong className="panel-heading-with-icon"><AppIcon name="calendar" />Avisos e prazos</strong>
             <p>Atendimento normal. Acompanhe por aqui os avisos e as datas informadas pela biblioteca.</p>
             {calendarDates?.length ? <ul>{calendarDates.map((item) => <li key={item.id}><time>{new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(item.starts_at))}</time><span>{item.title} <small>{item.type === "holiday" ? "Feriado" : "Ponto facultativo"}</small></span></li>)}</ul> : <p className="calendar-panel__empty">Não há feriados ou pontos facultativos cadastrados para este mês.</p>}
           </section>
@@ -73,13 +74,13 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
   return <main className="dashboard-main dashboard-main--staff-overview">
     <div className="page-heading"><div><p className="eyebrow">Visão geral</p><h1>{administrator ? "Operação administrativa" : "Atendimento bibliotecário"}</h1><p>{administrator ? "Acompanhe acessos, fila e informações operacionais em um só lugar." : "Acompanhe sua carga de atendimento e o que precisa de ação agora."}</p></div></div>
     <section className="overview-stats" aria-label="Indicadores rápidos">
-      <article><strong>{unassigned}</strong><span>na fila sem responsável</span><Link href="/painel/fila">Abrir fila</Link></article>
-      <article><strong>{mine}</strong><span>{administrator ? "atendimentos em andamento" : "meus atendimentos em andamento"}</span><Link href="/painel/fila?responsavel=me">Ver atendimentos</Link></article>
-      <article><strong>{changes}</strong><span>solicitações aguardando correção</span><Link href="/painel/fila?status=changes_requested">Ver pendências</Link></article>
-      <article><strong>{administrator ? candidates.length : approved}</strong><span>{administrator ? "contas aguardando provisionamento" : "solicitações aprovadas"}</span><Link href={administrator ? "/painel/admin" : "/painel/fila?status=approved"}>{administrator ? "Administrar contas" : "Ver aprovações"}</Link></article>
+      <article><AppIcon name="queue" /><strong>{unassigned}</strong><span>na fila sem responsável</span><Link href="/painel/fila">Abrir fila</Link></article>
+      <article><AppIcon name="work" /><strong>{mine}</strong><span>{administrator ? "atendimentos em andamento" : "meus atendimentos em andamento"}</span><Link href="/painel/fila?responsavel=me">Ver atendimentos</Link></article>
+      <article><AppIcon name="edit" /><strong>{changes}</strong><span>solicitações aguardando correção</span><Link href="/painel/fila?status=changes_requested">Ver pendências</Link></article>
+      <article><AppIcon name={administrator ? "admin" : "check"} /><strong>{administrator ? candidates.length : approved}</strong><span>{administrator ? "contas aguardando provisionamento" : "solicitações aprovadas"}</span><Link href={administrator ? "/painel/admin" : "/painel/fila?status=approved"}>{administrator ? "Administrar contas" : "Ver aprovações"}</Link></article>
     </section>
     {administrator && <section className="overview-context"><article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article><article className="panel"><p className="eyebrow">Prioridade da fila</p><h2>{unassigned ? `${unassigned} solicitações aguardam responsável` : "Fila distribuída"}</h2><p>{unassigned ? "Reveja a fila para distribuir ou assumir os atendimentos disponíveis." : "No momento, não há solicitações sem responsável."}</p><Link className="button button--secondary button--small" href="/painel/fila">Gerenciar fila</Link></article></section>}
     {administrator && <AdminProvisioningAlert candidates={candidates ?? []} />}
-    <section className="overview-announcements"><div><p className="eyebrow">Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{announcementLabels[item.type] ?? "Aviso"}</span><strong>{item.title}</strong><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
+    <section className="overview-announcements"><div><p className="eyebrow"><AppIcon name="inbox" /> Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><AppIcon name="inbox" /><span>{announcementLabels[item.type] ?? "Aviso"}</span><strong>{item.title}</strong><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
   </main>;
 }
