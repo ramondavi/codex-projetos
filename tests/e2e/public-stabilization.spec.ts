@@ -31,6 +31,16 @@ test("navegação por teclado alcança o conteúdo", async ({ page }) => {
   await expect(page.locator("#conteudo")).toBeFocused();
 });
 
+test("barras públicas compartilham as mesmas margens", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#barra-brasil .conteudo-barra-brasil").waitFor({ state: "visible" });
+  const offsets = await page.evaluate(() => ["#barra-brasil .conteudo-barra-brasil", ".accessibility-bar__inner", ".site-header__inner"].map((selector) => {
+    const { left, right } = document.querySelector(selector)!.getBoundingClientRect();
+    return { left: Math.round(left), right: Math.round(right) };
+  }));
+  expect(offsets.every(({ left, right }) => left === offsets[0].left && right === offsets[0].right)).toBe(true);
+});
+
 test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
   await page.goto("/");
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
