@@ -24,8 +24,8 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
 test("busca de ajuda sugere respostas", async ({ page }) => {
   await page.goto("/perguntas-frequentes");
   await page.waitForTimeout(300);
-  await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("autodeposito");
-  await expect(page.getByRole("link", { name: /Ajuda Autodepósito/ })).toBeVisible();
+  await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("correcao");
+  await expect(page.getByRole("link", { name: /Artigo de ajuda.*correção/ })).toBeVisible();
 });
 
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {

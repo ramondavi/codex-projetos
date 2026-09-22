@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () => {
-  const [layout, breadcrumbs, icon, og, robots, sitemap, dashboardLayout, notFound, home, header, css, faq, search] = await Promise.all([
+  const [layout, breadcrumbs, icon, og, robots, sitemap, dashboardLayout, notFound, home, header, css, faq, search, studentForm, article] = await Promise.all([
     readFile("src/app/layout.tsx", "utf8"), readFile("src/components/breadcrumbs.tsx", "utf8"),
     stat("src/app/icon.png"), readFile("src/app/opengraph-image.tsx", "utf8"),
-    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"), readFile("src/app/globals.css", "utf8"), readFile("src/app/perguntas-frequentes/page.tsx", "utf8"), readFile("src/components/help-search.tsx", "utf8"),
+    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"), readFile("src/app/globals.css", "utf8"), readFile("src/app/perguntas-frequentes/page.tsx", "utf8"), readFile("src/components/help-search.tsx", "utf8"), readFile("src/components/student-request-form.tsx", "utf8"), readFile("src/app/perguntas-frequentes/artigos/[slug]/page.tsx", "utf8"),
   ]);
   assert.match(layout, /openGraph/);
   assert.match(layout, /metadataBase/);
@@ -33,4 +33,7 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(faq, /bibarq@ufba\.br/);
   assert.match(faq, /3283-5888/);
   assert.match(search, /aria-autocomplete="list"/);
+  assert.match(search, /api\/central-de-duvidas/);
+  assert.match(studentForm, /HelpSearch compact/);
+  assert.match(article, /generateStaticParams/);
 });

@@ -429,6 +429,8 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .faq-list details[open] summary { border-bottom: 1px solid var(--line); color: var(--institutional); }
 .faq-list details p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
 .help-search { position: relative; margin-bottom: 40px; }
+.help-search--compact { margin-bottom: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.help-search--compact .help-search__field input { min-height: 48px; padding-block: 12px; font-size: .95rem; }
 .help-search label { display: block; margin-bottom: 10px; font-size: 1.1rem; font-weight: 850; }
 .help-search__field { position: relative; }
 .help-search__field input { width: 100%; min-height: 68px; padding: 18px 58px 18px 22px; border: 1px solid var(--text); border-radius: var(--radius); background: var(--surface-raised); color: var(--text); font: inherit; font-size: clamp(1rem, 2vw, 1.2rem); }
@@ -442,6 +444,19 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .help-search__suggestions span { color: var(--text-muted); font-size: .9rem; }
 .help-search__suggestions p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
 .help-section { margin-top: 46px; }
+.knowledge-category { margin-top: 46px; }
+.knowledge-category > h2,.faq-list > h2 { margin: 0 0 20px; font-size: clamp(1.7rem, 4vw, 2.5rem); }
+.knowledge-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.knowledge-cards article { padding: 24px; border: 1px solid var(--line); background: var(--surface-raised); }
+.knowledge-cards span { color: var(--institutional); font-size: .78rem; font-weight: 850; }
+.knowledge-cards h3 { margin: 14px 0 8px; font-size: 1.2rem; }
+.knowledge-cards p { color: var(--text-muted); line-height: 1.55; }
+.knowledge-cards a { color: var(--institutional); font-weight: 850; }
+.knowledge-article { padding-bottom: 72px; }
+.knowledge-article__heading { padding-block: 26px 34px; }
+.knowledge-article__heading h1 { max-width: 840px; margin: 0; font-size: clamp(2.8rem, 7vw, 5.4rem); letter-spacing: -.05em; line-height: .95; }
+.knowledge-article__heading > p:last-child,.knowledge-article__body { max-width: 760px; color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; }
+.knowledge-article__body { display: grid; gap: 18px; }
 .help-section > h2 { margin: 0 0 20px; font-size: clamp(1.8rem, 4vw, 2.6rem); }
 .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .help-grid article { min-height: 220px; padding: 28px; border: 1px solid var(--line); background: var(--surface-raised); }
@@ -558,6 +573,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
   .site-header__nav { gap: 10px; }
   .site-header__nav > a { display: none; }
   .help-grid { grid-template-columns: 1fr; }
+  .knowledge-cards { grid-template-columns: 1fr; }
   .help-contact { align-items: flex-start; flex-direction: column; }
   .hero { min-height: auto; }
   .hero h1 { font-size: 5rem; }
