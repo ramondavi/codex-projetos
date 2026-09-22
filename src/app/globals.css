@@ -169,8 +169,7 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
     width: 232px;
     margin-top: 0;
     padding-top: 28px;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: visible;
   }
   body:has(.dashboard-shell--compact) .dashboard-nav { width: 76px; }
   body:has(.dashboard-shell) #barra-brasil .conteudo-barra-brasil,
@@ -557,18 +556,18 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .dashboard-nav__favicon { position: relative; width: 40px; height: 40px; padding: 4px; margin: 0 auto; border-radius: 12px; transition: background .2s ease, transform .2s ease; }
 .dashboard-nav__favicon img { width: 32px; height: 32px; object-fit: contain; transition: opacity .2s ease, transform .22s ease; }
 .dashboard-nav__favicon:hover { background: color-mix(in srgb, var(--nav-text) 12%, transparent); transform: scale(1.08); }
-.dashboard-nav__logo-action { position: absolute; inset: 0; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--nav-text) 30%, transparent); border-radius: var(--radius); background: color-mix(in srgb, var(--institutional) 74%, var(--nav-bg)); color: #fff; opacity: 0; transform: scale(.82); transition: opacity .2s ease, transform .22s ease, background .2s ease; }
+.dashboard-nav__logo-action { position: absolute; inset: 0; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--nav-text) 24%, transparent); border-radius: var(--radius); background: color-mix(in srgb, var(--nav-text) 8%, var(--nav-bg)); color: var(--nav-text); opacity: 0; transform: scale(.82); transition: opacity .2s ease, transform .22s ease, background .2s ease; }
 .dashboard-nav__logo-action .dashboard-nav__icon { width: 25px; height: 25px; }
 .dashboard-nav__brand-toggle:hover .dashboard-nav__brand-logo,.dashboard-nav__brand-toggle:focus-visible .dashboard-nav__brand-logo { opacity: 0; transform: scale(.88); }
 .dashboard-nav__favicon:hover img,.dashboard-nav__favicon:focus-visible img { opacity: 0; transform: scale(.82); }
 .dashboard-nav__brand-toggle:hover .dashboard-nav__logo-action,.dashboard-nav__brand-toggle:focus-visible .dashboard-nav__logo-action,.dashboard-nav__favicon:hover .dashboard-nav__logo-action,.dashboard-nav__favicon:focus-visible .dashboard-nav__logo-action { opacity: 1; transform: scale(1); }
-.dashboard-nav__logo-action:hover { background: var(--institutional); }
+.dashboard-nav__brand-toggle:hover .dashboard-nav__logo-action,.dashboard-nav__favicon:hover .dashboard-nav__logo-action { background: color-mix(in srgb, var(--nav-text) 15%, var(--nav-bg)); }
 .dashboard-nav__favicon .dashboard-nav__logo-action { border-radius: 10px; }
 .dashboard-nav__favicon .dashboard-nav__logo-action .dashboard-nav__icon { width: 20px; height: 20px; }
 .dashboard-nav nav { display: grid; gap: 6px; margin: 44px -20px 0; }
 .dashboard-nav .brand__image--light { display: none; }
 .dashboard-nav .brand__image--dark { display: block; }
-.dashboard-nav nav a, .dashboard-nav nav span { display: flex; justify-content: flex-start; align-items: center; gap: 11px; min-height: 44px; padding: 10px 12px; color: color-mix(in srgb, var(--nav-text) 74%, transparent); text-decoration: none; border-left: 2px solid transparent; border-radius: 0 var(--radius) var(--radius) 0; }
+.dashboard-nav nav a, .dashboard-nav nav span { display: flex; justify-content: flex-start; align-items: center; gap: 11px; min-height: 44px; padding: 10px 12px; color: color-mix(in srgb, var(--nav-text) 90%, transparent); text-decoration: none; border-left: 2px solid transparent; border-radius: 0 var(--radius) var(--radius) 0; }
 .dashboard-nav__icon { flex: 0 0 auto; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
 .dashboard-nav__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dashboard-nav nav .is-active { color: var(--nav-text); border-left-color: var(--gold); background: color-mix(in srgb, var(--nav-text) 8%, transparent); }
