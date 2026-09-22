@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Brand } from "./brand";
-import { ThemeSwitcher } from "./theme-switcher";
 import { logout } from "@/app/auth-actions";
 import { DashboardBreadcrumbs } from "./breadcrumbs";
 
@@ -43,7 +42,6 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
         <header className="dashboard-header">
           <div><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>
           <div className="dashboard-header__actions">
-            <ThemeSwitcher />
             <div className="user-identity"><span className="user-greeting">Olá, {firstName}</span><span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span></div>
             <form action={logout}><button className="logout-icon" type="submit" aria-label="Sair da conta" title="Sair da conta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10" /></svg></button></form>
           </div>
