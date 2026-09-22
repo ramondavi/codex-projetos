@@ -14,7 +14,7 @@ export function SiteFooter({ version }: { version: string }) {
         </div>
         <nav className={styles.navigation} aria-label="Informações">
           <Link href="/perguntas-frequentes">Perguntas frequentes</Link>
-          <Link href="/ajuda">Ajuda</Link>
+          <Link href="/perguntas-frequentes#ajuda">Ajuda</Link>
           <Link href="/politica-de-privacidade">Privacidade</Link>
           <Link href="/acessibilidade">Acessibilidade</Link>
         </nav>

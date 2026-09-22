@@ -419,7 +419,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 
 - A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
 - Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
-- A página pública de Ajuda reúne orientações breves para antes de começar, durante a solicitação, após a análise e autodepósito. Para dúvidas operacionais sobre o Pronto!, divulga os contatos aprovados da BIB/FA: `bibarq@ufba.br` e telefone `(71) 3283-5888`.
+- A página pública de Perguntas frequentes e Ajuda reúne orientações breves para antes de começar, durante a solicitação, após a análise e autodepósito; sua busca sugere resultados conforme a pessoa digita. Para dúvidas operacionais sobre o Pronto!, divulga os contatos aprovados da BIB/FA: `bibarq@ufba.br` e telefone `(71) 3283-5888`.
 
 ## 21. Escopo por fase
 

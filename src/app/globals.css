@@ -428,24 +428,31 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .faq-list summary { padding: 18px 22px; color: var(--text); font-weight: 850; cursor: pointer; }
 .faq-list details[open] summary { border-bottom: 1px solid var(--line); color: var(--institutional); }
 .faq-list details p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
-.help-preview { margin-top: 46px; padding: 28px; border-left: 4px solid var(--gold); background: var(--surface); }
-.help-preview h2 { margin: 0; }
-.help-preview a,.help-faq-link a { color: var(--institutional); font-weight: 800; }
-.help-page { padding-bottom: 72px; }
-.help-heading { padding-block: 26px 34px; }
-.help-heading h1 { margin: 0; font-size: clamp(2.8rem,7vw,5.4rem); letter-spacing: -.05em; line-height: .95; }
-.help-heading > p:last-child { max-width: 620px; color: var(--text-muted); font-size: 1.05rem; }
+.help-search { position: relative; margin-bottom: 40px; }
+.help-search label { display: block; margin-bottom: 10px; font-size: 1.1rem; font-weight: 850; }
+.help-search__field { position: relative; }
+.help-search__field input { width: 100%; min-height: 68px; padding: 18px 58px 18px 22px; border: 1px solid var(--text); border-radius: var(--radius); background: var(--surface-raised); color: var(--text); font: inherit; font-size: clamp(1rem, 2vw, 1.2rem); }
+.help-search__field input:focus { outline: 3px solid color-mix(in srgb, var(--gold) 60%, transparent); outline-offset: 2px; }
+.help-search__field span { position: absolute; top: 50%; right: 22px; color: var(--institutional); font-size: 1.8rem; transform: translateY(-55%); }
+.help-search__suggestions { position: absolute; z-index: 2; width: 100%; border: 1px solid var(--line); border-top: 0; background: var(--surface-raised); box-shadow: var(--shadow); }
+.help-search__suggestions ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.help-search__suggestions a { display: grid; gap: 3px; padding: 14px 22px; color: var(--text); text-decoration: none; }
+.help-search__suggestions a:hover,.help-search__suggestions a:focus { background: var(--surface); }
+.help-search__suggestions small { color: var(--institutional); font-weight: 850; }
+.help-search__suggestions span { color: var(--text-muted); font-size: .9rem; }
+.help-search__suggestions p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
+.help-section { margin-top: 46px; }
+.help-section > h2 { margin: 0 0 20px; font-size: clamp(1.8rem, 4vw, 2.6rem); }
 .help-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .help-grid article { min-height: 220px; padding: 28px; border: 1px solid var(--line); background: var(--surface-raised); }
 .help-grid article span { color: var(--gold); font-size: .75rem; font-weight: 900; letter-spacing: .12em; }
-.help-grid h2,.help-contact h2 { margin: 24px 0 10px; font-size: 1.3rem; }
-.help-grid p,.help-contact p,.help-faq-link { color: var(--text-muted); }
+.help-grid h3,.help-contact h2 { margin: 24px 0 10px; font-size: 1.3rem; }
+.help-grid p,.help-contact p { color: var(--text-muted); }
 .help-contact { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-top: 46px; padding: 28px; border-left: 4px solid var(--gold); background: var(--surface); }
 .help-contact h2 { margin-top: 0; }
 .help-contact address { display: grid; gap: 8px; min-width: 190px; font-style: normal; }
 .help-contact a { color: var(--institutional); font-weight: 850; text-decoration: none; }
 .help-contact a:hover { text-decoration: underline; }
-.help-faq-link { margin-top: 24px; }
 
 .privacy-page { padding-bottom: 72px; }
 .privacy-hero { padding-block: 26px 34px; }

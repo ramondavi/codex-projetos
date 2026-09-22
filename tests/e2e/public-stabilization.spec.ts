@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas-frequentes", "/ajuda"]) {
+for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas-frequentes"]) {
   test(`${path} não tem violações críticas ou sérias`, async ({ page }) => {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).analyze();
@@ -19,6 +19,13 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
   await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+});
+
+test("busca de ajuda sugere respostas", async ({ page }) => {
+  await page.goto("/perguntas-frequentes");
+  await page.waitForTimeout(300);
+  await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("autodeposito");
+  await expect(page.getByRole("link", { name: /Ajuda Autodepósito/ })).toBeVisible();
 });
 
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {
