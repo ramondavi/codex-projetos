@@ -13,7 +13,6 @@ export function SiteFooter({ version }: { version: string }) {
           <p>Fichas catalográficas e autodepósito</p>
         </div>
         <nav className={styles.navigation} aria-label="Informações">
-          <Link href="/ajuda#perguntas-frequentes">Perguntas frequentes</Link>
           <Link href="/ajuda">Central de ajuda</Link>
           <Link href="/politica-de-privacidade">Privacidade</Link>
           <Link href="/acessibilidade">Acessibilidade</Link>

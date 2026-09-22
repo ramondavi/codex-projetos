@@ -7,6 +7,7 @@ import Image from "next/image";
 import { logout } from "@/app/auth-actions";
 import { DashboardBreadcrumbs } from "./breadcrumbs";
 import { AppIcon, type AppIconName } from "./app-icon";
+import { BackendHelpWidget } from "./backend-help-widget";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
 
@@ -60,6 +61,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
         </header>
         <DashboardBreadcrumbs />
         {children}
+        <BackendHelpWidget role={role} />
       </div>
     </div>
   );

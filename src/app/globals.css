@@ -424,10 +424,23 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .faq-heading h1 { margin: 0 0 .18em; font-size: clamp(2.8rem,7vw,5.4rem); letter-spacing: -.05em; line-height: 1.08; }
 .faq-heading > p:last-child { max-width: 700px; margin-top: 0; color: var(--text-muted); font-size: 1.05rem; line-height: 1.55; }
 .faq-list { display: grid; gap: 10px; }
-.faq-list details { border: 1px solid var(--line); background: var(--surface-raised); }
-.faq-list summary { padding: 18px 22px; color: var(--text); font-weight: 850; cursor: pointer; }
+.faq-list details { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); box-shadow: 0 5px 16px color-mix(in srgb, var(--text) 5%, transparent); transition: border-color .18s ease, transform .18s ease; }
+.faq-list details:hover { border-color: color-mix(in srgb, var(--institutional) 50%, var(--line)); transform: translateY(-1px); }
+.faq-list summary { display: grid; grid-template-columns: 1fr 28px; gap: 16px; align-items: center; padding: 19px 22px; color: var(--text); font-weight: 850; cursor: pointer; list-style: none; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--institutional-soft); color: var(--institutional); content: "+"; font-size: 1.2rem; line-height: 1; transition: transform .18s ease; }
 .faq-list details[open] summary { border-bottom: 1px solid var(--line); color: var(--institutional); }
-.faq-list details p { margin: 0; padding: 18px 22px; color: var(--text-muted); }
+.faq-list details[open] summary::after { content: "−"; transform: rotate(180deg); }
+.faq-list details p { margin: 0; padding: 19px 22px 22px; color: var(--text-muted); line-height: 1.6; }
+.backend-help { position: fixed; right: 22px; bottom: 22px; z-index: 30; }
+.backend-help__trigger { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--institutional) 34%, transparent); border-radius: 50%; background: color-mix(in srgb, var(--surface-raised) 78%, transparent); color: color-mix(in srgb, var(--institutional) 60%, transparent); box-shadow: 0 6px 18px color-mix(in srgb, var(--text) 14%, transparent); cursor: pointer; opacity: .45; transition: opacity .18s ease, transform .18s ease, background .18s ease; }
+.backend-help:hover .backend-help__trigger,.backend-help__trigger:focus-visible,.backend-help.is-open .backend-help__trigger { opacity: 1; transform: translateY(-2px); background: var(--institutional); color: var(--bg); }
+.backend-help__trigger svg { width: 21px; }
+.backend-help__panel { position: absolute; right: 0; bottom: 56px; width: min(390px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); box-shadow: var(--shadow); }
+.backend-help__panel h2 { margin: 2px 0 16px; font-size: 1.35rem; }
+.backend-help__topics { display: grid; gap: 8px; margin-top: 16px; }
+.backend-help__topics a,.backend-help__all { color: var(--institutional); font-size: .88rem; font-weight: 750; text-decoration: none; }
+.backend-help__all { display: block; margin-top: 18px; }
 .help-search { position: relative; margin-bottom: 40px; }
 .help-search--compact { margin-bottom: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .help-search--compact .help-search__field input { min-height: 48px; padding-block: 12px; font-size: .95rem; }
@@ -448,6 +461,7 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .knowledge-category > h2,.faq-list > h2 { margin: 0 0 20px; font-size: clamp(1.7rem, 4vw, 2.5rem); }
 .knowledge-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .knowledge-cards article { padding: 24px; border: 1px solid var(--line); background: var(--surface-raised); }
+.knowledge-cards article > svg { width: 24px; height: 24px; margin-bottom: 16px; color: var(--gold); }
 .knowledge-cards span { color: var(--institutional); font-size: .78rem; font-weight: 850; }
 .knowledge-cards h3 { margin: 14px 0 8px; font-size: 1.2rem; }
 .knowledge-cards p { color: var(--text-muted); line-height: 1.55; }
