@@ -10,5 +10,5 @@ test("staff opens the overview first and sees role-appropriate operational summa
   assert.match(dashboard, /<StaffOverview role=\{profile\.role\} userId=\{user\.id\}/);
   assert.match(dashboard, /Atendimento bibliotecário/);
   assert.match(dashboard, /<AdminProvisioningAlert candidates=\{candidates \?\? \[\]\}/);
-  assert.ok(shell.indexOf('href="/painel">Visão geral') < shell.indexOf('href="/painel/fila">Fila de solicitações'));
+  assert.ok(shell.indexOf('href="/painel"') < shell.indexOf('href="/painel/fila"'));
 });

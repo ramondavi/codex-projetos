@@ -9,12 +9,49 @@ for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas
   });
 }
 
+test("recursos de acessibilidade preservam as preferências", async ({ page }) => {
+  test.slow();
+  await page.goto("/");
+  await page.getByRole("button", { name: "Aumentar tamanho do texto" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await page.getByRole("button", { name: "Alternar alto contraste" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
+  await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+});
+
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {
   await page.goto("/");
-  await page.keyboard.press("Tab");
-  await expect(page.getByRole("link", { name: "Pular para o conteúdo principal" })).toBeFocused();
+  for (let step = 0; step < 12; step += 1) {
+    await page.keyboard.press("Tab");
+    if (await page.evaluate(() => document.activeElement?.getAttribute("href") === "#conteudo")) break;
+  }
+  await expect.poll(() => page.evaluate(() => document.activeElement?.getAttribute("href"))).toBe("#conteudo");
   await page.keyboard.press("Enter");
   await expect(page.locator("#conteudo")).toBeFocused();
+});
+
+test("barras públicas compartilham as mesmas margens", async ({ page }) => {
+  await page.goto("/");
+  await page.locator("#barra-brasil .conteudo-barra-brasil").waitFor({ state: "visible" });
+  const offsets = await page.evaluate(() => ["#barra-brasil .conteudo-barra-brasil", ".accessibility-bar__inner", ".site-header__inner"].map((selector) => {
+    const { left, right } = document.querySelector(selector)!.getBoundingClientRect();
+    return { left: Math.round(left), right: Math.round(right) };
+  }));
+  expect(offsets.every(({ left, right }) => left === offsets[0].left && right === offsets[0].right)).toBe(true);
+});
+
+test("links do rodapé público formam uma linha no desktop", async ({ page }) => {
+  if ((page.viewportSize()?.width ?? 0) < 900) return;
+  await page.goto("/");
+  const footerLinks = page.locator('#creditos nav[aria-label="Informações"] a');
+  await footerLinks.first().waitFor({ state: "visible" });
+  const alignment = await footerLinks.evaluateAll((links) => ({
+    columns: new Set(links.map((link) => Math.round(link.getBoundingClientRect().left))).size,
+    rows: new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size,
+  }));
+  expect(alignment).toEqual({ columns: 4, rows: 1 });
 });
 
 test("páginas públicas não criam rolagem horizontal", async ({ page }) => {

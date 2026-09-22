@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeScript } from "@/components/theme-script";
+import { AccessibilityControls } from "@/components/accessibility-controls";
 import { SiteFooter } from "@/components/site-footer";
+import { GovernmentBar } from "@/components/government-bar";
 import packageInfo from "../../package.json";
 
 const metadataBase = new URL("https://prontobib.vercel.app");
@@ -32,7 +35,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "Pronto!", url: metadataBase.toString(), inLanguage: "pt-BR", publisher: { "@type": "Organization", name: "Universidade Federal da Bahia", url: "https://ufba.br" } }) }} />
       </head>
       <body>
+        <GovernmentBar />
+        <Script id="barra-brasil-oficial" src="https://barra.brasil.gov.br/barra_2.0.js" strategy="afterInteractive" />
         <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+        <AccessibilityControls />
         <div id="conteudo" tabIndex={-1}>{children}</div>
         <SiteFooter version={packageInfo.version} />
       </body>

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Brand } from "./brand";
 import { Geometry } from "./geometry";
-import { ThemeSwitcher } from "./theme-switcher";
 
 export function AuthShell({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return (
@@ -9,7 +8,6 @@ export function AuthShell({ title, description, children }: { title: string; des
       <Geometry />
       <div className="auth-shell__top">
         <div className="shell-brand"><Brand compact /></div>
-        <ThemeSwitcher />
       </div>
       <section className="auth-card">
         <p className="eyebrow">Acesso seguro</p>
