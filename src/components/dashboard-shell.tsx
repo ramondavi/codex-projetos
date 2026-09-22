@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { logout } from "@/app/auth-actions";
@@ -18,7 +18,8 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [compact, setCompact] = useState(true);
-  const [adminMenuOpen, setAdminMenuOpen] = useState(() => pathname.startsWith("/painel/admin"));
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+  useEffect(() => { setAdminMenuOpen(false); }, [pathname, searchParams]);
   const activeClass = (href: string) => {
     const [targetPath, targetQuery] = href.split("?");
     if (targetPath === "/painel/fila" && pathname.startsWith("/painel/atendimento/")) return targetQuery ? undefined : "is-active";
@@ -38,7 +39,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel")} href="/painel" aria-label="Visão geral" title="Visão geral"><SidebarIcon name="overview" /><span className="dashboard-nav__label">Visão geral</span></Link>
           <Link className={activeClass("/painel/fila")} href="/painel/fila" aria-label="Fila de solicitações" title="Fila de solicitações"><SidebarIcon name="queue" /><span className="dashboard-nav__label">Fila de solicitações</span></Link>
           <Link className={activeClass("/painel/fila?responsavel=me")} href="/painel/fila?responsavel=me" aria-label="Meus atendimentos" title="Meus atendimentos"><SidebarIcon name="work" /><span className="dashboard-nav__label">Meus atendimentos</span></Link>
-          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuOpen} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title="Administração"><SidebarIcon name="admin" /><span className="dashboard-nav__label">Administração</span></button><div className={`dashboard-nav__admin-menu${adminMenuOpen ? " is-visible" : ""}`} id="submenu-administracao" aria-label="Subseções administrativas"><Link className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">Operação</Link><Link className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">Conteúdo</Link><Link className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">Controle</Link></div></div>}
+          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuOpen} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title="Administração"><SidebarIcon name="admin" /><span className="dashboard-nav__label">Administração</span></button><div className={`dashboard-nav__admin-menu${adminMenuOpen ? " is-visible" : ""}`} id="submenu-administracao" aria-label="Subseções administrativas"><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">Operação</Link><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">Conteúdo</Link><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">Controle</Link></div></div>}
           <Link className={activeClass("/painel/conta")} href="/painel/conta" aria-label="Minha conta" title="Minha conta"><SidebarIcon name="account" /><span className="dashboard-nav__label">Minha conta</span></Link>
         </nav> : <nav aria-label="Área do estudante">
           <Link className={activeClass("/painel")} href="/painel" aria-label="Visão geral" title="Visão geral"><SidebarIcon name="overview" /><span className="dashboard-nav__label">Visão geral</span></Link>
@@ -46,6 +47,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel/autodeposito")} href="/painel/autodeposito" aria-label="Autodepósito" title="Autodepósito"><SidebarIcon name="deposit" /><span className="dashboard-nav__label">Autodepósito</span></Link>
           <Link className={activeClass("/painel/conta")} href="/painel/conta" aria-label="Minha conta" title="Minha conta"><SidebarIcon name="account" /><span className="dashboard-nav__label">Minha conta</span></Link>
         </nav>}
+        <Link className="dashboard-nav__public-link" href="/" title="Abrir site público"><AppIcon name="home" /><span className="dashboard-nav__label">Site público</span></Link>
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">
