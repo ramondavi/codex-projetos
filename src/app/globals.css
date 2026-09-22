@@ -158,7 +158,16 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 }
 
 @media (min-width: 901px) {
-  body:has(.dashboard-shell) .dashboard-nav { position: fixed; inset: 0 auto 0 0; z-index: 30; width: 232px; }
+  body:has(.dashboard-shell) .dashboard-nav {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    height: calc(100vh + 86px);
+    margin-top: -86px;
+    padding-top: 122px;
+    overflow-y: auto;
+    box-shadow: 32px 0 0 var(--nav-bg);
+  }
   body:has(.dashboard-shell) #barra-brasil .conteudo-barra-brasil,
   body:has(.dashboard-shell) .accessibility-bar__inner { width: calc(100% - 296px) !important; max-width: none !important; margin-left: 264px !important; margin-right: 32px !important; }
 }
@@ -358,18 +367,18 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .library-social-links a:last-child svg { fill: currentColor; stroke: none; }
 .header-divider { width: 1px; height: 22px; background: var(--line-strong); }
 .global-footer { border-top: 1px solid var(--line); background: var(--surface-raised); }
-.global-footer__inner { display: block; padding-block: 30px; }
-.global-footer__columns { grid-template-columns: minmax(220px, 1fr) minmax(190px, .78fr) minmax(250px, 1fr); align-items: center; gap: clamp(24px, 4vw, 56px); }
-.global-footer__columns { grid-template-columns: minmax(200px, 1fr) minmax(280px, 1fr) minmax(180px, .72fr); gap: clamp(24px, 3vw, 44px); }
-.global-footer__left { gap: 7px; }
+.global-footer__inner { display: block; padding-block: 38px; }
+.global-footer__columns { display: grid; grid-template-columns: minmax(210px, 1fr) minmax(270px, 1fr) minmax(185px, .72fr); align-items: stretch; gap: 0; }
+.global-footer__left { display: grid; align-content: center; gap: 7px; padding-right: clamp(24px, 4vw, 56px); }
 .global-footer__identity { gap: 5px; }
 .global-footer__identity .brand--compact .brand__logo { width: 144px; }
 .global-footer__tagline { max-width: 230px; font-size: .67rem; }
 .global-footer__version { font-size: .64rem; }
-.global-footer .global-footer__nav { grid-column: 3; grid-row: 1; display: grid; justify-items: start; gap: 8px; text-align: left; }
+.global-footer .global-footer__nav { grid-column: 3; grid-row: 1; display: grid; align-content: center; justify-items: start; gap: 9px; min-width: 0; padding-left: clamp(24px, 3vw, 42px); border-left: 1px solid var(--line); text-align: left; }
+.global-footer__nav-label { margin-bottom: 3px; color: var(--text-muted); font-size: .62rem; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
 .global-footer__nav a { color: var(--text); font-size: .78rem; font-weight: 720; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 70%, transparent); text-decoration-thickness: 1px; text-underline-offset: 5px; }
 .global-footer__nav a:hover { color: var(--institutional); text-decoration-color: currentColor; }
-.global-footer__right { grid-column: 2; grid-row: 1; gap: 9px; justify-items: center; align-content: center; text-align: center; }
+.global-footer__right { grid-column: 2; grid-row: 1; display: grid; gap: 10px; justify-items: center; align-content: center; padding-inline: clamp(20px, 3vw, 42px); text-align: center; }
 .institution-links { gap: 13px; }
 .institution-links--public img { max-height: 25px; opacity: .86; }
 .institution-links--public a:first-child img { max-height: 30px; max-width: 28px; }
@@ -384,7 +393,8 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
   .global-footer__left, .global-footer__right { justify-items: center; }
   .global-footer__identity { align-items: center; }
   .global-footer__copy, .global-footer__legal { text-align: center; justify-content: center; }
-  .global-footer .global-footer__nav { grid-column: auto; grid-row: auto; display: flex; flex-wrap: wrap; justify-content: center; }
+  .global-footer .global-footer__nav { grid-column: auto; grid-row: auto; display: flex; flex-wrap: wrap; justify-content: center; padding-left: 0; border-left: 0; }
+  .global-footer__nav-label { display: none; }
 }
 
 @media (max-width: 760px) {
