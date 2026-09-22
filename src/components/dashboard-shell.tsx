@@ -9,7 +9,7 @@ import { DashboardBreadcrumbs } from "./breadcrumbs";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
 
-type IconName = "overview" | "queue" | "work" | "admin" | "account" | "request" | "deposit";
+type IconName = "overview" | "queue" | "work" | "admin" | "account" | "request" | "deposit" | "panelCollapse" | "panelExpand";
 
 const icons: Record<IconName, React.ReactNode> = {
   overview: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
@@ -19,6 +19,8 @@ const icons: Record<IconName, React.ReactNode> = {
   account: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-3.7 3-5.5 7-5.5s6.3 1.8 7 5.5" /></>,
   request: <><path d="M6 3h9l3 3v15H6zM15 3v4h4M9 12h6M9 16h4" /></>,
   deposit: <><path d="M4 10h16v10H4zM12 3v10M8 9l4 4 4-4" /></>,
+  panelCollapse: <><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M9 4v16M16 9l-3 3 3 3" /></>,
+  panelExpand: <><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M9 4v16M12 9l3 3-3 3" /></>,
 };
 
 function SidebarIcon({ name }: { name: IconName }) {
@@ -43,7 +45,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
     <div className={`dashboard-shell${compact ? " dashboard-shell--compact" : ""}`}>
       <aside className={`dashboard-nav${compact ? " dashboard-nav--compact" : ""}`}>
         <div className="dashboard-nav__top">
-          {compact ? <button className="dashboard-nav__favicon" type="button" onClick={() => setCompact(false)} aria-label="Expandir menu lateral" title="Clique para expandir o menu" data-tooltip="Clique para expandir o menu"><Image src="/icon.png" alt="" width={64} height={64} priority /></button> : <button className="dashboard-nav__brand-toggle" type="button" onClick={() => setCompact(true)} aria-label="Compactar menu lateral" title="Clique para compactar o menu" data-tooltip="Clique para compactar o menu"><span className="dashboard-nav__brand-logo"><Image className="brand__image brand__image--light" src="/logo-pronto-light.png" alt="" width={1600} height={643} priority /><Image className="brand__image brand__image--dark" src="/logo-pronto-dark.png" alt="" width={1600} height={643} priority /></span></button>}
+          {compact ? <button className="dashboard-nav__favicon" type="button" onClick={() => setCompact(false)} aria-label="Expandir menu lateral"><Image src="/icon.png" alt="" width={64} height={64} priority /><span className="dashboard-nav__logo-action"><SidebarIcon name="panelExpand" /></span></button> : <button className="dashboard-nav__brand-toggle" type="button" onClick={() => setCompact(true)} aria-label="Compactar menu lateral"><span className="dashboard-nav__brand-logo"><Image className="brand__image brand__image--light" src="/logo-pronto-light.png" alt="" width={1600} height={643} priority /><Image className="brand__image brand__image--dark" src="/logo-pronto-dark.png" alt="" width={1600} height={643} priority /></span><span className="dashboard-nav__logo-action"><SidebarIcon name="panelCollapse" /></span></button>}
         </div>
         {isStaff ? <nav aria-label="Área da biblioteca">
           <Link className={activeClass("/painel")} href="/painel" aria-label="Visão geral" title="Visão geral"><SidebarIcon name="overview" /><span className="dashboard-nav__label">Visão geral</span></Link>
