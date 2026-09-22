@@ -419,7 +419,7 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 
 - A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
 - Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
-- A Central pública de ajuda usa a URL canônica `/ajuda` e organiza Dúvidas rápidas, Perguntas frequentes administráveis e Artigos de ajuda completos, cada artigo em página própria com introdução, seções, passos e artigos relacionados. A busca no servidor sugere resultados conforme a pessoa digita e também está disponível de forma compacta no formulário estudantil. URLs legadas de perguntas frequentes apenas redirecionam. Para dúvidas operacionais sobre o Pronto!, divulga os contatos aprovados da BIB/FA: `bibarq@ufba.br` e telefone `(71) 3283-5888`.
+- A Central pública de ajuda usa a URL canônica `/ajuda` e organiza Perguntas frequentes administráveis e Artigos de ajuda completos, cada artigo em página própria com introdução, seções, passos e artigos relacionados. A busca no servidor sugere resultados conforme a pessoa digita e também está disponível de forma compacta no formulário estudantil. URLs legadas de perguntas frequentes apenas redirecionam. No painel interno, um ícone discreto abre ajuda contextual à tela e ao perfil, com a mesma busca da Central. Para dúvidas operacionais sobre o Pronto!, divulga os contatos aprovados da BIB/FA: `bibarq@ufba.br` e telefone `(71) 3283-5888`.
 
 ## 21. Escopo por fase
 
