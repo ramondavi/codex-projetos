@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ThemeSwitcher } from "./theme-switcher";
 
 type TextScale = "normal" | "large" | "larger";
 
@@ -57,6 +58,7 @@ export function AccessibilityControls() {
           <button type="button" onClick={() => changeScale("normal")} disabled={scale === "normal"} aria-label="Usar tamanho padrão do texto" title="Tamanho padrão">A</button>
           <button type="button" onClick={() => changeScale(scales[Math.min(scales.length - 1, scaleIndex + 1)])} disabled={scaleIndex === scales.length - 1} aria-label="Aumentar tamanho do texto" title="Aumentar texto">A+</button>
           <button type="button" onClick={changeContrast} accessKey="4" aria-pressed={highContrast} aria-label="Alternar alto contraste" title="Alto contraste">Contraste <span aria-hidden="true">[4]</span></button>
+          <ThemeSwitcher />
         </div>
       </div>
     </nav>
