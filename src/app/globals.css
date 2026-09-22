@@ -543,9 +543,10 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .dashboard-shell { min-height: 100vh; display: grid; grid-template-columns: 232px 1fr; background: var(--surface); transition: grid-template-columns .24s ease; }
 .dashboard-shell--compact { grid-template-columns: 76px 1fr; }
 .dashboard-nav { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; padding: 36px 20px 28px; background: var(--nav-bg); color: var(--nav-text); transition: padding .24s ease; }
-.dashboard-nav__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 34px; }
+.dashboard-nav__top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; min-height: 34px; }
+.dashboard-nav__top .brand { min-width: 0; }
 .dashboard-nav .brand { color: inherit; }
-.dashboard-nav .brand--compact .brand__logo { width: 178px; }
+.dashboard-nav .brand--compact .brand__logo { display: block; width: min(150px, 100%); }
 .dashboard-nav__toggle,.dashboard-nav__favicon { display: grid; flex: 0 0 auto; place-items: center; border: 0; background: transparent; color: color-mix(in srgb, var(--nav-text) 78%, transparent); cursor: pointer; }
 .dashboard-nav__toggle { width: 34px; height: 34px; border-radius: 50%; transition: background .18s ease, color .18s ease, transform .18s ease; }
 .dashboard-nav__toggle:hover { background: color-mix(in srgb, var(--nav-text) 12%, transparent); color: var(--nav-text); transform: translateX(-2px); }
@@ -553,25 +554,32 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .dashboard-nav__favicon { position: relative; width: 40px; height: 40px; padding: 4px; margin-inline: auto; border-radius: 12px; transition: background .2s ease, transform .2s ease; }
 .dashboard-nav__favicon img { width: 32px; height: 32px; object-fit: contain; }
 .dashboard-nav__favicon:hover { background: color-mix(in srgb, var(--nav-text) 12%, transparent); transform: scale(1.08); }
-.dashboard-nav__favicon::after { position: absolute; width: 17px; height: 17px; border: 1px solid var(--gold); border-left: 0; border-bottom: 0; border-radius: 2px; content: ""; opacity: 0; transform: translateX(-5px) rotate(45deg); transition: opacity .2s ease, transform .2s ease; }
-.dashboard-nav__favicon:hover::after { opacity: 1; transform: translateX(12px) rotate(45deg); }
+.dashboard-nav__expand-mark { position: absolute; right: -14px; display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid color-mix(in srgb, var(--gold) 85%, transparent); border-radius: 50%; background: var(--nav-bg); color: var(--gold); opacity: 0; transform: translateX(-5px); transition: opacity .2s ease, transform .2s ease; }
+.dashboard-nav__expand-mark .dashboard-nav__icon { width: 14px; height: 14px; }
+.dashboard-nav__favicon:hover .dashboard-nav__expand-mark,.dashboard-nav__favicon:focus-visible .dashboard-nav__expand-mark { opacity: 1; transform: translateX(0); }
 .dashboard-nav nav { display: grid; gap: 6px; margin-top: 44px; }
 .dashboard-nav .brand__image--light { display: none; }
 .dashboard-nav .brand__image--dark { display: block; }
 .dashboard-nav nav a, .dashboard-nav nav span { display: flex; justify-content: flex-start; align-items: center; gap: 11px; min-height: 44px; padding: 10px 12px; color: color-mix(in srgb, var(--nav-text) 74%, transparent); text-decoration: none; border-left: 2px solid transparent; border-radius: 0 var(--radius) var(--radius) 0; }
 .dashboard-nav__icon { flex: 0 0 auto; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.75; }
-.dashboard-nav__label { overflow: hidden; white-space: nowrap; }
+.dashboard-nav__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .dashboard-nav nav .is-active { color: var(--nav-text); border-left-color: var(--gold); background: color-mix(in srgb, var(--nav-text) 8%, transparent); }
 .dashboard-nav nav a:hover { color: var(--nav-text) !important; border-left-color: var(--gold); background: color-mix(in srgb, var(--gold) 38%, var(--nav-bg)); transform: translateX(2px); }
 .dashboard-nav nav span { opacity: 0.45; }
 .dashboard-nav nav small { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.dashboard-nav__admin > div { display: grid; gap: 2px; margin: 3px 0 6px 14px; padding-left: 10px; border-left: 1px solid color-mix(in srgb, var(--nav-text) 26%, transparent); }
-.dashboard-nav__admin > div a { min-height: 32px !important; padding: 6px 8px !important; font-size: .72rem; }
+.dashboard-nav__admin { position: relative; }
+.dashboard-nav__admin-menu { display: none; gap: 2px; margin: 3px 0 6px 14px; padding-left: 10px; border-left: 1px solid color-mix(in srgb, var(--nav-text) 26%, transparent); }
+.dashboard-nav__admin-menu.is-visible { display: grid; }
+.dashboard-nav__admin-menu a { min-height: 32px !important; padding: 6px 8px !important; font-size: .72rem; }
 .dashboard-nav--compact { padding-inline: 10px; }
 .dashboard-nav--compact nav { margin-top: 38px; }
 .dashboard-nav--compact nav a { justify-content: center; padding-inline: 0; border-left: 0; border-radius: var(--radius); }
 .dashboard-nav--compact nav a:hover { transform: translateY(-1px); }
-.dashboard-nav--compact .dashboard-nav__label,.dashboard-nav--compact .dashboard-nav__admin > div { display: none; }
+.dashboard-nav--compact .dashboard-nav__label { display: none; }
+.dashboard-nav--compact .dashboard-nav__admin-menu { position: absolute; top: -4px; left: calc(100% + 10px); z-index: 40; width: 162px; margin: 0; padding: 8px; border: 1px solid color-mix(in srgb, var(--nav-text) 22%, transparent); border-left: 3px solid var(--gold); border-radius: var(--radius); background: var(--nav-bg); box-shadow: 0 14px 30px rgb(0 0 0 / .22); }
+.dashboard-nav--compact .dashboard-nav__admin-menu a { justify-content: flex-start; padding: 7px 9px !important; border-radius: var(--radius-sm); font-size: .74rem; }
+.dashboard-nav--compact .dashboard-nav__admin-menu { display: none; }
+.dashboard-nav--compact .dashboard-nav__admin-menu.is-visible,.dashboard-nav--compact .dashboard-nav__admin:hover .dashboard-nav__admin-menu,.dashboard-nav--compact .dashboard-nav__admin:focus-within .dashboard-nav__admin-menu { display: grid; }
 .dashboard-nav--compact .dashboard-nav__icon { width: 20px; height: 20px; }
 .dashboard-nav__institution { margin: auto 0 0; display: grid; justify-items: center; }
 .dashboard-nav__institution .official-library-logo { width: 112px; background: transparent; border-radius: 0; }
