@@ -433,14 +433,26 @@ body:has(.dashboard-shell) .backend-only { display: inline; }
 .faq-list details[open] summary::after { content: "−"; transform: rotate(180deg); }
 .faq-list details p { margin: 0; padding: 19px 22px 22px; color: var(--text-muted); line-height: 1.6; }
 .backend-help { position: fixed; right: 22px; bottom: 22px; z-index: 30; }
-.backend-help__trigger { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid color-mix(in srgb, var(--institutional) 34%, transparent); border-radius: 50%; background: color-mix(in srgb, var(--surface-raised) 78%, transparent); color: color-mix(in srgb, var(--institutional) 60%, transparent); box-shadow: 0 6px 18px color-mix(in srgb, var(--text) 14%, transparent); cursor: pointer; opacity: .45; transition: opacity .18s ease, transform .18s ease, background .18s ease; }
+.backend-help__trigger { display: flex; align-items: center; justify-content: center; gap: 8px; width: 44px; height: 44px; padding: 0; overflow: hidden; border: 1px solid color-mix(in srgb, var(--institutional) 34%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--surface-raised) 78%, transparent); color: color-mix(in srgb, var(--institutional) 60%, transparent); box-shadow: 0 6px 18px color-mix(in srgb, var(--text) 14%, transparent); cursor: pointer; opacity: .45; transition: width .24s ease, opacity .18s ease, transform .18s ease, background .18s ease, padding .24s ease; }
+.backend-help__trigger span { width: 0; overflow: hidden; white-space: nowrap; font-size: .82rem; font-weight: 750; opacity: 0; transition: opacity .16s ease; }
 .backend-help:hover .backend-help__trigger,.backend-help__trigger:focus-visible,.backend-help.is-open .backend-help__trigger { opacity: 1; transform: translateY(-2px); background: var(--institutional); color: var(--bg); }
+.backend-help:hover .backend-help__trigger,.backend-help__trigger:focus-visible { width: 177px; padding: 0 15px; }
+.backend-help:hover .backend-help__trigger span,.backend-help__trigger:focus-visible span { width: auto; opacity: 1; }
 .backend-help__trigger svg { width: 21px; }
 .backend-help__panel { position: absolute; right: 0; bottom: 56px; width: min(390px, calc(100vw - 32px)); padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); box-shadow: var(--shadow); }
+.backend-help__panel header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
 .backend-help__panel h2 { margin: 2px 0 16px; font-size: 1.35rem; }
-.backend-help__topics { display: grid; gap: 8px; margin-top: 16px; }
-.backend-help__topics a,.backend-help__all { color: var(--institutional); font-size: .88rem; font-weight: 750; text-decoration: none; }
-.backend-help__all { display: block; margin-top: 18px; }
+.backend-help__close { display: grid; place-items: center; flex: 0 0 auto; width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; background: transparent; color: var(--text-muted); cursor: pointer; }
+.backend-help__close:hover,.backend-help__close:focus-visible { color: var(--institutional); border-color: var(--institutional); }
+.backend-help__close svg { width: 17px; }
+.backend-help__topics,.backend-help__history { display: grid; gap: 8px; margin-top: 16px; }
+.backend-help__topics a,.backend-help__topics button,.backend-help__history button,.backend-help__all,.backend-help__answer button { display: inline-flex; align-items: center; gap: 6px; width: fit-content; padding: 0; border: 0; background: transparent; color: var(--institutional); font-size: .88rem; font-weight: 750; line-height: 1.4; text-align: left; text-decoration: none; cursor: pointer; }
+.backend-help__topics a svg,.backend-help__all svg { width: 14px; }
+.backend-help__history { padding-top: 14px; border-top: 1px solid var(--line); }
+.backend-help__history strong { font-size: .78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; }
+.backend-help__answer { display: grid; gap: 16px; }
+.backend-help__answer p { margin: 0; color: var(--text-muted); line-height: 1.6; }
+.help-search__suggestions button { display: grid; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; text-align: left; cursor: pointer; }
 .help-search { position: relative; margin-bottom: 40px; }
 .help-search--compact { margin-bottom: 0; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .help-search--compact .help-search__field input { min-height: 48px; padding-block: 12px; font-size: .95rem; }

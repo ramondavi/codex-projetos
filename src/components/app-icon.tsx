@@ -1,6 +1,6 @@
 import type { ReactNode, SVGProps } from "react";
 
-export type AppIconName = "account" | "admin" | "arrowRight" | "book" | "calendar" | "check" | "document" | "edit" | "external" | "github" | "help" | "home" | "inbox" | "link" | "lock" | "logout" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "tag" | "upload" | "work";
+export type AppIconName = "account" | "admin" | "arrowRight" | "book" | "calendar" | "check" | "close" | "document" | "edit" | "external" | "github" | "help" | "home" | "inbox" | "link" | "lock" | "logout" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "tag" | "upload" | "work";
 
 const paths: Record<AppIconName, ReactNode> = {
   account: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-3.7 3-5.5 7-5.5s6.3 1.8 7 5.5" /></>,
@@ -9,6 +9,7 @@ const paths: Record<AppIconName, ReactNode> = {
   book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z" /><path d="M4 5.5v16M8 7h8M8 11h8" /></>,
   calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h6" /></>,
   check: <path d="m5 12 4 4L19 6" />,
+  close: <path d="m6 6 12 12M18 6 6 18" />,
   document: <><path d="M6 3h9l3 3v15H6zM15 3v4h4M9 12h6M9 16h4" /></>,
   edit: <><path d="m4 16.5-.8 4.3 4.3-.8L19 8.5 15.5 5zM13.8 6.7l3.5 3.5" /></>,
   external: <><path d="M14 4h6v6M20 4l-9 9" /><path d="M17 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5" /></>,
