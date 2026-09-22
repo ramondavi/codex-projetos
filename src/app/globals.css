@@ -203,7 +203,11 @@ button, a, input, select { -webkit-tap-highlight-color: transparent; }
 .site-header__nav > a { display: inline-flex; align-items: center; gap: 7px; text-decoration: none; }
 .site-header__nav > a svg,.site-header__access svg,.site-header__logout svg { flex: 0 0 auto; width: 15px; height: 15px; }
 .site-header__nav > a:hover { color: var(--gold); }
-.site-header__access { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border: 1px solid var(--text); border-radius: var(--radius); background: var(--text); color: var(--bg); font-weight: 800; }
+.site-header__access { display: inline-grid; grid-template-columns: auto max-content; align-items: center; gap: 7px; padding: 8px 13px; border: 1px solid var(--text); border-radius: var(--radius); background: var(--text); color: var(--bg); font-weight: 800; }
+.site-header__access-label,.site-header__access-greeting { grid-column: 2; grid-row: 1; transition: opacity .18s ease, transform .18s ease; }
+.site-header__access-greeting { opacity: 0; transform: translateY(3px); }
+.site-header__account:hover .site-header__access-label,.site-header__account:focus-within .site-header__access-label { opacity: 0; transform: translateY(-3px); }
+.site-header__account:hover .site-header__access-greeting,.site-header__account:focus-within .site-header__access-greeting { opacity: 1; transform: translateY(0); }
 .site-header__access:hover { background: var(--institutional); border-color: var(--institutional); color: #fff !important; transform: translateY(-1px); }
 .site-header__account { position: relative; padding-bottom: 10px; margin-bottom: -10px; }
 .site-header__submenu { position: absolute; top: 100%; right: 0; z-index: 20; display: grid; min-width: 210px; padding: 8px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); box-shadow: var(--shadow); opacity: 0; pointer-events: none; transform: translateY(-6px); transition: opacity .18s ease, transform .18s ease; }

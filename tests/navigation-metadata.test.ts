@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () => {
-  const [layout, breadcrumbs, icon, og, robots, sitemap, dashboardLayout, notFound, home, header] = await Promise.all([
+  const [layout, breadcrumbs, icon, og, robots, sitemap, dashboardLayout, notFound, home, header, css] = await Promise.all([
     readFile("src/app/layout.tsx", "utf8"), readFile("src/components/breadcrumbs.tsx", "utf8"),
     stat("src/app/icon.png"), readFile("src/app/opengraph-image.tsx", "utf8"),
-    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"),
+    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"), readFile("src/app/globals.css", "utf8"),
   ]);
   assert.match(layout, /openGraph/);
   assert.match(layout, /metadataBase/);
@@ -27,4 +27,7 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(home, /homeFaqs/);
   assert.match(header, /AppIcon name="logout"/);
   assert.match(header, /Sair da conta/);
+  assert.match(header, /site-header__access-greeting/);
+  assert.match(header, /Olá, \$\{firstName\}/);
+  assert.match(css, /grid-template-columns: auto max-content/);
 });
