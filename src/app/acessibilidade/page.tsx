@@ -1,5 +1,6 @@
 import { SiteHeader } from "@/components/site-header";
 import type { Metadata } from "next";
+import { AppIcon } from "@/components/app-icon";
 
 export const metadata: Metadata = {
   title: "Acessibilidade",
@@ -7,12 +8,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/acessibilidade" },
 };
 
+const resources = [
+  ["keyboard", "Navegação por teclado", "Use Tab, Enter e Espaço para percorrer e acionar todos os controles."],
+  ["settings", "Visualização ajustável", "A barra superior permite ampliar texto e ativar alto contraste neste navegador."],
+  ["help", "Encontrou uma barreira?", "Escreva para bibarq@ufba.br, indicando a página e o que tentou fazer."],
+] as const;
+
 export default function AccessibilityPage() {
   return <><SiteHeader /><main className="accessibility-page"><header className="container accessibility-page__hero">
     <p className="eyebrow">Acessibilidade digital</p><h1>Um Pronto! mais simples de usar.</h1>
     <p>O Pronto! foi construído para funcionar com teclado, diferentes tamanhos de texto, contraste elevado e tecnologias assistivas.</p>
-  </header><section className="container accessibility-page__content" aria-label="Recursos de acessibilidade">
-    <h2>Atalhos e recursos</h2>
+  </header><section className="container accessibility-page__cards" aria-label="Recursos principais de acessibilidade">{resources.map(([icon, title, text]) => <article key={title}><AppIcon name={icon === "keyboard" ? "check" : icon} /><h2>{title}</h2><p>{text}</p></article>)}</section><section className="container accessibility-page__content" aria-label="Atalhos e detalhes de acessibilidade"><div className="accessibility-page__section-heading"><AppIcon name="help" /><div><p className="eyebrow">Recursos disponíveis</p><h2>Atalhos e recursos</h2></div></div>
     <ul>
       <li><strong>Alt + 1:</strong> vai direto ao conteúdo principal.</li>
       <li><strong>Alt + 2:</strong> vai ao menu principal.</li>

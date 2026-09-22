@@ -5,12 +5,13 @@ import { ClarityHeading } from "@/components/clarity-heading";
 import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
 import { isCurrentServiceAnnouncement } from "@/lib/service-announcements";
+import { AppIcon, type AppIconName } from "@/components/app-icon";
 
 const steps = [
-  ["pencil", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
+  ["edit", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
   ["review", "Acompanhe a análise", "A biblioteca confere os dados e indica exatamente os campos que precisam de correção."],
-  ["file", "Receba sua ficha", "Após a homologação e a validação do Nada Consta, gere o trabalho completo no seu navegador."],
-];
+  ["document", "Receba sua ficha", "Após a homologação e a validação do Nada Consta, gere o trabalho completo no seu navegador."],
+] as const satisfies readonly [AppIconName, string, string][];
 const fallbackHomeFaqs = [
   { id: "fallback-home-1", question: "Quem pode usar o Pronto!?", answer: "Estudantes da UFBA que precisam solicitar ficha catalográfica e realizar o autodepósito, além da equipe autorizada da BIB/FA." },
   { id: "fallback-home-2", question: "O trabalho completo é enviado ao Pronto!?", answer: "Não. O estudante informa um link público para análise e o PDF completo permanece no próprio dispositivo durante a mesclagem da ficha." },
@@ -37,7 +38,7 @@ export default async function HomePage() {
               <p className="eyebrow">Biblioteca da Faculdade de Arquitetura · UFBA</p>
               <p className="hero__lead">Assistente de Fichas Catalográficas e Autodepósito</p>
               <p className="hero__description">Um fluxo claro e seguro para concluir sua ficha catalográfica com acompanhamento profissional da BIB/FAUFBA.</p>
-              {!user && <div className="actions"><Link className="button button--primary" href="/entrar">Entrar no Pronto!</Link><Link className="button button--secondary" href="/cadastro">Criar conta</Link></div>}
+              {!user && <div className="actions"><Link className="button button--primary button--with-icon" href="/entrar"><AppIcon name="account" />Entrar no Pronto!</Link><Link className="button button--secondary button--with-icon" href="/cadastro"><AppIcon name="edit" />Criar conta</Link></div>}
             </div>
             <div className="hero__aside">
               <Notice announcement={currentAnnouncement} />
@@ -61,7 +62,7 @@ export default async function HomePage() {
             <div className="steps">
               {steps.map(([icon, title, description]) => (
                 <article className="step" key={icon}>
-                  <span className={`step__icon step__icon--${icon}`} aria-hidden="true">{icon === "pencil" ? "✎" : icon === "review" ? "✓" : "↗"}</span>
+                  <span className="step__icon" aria-hidden="true"><AppIcon name={icon} /></span>
                   <h3>{title}</h3>
                   <p>{description}</p>
                 </article>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import { AppIcon } from "./app-icon";
 
 export type TimelineEvent = { event_key?: string; key?: string; label: string; occurred_at: string };
 
@@ -11,5 +12,5 @@ export function RequestTimeline({ events, showHeading = true, highlightCurrent =
 
 export function RequestTimelineDialog({ events }: { events: TimelineEvent[] }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
-  return <><button className="button button--secondary button--small" type="button" onClick={() => dialogRef.current?.showModal()}>Ver histórico do atendimento</button><dialog className="timeline-dialog" ref={dialogRef} aria-label="Histórico do atendimento"><div className="timeline-dialog__header"><div><p className="eyebrow">Histórico do atendimento</p><h2>Marcos do protocolo</h2></div><button className="text-button" type="button" onClick={() => dialogRef.current?.close()}>Fechar</button></div><RequestTimeline events={events} showHeading={false} highlightCurrent /></dialog></>;
+  return <><button className="button button--secondary button--small button--with-icon" type="button" onClick={() => dialogRef.current?.showModal()}><AppIcon name="calendar" />Ver histórico do atendimento</button><dialog className="timeline-dialog" ref={dialogRef} aria-label="Histórico do atendimento"><div className="timeline-dialog__header"><div><p className="eyebrow">Histórico do atendimento</p><h2>Marcos do protocolo</h2></div><button className="text-button" type="button" onClick={() => dialogRef.current?.close()}>Fechar</button></div><RequestTimeline events={events} showHeading={false} highlightCurrent /></dialog></>;
 }

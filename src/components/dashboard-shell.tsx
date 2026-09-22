@@ -1,38 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { logout } from "@/app/auth-actions";
 import { DashboardBreadcrumbs } from "./breadcrumbs";
+import { AppIcon, type AppIconName } from "./app-icon";
 
 const roleLabels: Record<string, string> = { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador" };
 
-type IconName = "overview" | "queue" | "work" | "admin" | "account" | "request" | "deposit" | "panelCollapse" | "panelExpand";
-
-const icons: Record<IconName, React.ReactNode> = {
-  overview: <><rect x="4" y="4" width="6" height="6" /><rect x="14" y="4" width="6" height="6" /><rect x="4" y="14" width="6" height="6" /><rect x="14" y="14" width="6" height="6" /></>,
-  queue: <><path d="M8 6h12M8 12h12M8 18h12" /><circle cx="4" cy="6" r="1" /><circle cx="4" cy="12" r="1" /><circle cx="4" cy="18" r="1" /></>,
-  work: <><rect x="3" y="6" width="18" height="14" rx="2" /><path d="M8 6V4h8v2M3 12h18M10 12v2h4v-2" /></>,
-  admin: <><circle cx="12" cy="8" r="3" /><path d="M5 20c.8-3.5 3-5 7-5s6.2 1.5 7 5M19 6v4M17 8h4" /></>,
-  account: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-3.7 3-5.5 7-5.5s6.3 1.8 7 5.5" /></>,
-  request: <><path d="M6 3h9l3 3v15H6zM15 3v4h4M9 12h6M9 16h4" /></>,
-  deposit: <><path d="M4 10h16v10H4zM12 3v10M8 9l4 4 4-4" /></>,
-  panelCollapse: <><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M9 4v16M16 9l-3 3 3 3" /></>,
-  panelExpand: <><rect x="3.5" y="4" width="17" height="16" rx="2" /><path d="M9 4v16M12 9l3 3-3 3" /></>,
-};
-
-function SidebarIcon({ name }: { name: IconName }) {
-  return <svg className="dashboard-nav__icon" aria-hidden="true" viewBox="0 0 24 24">{icons[name]}</svg>;
-}
+const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "admin", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
+function SidebarIcon({ name }: { name: keyof typeof navIcons }) { return <AppIcon className="dashboard-nav__icon" name={navIcons[name]} />; }
 
 export function DashboardShell({ children, fullName, role, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
   const isStaff = role === "cataloger" || role === "administrator";
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [compact, setCompact] = useState(true);
-  const [adminMenuOpen, setAdminMenuOpen] = useState(() => pathname.startsWith("/painel/admin"));
+  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
+  useEffect(() => { setAdminMenuOpen(false); }, [pathname, searchParams]);
   const activeClass = (href: string) => {
     const [targetPath, targetQuery] = href.split("?");
     if (targetPath === "/painel/fila" && pathname.startsWith("/painel/atendimento/")) return targetQuery ? undefined : "is-active";
@@ -52,7 +39,7 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel")} href="/painel" aria-label="Visão geral" title="Visão geral"><SidebarIcon name="overview" /><span className="dashboard-nav__label">Visão geral</span></Link>
           <Link className={activeClass("/painel/fila")} href="/painel/fila" aria-label="Fila de solicitações" title="Fila de solicitações"><SidebarIcon name="queue" /><span className="dashboard-nav__label">Fila de solicitações</span></Link>
           <Link className={activeClass("/painel/fila?responsavel=me")} href="/painel/fila?responsavel=me" aria-label="Meus atendimentos" title="Meus atendimentos"><SidebarIcon name="work" /><span className="dashboard-nav__label">Meus atendimentos</span></Link>
-          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuOpen} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title="Administração"><SidebarIcon name="admin" /><span className="dashboard-nav__label">Administração</span></button><div className={`dashboard-nav__admin-menu${adminMenuOpen ? " is-visible" : ""}`} id="submenu-administracao" aria-label="Subseções administrativas"><Link className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">Operação</Link><Link className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">Conteúdo</Link><Link className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">Controle</Link></div></div>}
+          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuOpen} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title="Administração"><SidebarIcon name="admin" /><span className="dashboard-nav__label">Administração</span></button><div className={`dashboard-nav__admin-menu${adminMenuOpen ? " is-visible" : ""}`} id="submenu-administracao" aria-label="Subseções administrativas"><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">Operação</Link><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">Conteúdo</Link><Link onClick={() => setAdminMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">Controle</Link></div></div>}
           <Link className={activeClass("/painel/conta")} href="/painel/conta" aria-label="Minha conta" title="Minha conta"><SidebarIcon name="account" /><span className="dashboard-nav__label">Minha conta</span></Link>
         </nav> : <nav aria-label="Área do estudante">
           <Link className={activeClass("/painel")} href="/painel" aria-label="Visão geral" title="Visão geral"><SidebarIcon name="overview" /><span className="dashboard-nav__label">Visão geral</span></Link>
@@ -60,13 +47,14 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
           <Link className={activeClass("/painel/autodeposito")} href="/painel/autodeposito" aria-label="Autodepósito" title="Autodepósito"><SidebarIcon name="deposit" /><span className="dashboard-nav__label">Autodepósito</span></Link>
           <Link className={activeClass("/painel/conta")} href="/painel/conta" aria-label="Minha conta" title="Minha conta"><SidebarIcon name="account" /><span className="dashboard-nav__label">Minha conta</span></Link>
         </nav>}
+        <Link className="dashboard-nav__public-link" href="/" title="Abrir site público"><AppIcon name="external" /><span className="dashboard-nav__label">Site público</span></Link>
       </aside>
       <div className="dashboard-content">
         <header className="dashboard-header">
           <div><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>
           <div className="dashboard-header__actions">
             <div className="user-identity"><span className="user-greeting">Olá, {firstName}</span><span className="user-chip" title={fullName}>{roleLabels[role] ?? role}</span></div>
-            <form action={logout}><button className="logout-icon" type="submit" aria-label="Sair da conta" title="Sair da conta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M8 12h10" /></svg></button></form>
+            <form action={logout}><button className="logout-icon" type="submit" aria-label="Sair da conta" title="Sair da conta"><AppIcon name="logout" /></button></form>
           </div>
         </header>
         <DashboardBreadcrumbs />

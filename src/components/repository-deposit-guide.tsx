@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { AppIcon } from "./app-icon";
 
 export type RepositoryCopyField = { label: string; value?: string | null; note?: string };
 
@@ -20,7 +21,7 @@ export function RepositoryDepositGuide({ requestId, startedAt, fields }: { reque
   async function copy(label: string, value: string) {
     await navigator.clipboard.writeText(value); setCopied(label); window.setTimeout(() => setCopied(""), 1600);
   }
-  if (!started) return <section className="repository-start panel"><p className="eyebrow">Etapa liberada</p><h2>Inicie quando estiver diante do RI/UFBA</h2><p>O Pronto! registra somente que você começou. O trabalho continua no seu computador e será enviado diretamente ao Repositório Institucional.</p><button className="button button--primary" disabled={busy} onClick={begin}>{busy ? "Registrando…" : "Iniciar autodepósito assistido"}</button>{error && <p className="auth-feedback" role="alert">{error}</p>}</section>;
+  if (!started) return <section className="repository-start panel"><p className="eyebrow">Etapa liberada</p><h2>Inicie quando estiver diante do RI/UFBA</h2><p>O Pronto! registra somente que você começou. O trabalho continua no seu computador e será enviado diretamente ao Repositório Institucional.</p><button className="button button--primary button--with-icon" disabled={busy} onClick={begin}><AppIcon name="upload" />{busy ? "Registrando…" : "Iniciar autodepósito assistido"}</button>{error && <p className="auth-feedback" role="alert">{error}</p>}</section>;
   const steps = [
     ["01", "Coleção", "No RI/UFBA, clique em “Iniciar um novo depósito” e escolha exatamente a coleção indicada abaixo."],
     ["02", "Tipo de documento", "Selecione o tipo observado para seu curso ou programa."],
@@ -36,6 +37,6 @@ export function RepositoryDepositGuide({ requestId, startedAt, fields }: { reque
     <section className="repository-map panel"><p className="eyebrow">Dados disponíveis para copiar</p><h2>Mapa Pronto! → RI/UFBA</h2><div>{fields.map((field) => <article key={field.label}><div><span>{field.label}</span>{field.value ? <strong>{field.value}</strong> : <em>{field.note ?? "Preencha diretamente no RI/UFBA."}</em>}</div>{field.value && <button className="button button--secondary button--small" onClick={() => copy(field.label, field.value!)}>{copied === field.label ? "Copiado" : "Copiar"}</button>}</article>)}</div></section>
     <section className="repository-steps">{steps.map(([index,title,body]) => <article className="panel" key={index}><span>{index}</span><div><h2>{title}</h2><p>{body}</p></div></article>)}</section>
     <section className="pdfa-guidance"><strong>PDF/A é uma orientação de preservação</strong><p>Consulte o tutorial oficial de conversão antes do upload. O Pronto! não converte nem valida automaticamente PDF/A.</p></section>
-    <a className="button button--primary repository-ri-link" href="https://repositorio.ufba.br/submit" target="_blank" rel="noreferrer">Abrir o RI/UFBA em nova aba ↗</a>
+    <a className="button button--primary button--with-icon repository-ri-link" href="https://repositorio.ufba.br/submit" target="_blank" rel="noreferrer"><AppIcon name="external" />Abrir o RI/UFBA em nova aba</a>
   </>;
 }

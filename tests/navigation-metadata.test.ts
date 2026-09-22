@@ -25,5 +25,6 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(notFound, /Voltar ao início/);
   assert.match(home, /fallbackHomeFaqs/);
   assert.match(home, /homeFaqs/);
-  assert.match(header, /↗ Sair da conta/);
+  assert.match(header, /AppIcon name="logout"/);
+  assert.match(header, /Sair da conta/);
 });
