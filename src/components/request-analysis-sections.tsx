@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { AppIcon, type AppIconName } from "@/components/app-icon";
 
 const steps = [
-  { id: "metadata", label: "Metadados", guidance: "Confira os dados enviados. Com pendências, devolva ao estudante; sem pendências, valide e siga para a catalogação." },
-  { id: "cataloging", label: "Catalogação e ficha", guidance: "Complete autoridades, assuntos, CDU e Cutter; confira a prévia e homologue a ficha." },
-  { id: "documentation", label: "Nada Consta e liberação", guidance: "O documento pode ser validado em paralelo. A ficha só é liberada quando ela estiver homologada e o Nada Consta, aprovado." },
+  { id: "metadata", label: "Metadados", icon: "document", guidance: "Confira os dados enviados. Com pendências, devolva ao estudante; sem pendências, valide e siga para a catalogação." },
+  { id: "cataloging", label: "Catalogação e ficha", icon: "book", guidance: "Complete autoridades, assuntos, CDU e Cutter; confira a prévia e homologue a ficha." },
+  { id: "documentation", label: "Nada Consta e liberação", icon: "shield", guidance: "O documento pode ser validado em paralelo. A ficha só é liberada quando ela estiver homologada e o Nada Consta, aprovado." },
 ] as const;
 
 export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode }) {
@@ -42,7 +43,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
         onClick={() => setActive(step.id)}
       >
         <span className="analysis-stepper__number">{String(index + 1).padStart(2, "0")}</span>
-        <span>{step.label}</span>
+        <span><AppIcon name={step.icon as AppIconName} />{step.label}</span>
       </button>)}
     </div>
     <aside className="analysis-next-action" aria-live="polite">
