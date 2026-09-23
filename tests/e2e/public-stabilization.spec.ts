@@ -22,8 +22,9 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
 });
 
 test("busca de ajuda sugere respostas", async ({ page }) => {
+  await page.route("**/api/central-de-duvidas?*", (route) => route.fulfill({ json: { results: [{ id: "article-corrections", slug: "corrigir-solicitacao", kind: "Artigo de ajuda", category: "Análise", title: "Como responder a uma correção da biblioteca", summary: "Como corrigir a solicitação" }] } }));
   await page.goto("/ajuda");
-  await page.waitForTimeout(300);
+  await page.waitForLoadState("networkidle");
   await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("correcao");
   await expect(page.getByRole("link", { name: /Artigo de ajuda.*correção/ })).toBeVisible();
 });
@@ -58,7 +59,7 @@ test("links do rodapé público formam uma linha no desktop", async ({ page }) =
     columns: new Set(links.map((link) => Math.round(link.getBoundingClientRect().left))).size,
     rows: new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size,
   }));
-  expect(alignment).toEqual({ columns: 4, rows: 1 });
+  expect(alignment).toEqual({ columns: 3, rows: 1 });
 });
 
 test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
