@@ -1,15 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
-import { helpArticles, knowledgeText, normalizeKnowledge, quickDoubts, type KnowledgeItem } from "@/lib/knowledge-base";
+import { normalizeKnowledge } from "@/lib/knowledge-base";
+import { getPublishedKnowledge, toKnowledgeItem } from "@/lib/knowledge-service";
 
 export async function GET(request: Request) {
-  const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
-  const context = new URL(request.url).searchParams.get("context");
+  const params = new URL(request.url).searchParams;
+  const term = normalizeKnowledge(params.get("q")?.trim() ?? "");
+  const requestedContext = params.get("context");
   const supabase = await createClient();
-  const { data } = await supabase.from("frequently_asked_questions").select("id,question,answer").eq("active", true).order("position");
-  const faqs: KnowledgeItem[] = (data ?? []).map((faq) => ({ id: faq.id, kind: "Pergunta frequente", category: "FAQ", title: faq.question, summary: faq.answer }));
-  const term = normalizeKnowledge(query);
-  const source = [...quickDoubts, ...faqs, ...helpArticles];
-  const contextual = context === "atendimento" ? helpArticles.filter((item) => item.category === "Análise") : context === "administracao" ? [...faqs.slice(0, 1), ...helpArticles.slice(0, 2)] : context === "estudante" ? [...quickDoubts, ...helpArticles] : source;
-  const results = (term.length >= 2 ? source.filter((item) => normalizeKnowledge(knowledgeText(item)).includes(term)) : contextual).slice(0, 8).map(({ body: _body, sections: _sections, ...item }) => item);
-  return Response.json({ results });
+  const { data: { user } } = await supabase.auth.getUser();
+  const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
+  const context = requestedContext === "administracao" && profile?.role === "administrator" ? "administracao"
+    : requestedContext === "atendimento" && (profile?.role === "cataloger" || profile?.role === "administrator") ? "atendimento"
+    : requestedContext === "estudante" && profile?.role === "student" ? "estudante"
+    : requestedContext === "painel" && user ? "painel" : null;
+  const entries = await getPublishedKnowledge(!context);
+  const audience = context === "administracao" ? "administrator" : context === "atendimento" ? "cataloger" : context === "estudante" ? "student" : "panel";
+  const contextual = context ? entries.filter((entry) => entry.audiences.includes(audience) || entry.audiences.includes("panel")) : entries;
+  const matching = term.length >= 2
+    ? contextual.filter((entry) => normalizeKnowledge(`${entry.title} ${entry.summary} ${entry.category} ${entry.body_html.replace(/<[^>]+>/g, " ")}`).includes(term))
+    : contextual;
+  return Response.json({ results: matching.slice(0, 8).map(toKnowledgeItem) });
 }

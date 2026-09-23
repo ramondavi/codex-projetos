@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { createClient } from "@/lib/supabase/server";
 import { isCurrentServiceAnnouncement } from "@/lib/service-announcements";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
+import { getPublishedKnowledge } from "@/lib/knowledge-service";
 
 const steps = [
   ["edit", "Informe os dados", "Envie os metadados e um link público para a versão final já defendida e aprovada."],
@@ -21,9 +22,9 @@ const fallbackHomeFaqs = [
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: faqs } = await supabase.from("frequently_asked_questions").select("id,question,answer,position,featured_position").eq("active", true).order("position");
-  const featuredFaqs = faqs?.filter((faq) => faq.featured_position !== null).sort((a, b) => (a.featured_position ?? 0) - (b.featured_position ?? 0));
-  const homeFaqs = featuredFaqs?.length ? featuredFaqs : faqs?.slice(0, 3).length ? faqs.slice(0, 3) : fallbackHomeFaqs;
+  const faqs = (await getPublishedKnowledge()).filter((entry) => entry.kind === "faq").map((entry) => ({ id: entry.id, question: entry.title, answer: entry.summary, featured_position: entry.featured_position }));
+  const featuredFaqs = faqs.filter((faq) => faq.featured_position !== null).sort((a, b) => (a.featured_position ?? 0) - (b.featured_position ?? 0));
+  const homeFaqs = featuredFaqs.length ? featuredFaqs : faqs.length ? faqs.slice(0, 3) : fallbackHomeFaqs;
   const now = new Date().toISOString();
   const { data: announcements } = await supabase.from("library_announcements").select("title,message,type,starts_at,ends_at").eq("active", true).neq("type", "normal").lte("starts_at", now).or(`ends_at.is.null,ends_at.gte.${now}`).order("starts_at", { ascending: false });
   const currentAnnouncement = announcements?.find((announcement) => isCurrentServiceAnnouncement(announcement, now));

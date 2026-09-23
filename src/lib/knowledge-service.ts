@@ -1,0 +1,40 @@
+import "server-only";
+import sanitizeHtml from "sanitize-html";
+import { createClient } from "@/lib/supabase/server";
+import { initialKnowledgeEntries, type KnowledgeEntry, type KnowledgeItem } from "@/lib/knowledge-base";
+
+const fields = "id,slug,kind,title,summary,body_html,category,audiences,active,position,featured_position,created_at,updated_at,published_at";
+
+export function safeKnowledgeHtml(html: string) {
+  return sanitizeHtml(html, {
+    allowedTags: ["p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a"],
+    allowedAttributes: { a: ["href", "target", "rel"] },
+    allowedSchemes: ["https", "mailto"],
+    transformTags: { a: (_tag, attrs) => ({ tagName: "a", attribs: { href: attrs.href ?? "#", target: "_blank", rel: "noopener noreferrer" } }) },
+  });
+}
+
+export function toKnowledgeItem(entry: KnowledgeEntry): KnowledgeItem {
+  return {
+    id: entry.id, slug: entry.slug ?? undefined,
+    kind: entry.kind === "faq" ? "Pergunta frequente" : entry.kind === "answer" ? "Dúvida rápida" : "Artigo de ajuda",
+    title: entry.title, summary: entry.summary, category: entry.category,
+    bodyHtml: safeKnowledgeHtml(entry.body_html),
+  };
+}
+
+export async function getPublishedKnowledge(publicOnly = true): Promise<KnowledgeEntry[]> {
+  const supabase = await createClient();
+  let query = supabase.from("knowledge_base_entries").select(fields).eq("active", true).order("position");
+  if (publicOnly) query = query.contains("audiences", ["public"]);
+  const { data, error } = await query;
+  if (!error) return data as KnowledgeEntry[];
+  const { data: faqs } = await supabase.from("frequently_asked_questions")
+    .select("id,question,answer,active,position,featured_position,created_at,updated_at").eq("active", true).order("position");
+  const defaults = faqs?.length ? faqs : [
+    { id: "fallback-1", question: "Quem pode usar o Pronto!?", answer: "Estudantes da UFBA que precisam solicitar ficha catalográfica e realizar o autodepósito, além da equipe autorizada da BIB/FA.", active: true, position: 10 },
+    { id: "fallback-2", question: "O trabalho completo é enviado ao Pronto!?", answer: "Não. O estudante informa um link público para análise e o PDF completo permanece no próprio dispositivo durante a mesclagem da ficha.", active: true, position: 20 },
+    { id: "fallback-3", question: "Quando posso baixar a ficha?", answer: "Depois que a ficha for homologada pela biblioteca e o Nada Consta for aprovado.", active: true, position: 30 },
+  ];
+  return initialKnowledgeEntries(defaults);
+}

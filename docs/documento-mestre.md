@@ -411,14 +411,14 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - Atalhos globais de produtividade para a análise bibliotecária são evolução posterior: devem ser descobríveis, não conflitar com navegador ou campos de texto e nunca executar ações críticas sem confirmação explícita.
 - Refinamento milimétrico da ficha e telas será feito depois.
 - O cabeçalho autenticado identifica o primeiro nome da pessoa logada com a saudação `Olá, [primeiro nome]`, ao lado do perfil operacional e da ação de saída.
-- Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, FAQ, ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.
+- Páginas públicas e autenticadas compartilham rodapé com versão, estágio Beta, Central de ajuda, créditos, ano de criação, autoria institucional, reconhecimento ao Codex e acesso ao repositório público do código.
 - Links possuem estados de foco e passagem do mouse coerentes com a paleta e a linguagem geométrica do sistema.
 - A Administração organiza usuários, programas, biblioteca, atendimento, FAQ, indicadores, retenção e auditoria em abas horizontais responsivas.
 
 ### 20.1. Perguntas frequentes e ajuda
 
-- A FAQ é pública, inicia com respostas curtas baseadas nas regras consolidadas e pode ser ordenada, ativada, desativada, editada e ampliada pelo Administrador.
-- Alterações administrativas da FAQ são validadas no banco e registradas em auditoria.
+- FAQs, respostas rápidas e artigos completos são registros de uma única base de conhecimento. O Administrador os edita em cartões recolhidos, por meio de um editor visual, e configura tipo, categoria padronizada, público, ordem, publicação e destaque da FAQ na página inicial. O resumo alimenta as sugestões de busca; o conteúdo completo aparece ao abrir a resposta ou artigo. A data de publicação e de atualização é exibida quando registrada.
+- A migração incorpora as FAQs já cadastradas e os artigos e respostas iniciais da Central. Alterações administrativas são validadas no banco, protegidas por RLS e registradas em auditoria. Conteúdo formatado é sanitizado antes de ser exibido.
 - A Central pública de ajuda usa a URL canônica `/ajuda` e organiza Perguntas frequentes administráveis e Artigos de ajuda completos, cada artigo em página própria com introdução, seções, passos e artigos relacionados. A busca no servidor sugere resultados conforme a pessoa digita e também está disponível de forma compacta no formulário estudantil. URLs legadas de perguntas frequentes apenas redirecionam. No painel interno, um ícone discreto se expande ao passar o mouse e abre ajuda contextual à tela e ao perfil, com a mesma busca da Central. Respostas rápidas e FAQs são lidas nessa janela; artigos e a Central abrem em nova aba, com indicação visual. Contextos anteriores da mesma sessão podem ser reabertos. Para dúvidas operacionais sobre o Pronto!, divulga os contatos aprovados da BIB/FA: `bibarq@ufba.br` e telefone `(71) 3283-5888`.
 
 ## 21. Escopo por fase
