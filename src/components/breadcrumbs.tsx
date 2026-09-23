@@ -12,7 +12,7 @@ function Trail({ items, variant }: { items: Crumb[]; variant: "public" | "dashbo
 
 export function PublicBreadcrumbs() {
   const pathname = usePathname();
-  const labels: Record<string, string> = { "/perguntas-frequentes": "Perguntas frequentes", "/politica-de-privacidade": "Política de privacidade", "/acessibilidade": "Acessibilidade" };
+  const labels: Record<string, string> = { "/ajuda": "Central de ajuda", "/perguntas-frequentes": "Central de ajuda", "/politica-de-privacidade": "Política de privacidade", "/acessibilidade": "Acessibilidade" };
   const label = labels[pathname];
   return label ? <Trail variant="public" items={[{ label: "Início", href: "/" }, { label }]} /> : null;
 }

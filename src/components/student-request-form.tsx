@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { compactDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY, type StudentRequestDraft } from "@/domain/student-requests/draft";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
+import { HelpSearch } from "@/components/help-search";
 
 type Program = { id: string; code: string; name: string; level: string; work_type: string };
 const levelLabels: Record<string, string> = { undergraduate: "Graduação", specialization: "Especialização", master: "Mestrado", doctorate: "Doutorado" };
@@ -89,6 +90,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   return (
     <form className="request-form" onSubmit={submit} data-active-step={activeStep}>
       {error && <div className="auth-feedback auth-feedback--error" role="alert">{error}</div>}
+      <HelpSearch compact />
       <div className="admin-tabs request-steps" role="tablist" aria-label="Etapas do formulário">{steps.map((step, index) => <button key={step.label} type="button" role="tab" aria-selected={activeStep === index + 1} className={activeStep === index + 1 ? "is-active" : ""} onClick={() => setActiveStep(index + 1)}><AppIcon name={step.icon} />{step.label}</button>)}</div>
 
       <fieldset className="form-section form-step form-step--1">

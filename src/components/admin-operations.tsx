@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { KnowledgeBaseAdmin, type KnowledgeEntry } from "./knowledge-base-admin";
 
 type User = {
   id: string;
@@ -39,14 +40,6 @@ type Template = {
   message: string;
   active: boolean;
   position: number;
-};
-type Faq = {
-  id: string;
-  question: string;
-  answer: string;
-  active: boolean;
-  position: number;
-  featured_position: number | null;
 };
 type Relation<T> = T[] & Partial<T>;
 type Log = {
@@ -101,15 +94,13 @@ export function AdminOperations(props: {
   templates: Template[];
   logs: Log[];
   purgeDocuments: Purge[];
-  faqs: Faq[];
+  knowledge: KnowledgeEntry[];
 }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState("");
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState(props.users);
   const [purge, setPurge] = useState(props.purgeDocuments);
-  const [faqs, setFaqs] = useState(props.faqs);
-  const [draggedFaqId, setDraggedFaqId] = useState<string | null>(null);
   const [announcements, setAnnouncements] = useState(props.announcements);
   const [editingAnnouncement, setEditingAnnouncement] =
     useState<Announcement | null>(null);
@@ -397,73 +388,6 @@ export function AdminOperations(props: {
       },
       "Template salvo e confirmado no banco de dados.",
     );
-  }
-  async function reorderFaqs(targetId: string) {
-    if (!draggedFaqId || draggedFaqId === targetId) return;
-    const source = faqs.findIndex((faq) => faq.id === draggedFaqId);
-    const target = faqs.findIndex((faq) => faq.id === targetId);
-    const next = [...faqs];
-    const [moved] = next.splice(source, 1);
-    next.splice(target, 0, moved);
-    setFaqs(next.map((faq, index) => ({ ...faq, position: (index + 1) * 10 })));
-    setDraggedFaqId(null);
-    const { error } = await supabase.rpc("admin_reorder_frequently_asked_questions", { faq_ids: next.filter((faq) => faq.id).map((faq) => faq.id) });
-    if (error) setMessage("Não foi possível salvar a nova ordem das perguntas.");
-  }
-
-  async function saveFaq(faq: Faq, form: FormData) {
-    setBusy(`f-${faq.id || "new"}`);
-    setMessage("");
-    const payload = {
-      faq_id: faq.id || null,
-      faq_question: String(form.get("question")),
-      faq_answer: String(form.get("answer")),
-      faq_position: Number(form.get("position")),
-      enabled: form.get("active") === "on",
-      home_featured_position: form.get("featured_position") ? Number(form.get("featured_position")) : null,
-    };
-    const { data: id, error } = await supabase.rpc(
-      "admin_save_frequently_asked_question",
-      payload,
-    );
-    const { data: saved, error: readError } =
-      error || !id
-        ? { data: null, error: true }
-        : await supabase
-            .from("frequently_asked_questions")
-            .select("question,answer,position,active,featured_position")
-            .eq("id", String(id))
-            .single();
-    if (
-      readError ||
-      saved?.question !== payload.faq_question ||
-      saved.answer !== payload.faq_answer ||
-      saved.position !== payload.faq_position ||
-      saved.active !== payload.enabled
-      || saved.featured_position !== payload.home_featured_position
-    )
-      setMessage(
-        "Não foi possível confirmar o salvamento. Confira os dados e tente novamente.",
-      );
-    else {
-      setMessage("Pergunta frequente salva e confirmada no banco de dados.");
-      setFaqs((current) =>
-        current.map((item) =>
-          item === faq
-            ? {
-                ...item,
-                id: String(id),
-                question: payload.faq_question,
-                answer: payload.faq_answer,
-                position: payload.faq_position,
-                active: payload.enabled,
-                featured_position: payload.home_featured_position,
-              }
-            : item,
-        ),
-      );
-    }
-    setBusy("");
   }
   async function loadStats(form: FormData) {
     setBusy("stats");
@@ -1065,100 +989,8 @@ export function AdminOperations(props: {
       <section className="panel admin-section">
         <p className="eyebrow">Conteúdo público</p>
         <h2>Ajuda e perguntas frequentes</h2>
-        <p>
-          Edite as respostas públicas, desative itens temporariamente ou
-          acrescente novas perguntas.
-        </p>
-        <div className="admin-list">
-          {faqs.map((faq) => (
-            <form
-              className="admin-row admin-row--faq"
-              action={(form) => saveFaq(faq, form)}
-              key={`${faq.id || "new"}-${faq.featured_position ?? "none"}`}
-              draggable={Boolean(faq.id)}
-              onDragStart={() => setDraggedFaqId(faq.id)}
-              onDragOver={(event) => event.preventDefault()}
-              onDrop={() => reorderFaqs(faq.id)}
-            >
-              <label className="admin-row--faq-question">
-                Pergunta
-                <input
-                  name="question"
-                  required
-                  minLength={5}
-                  maxLength={300}
-                  defaultValue={faq.question}
-                />
-              </label>
-              <label className="admin-row--faq-answer">
-                Resposta
-                <textarea
-                  name="answer"
-                  required
-                  minLength={5}
-                  maxLength={4000}
-                  rows={3}
-                  defaultValue={faq.answer}
-                />
-              </label>
-              <label>
-                Ordem
-                <input
-                  name="position"
-                  type="number"
-                  min="0"
-                  max="9999"
-                  defaultValue={faq.position}
-                />
-              </label>
-              <label className="compact-check">
-                <input
-                  name="active"
-                  type="checkbox"
-                  defaultChecked={faq.active}
-                />{" "}
-                Publicada
-              </label>
-              <label>
-                Página inicial
-                <select name="featured_position" defaultValue={faq.featured_position ?? ""}>
-                  <option value="">Não exibir</option>
-                  <option value="1">Posição 1</option>
-                  <option value="2">Posição 2</option>
-                  <option value="3">Posição 3</option>
-                </select>
-              </label>
-              <button
-                className="button button--secondary button--small"
-                disabled={busy === `f-${faq.id || "new"}`}
-              >
-                Salvar
-              </button>
-            </form>
-          ))}
-        </div>
-        <div className="faq-add-action">
-        <button
-          className="button button--primary button--small"
-          type="button"
-          onClick={() =>
-            setFaqs((current) => [
-              ...current,
-              {
-                id: "",
-                question: "",
-                answer: "",
-                position:
-                  Math.max(0, ...current.map((item) => item.position)) + 10,
-                active: true,
-                featured_position: null,
-              },
-            ])
-          }
-        >
-          Adicionar pergunta
-        </button>
-        </div>
+        <p>Edite o conteúdo publicado, seus públicos e a forma como aparece na Central.</p>
+        <KnowledgeBaseAdmin entries={props.knowledge} />
       </section>
     </div>
   );

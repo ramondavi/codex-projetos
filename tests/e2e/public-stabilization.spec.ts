@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/perguntas-frequentes"]) {
+for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/ajuda"]) {
   test(`${path} não tem violações críticas ou sérias`, async ({ page }) => {
     await page.goto(path);
     const results = await new AxeBuilder({ page }).analyze();
@@ -19,6 +19,14 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
   await expect(page.locator("html")).toHaveAttribute("data-contrast", "high");
+});
+
+test("busca de ajuda sugere respostas", async ({ page }) => {
+  await page.route("**/api/central-de-duvidas?*", (route) => route.fulfill({ json: { results: [{ id: "article-corrections", slug: "corrigir-solicitacao", kind: "Artigo de ajuda", category: "Análise", title: "Como responder a uma correção da biblioteca", summary: "Como corrigir a solicitação" }] } }));
+  await page.goto("/ajuda");
+  await page.waitForLoadState("networkidle");
+  await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("correcao");
+  await expect(page.getByRole("link", { name: /Artigo de ajuda.*correção/ })).toBeVisible();
 });
 
 test("navegação por teclado alcança o conteúdo", async ({ page }) => {
@@ -51,7 +59,7 @@ test("links do rodapé público formam uma linha no desktop", async ({ page }) =
     columns: new Set(links.map((link) => Math.round(link.getBoundingClientRect().left))).size,
     rows: new Set(links.map((link) => Math.round(link.getBoundingClientRect().top))).size,
   }));
-  expect(alignment).toEqual({ columns: 4, rows: 1 });
+  expect(alignment).toEqual({ columns: 3, rows: 1 });
 });
 
 test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
