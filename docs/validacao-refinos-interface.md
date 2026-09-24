@@ -13,6 +13,7 @@
 ## Verificação
 
 - `npm run verify`: 120 testes, tipos, lint e build aprovados. O lint mantém um aviso anterior em catalogação assistida.
+- `public-stabilization.spec.ts`: 39 testes de navegador aprovados em desktop claro, desktop escuro e celular. O teste define `pt-BR` explicitamente; atalhos duplicados da Barra Brasil são removidos quando ela carrega.
 - Prévia local sem banco: conferidos contadores, revisão, bloqueio de envio, troca de idioma, rodapé e aviso de cookies. Capturas em `evidencia-refinos-interface.png` e `evidencia-rodape-final.png`.
 
 ## Trabalho restante

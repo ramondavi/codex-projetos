@@ -41,6 +41,21 @@ export function AccessibilityControls() {
     }
   }, []);
 
+  useEffect(() => {
+    const governmentBar = document.getElementById("barra-brasil");
+    if (!governmentBar) return;
+    const removeDuplicateShortcuts = () => {
+      governmentBar.querySelectorAll<HTMLElement>("[accesskey]").forEach((element) => {
+        const key = element.getAttribute("accesskey");
+        if (key && document.querySelector(`.accessibility-bar [accesskey="${key}"]`)) element.removeAttribute("accesskey");
+      });
+    };
+    const observer = new MutationObserver(removeDuplicateShortcuts);
+    observer.observe(governmentBar, { subtree: true, childList: true, attributes: true, attributeFilter: ["accesskey"] });
+    removeDuplicateShortcuts();
+    return () => observer.disconnect();
+  }, []);
+
   function changeScale(next: TextScale) {
     hasUserChangedPreference.current = true;
     setScale(next);
