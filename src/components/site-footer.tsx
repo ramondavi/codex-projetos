@@ -22,6 +22,7 @@ export function SiteFooter({ version }: { version: string }) {
   const t = footerCopy[language];
   return (
     <footer className={styles.footer} id="creditos">
+      <div className={styles.decoration} aria-hidden="true" />
       <div className={styles.inner}>
         <div className={styles.topRow}>
           <LanguageControl />

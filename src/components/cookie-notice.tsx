@@ -1,37 +1,59 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useInterfaceLanguage } from "./interface-language";
 
 const copy = {
-  pt: ["Cookies essenciais", "O Pronto! usa apenas cookies essenciais para manter sua sessão. As preferências da interface ficam salvas neste navegador. Não usamos cookies de publicidade.", "Leia a Política de privacidade", "Aceitar e continuar"],
-  en: ["Essential cookies", "Pronto! uses only essential cookies to maintain your session. Interface preferences are saved in this browser. We do not use advertising cookies.", "Read the Privacy policy", "Accept and continue"],
-  es: ["Cookies esenciales", "Pronto! solo usa cookies esenciales para mantener su sesión. Las preferencias de la interfaz se guardan en este navegador. No usamos cookies publicitarias.", "Leer la Política de privacidad", "Aceptar y continuar"],
-  de: ["Notwendige Cookies", "Pronto! verwendet nur notwendige Cookies für Ihre Sitzung. Oberflächeneinstellungen werden in diesem Browser gespeichert. Wir verwenden keine Werbe-Cookies.", "Datenschutzerklärung lesen", "Akzeptieren und fortfahren"],
-  fr: ["Cookies essentiels", "Pronto! utilise uniquement des cookies essentiels pour maintenir votre session. Les préférences d’interface sont enregistrées dans ce navigateur. Aucun cookie publicitaire n’est utilisé.", "Lire la Politique de confidentialité", "Accepter et continuer"],
-  it: ["Cookie essenziali", "Pronto! usa solo cookie essenziali per mantenere la sessione. Le preferenze dell’interfaccia vengono salvate in questo browser. Non usiamo cookie pubblicitari.", "Leggi l’Informativa sulla privacy", "Accetta e continua"],
+  pt: ["Sobre cookies", "Usamos apenas cookies essenciais para sua sessão. As preferências ficam neste navegador. Ao continuar navegando, você toma ciência da nossa Política de privacidade.", "OK", "Saiba mais"],
+  en: ["About cookies", "We use only essential cookies for your session. Preferences stay in this browser. By continuing to browse, you acknowledge our Privacy policy.", "OK", "Learn more"],
+  es: ["Sobre las cookies", "Solo usamos cookies esenciales para su sesión. Las preferencias permanecen en este navegador. Al seguir navegando, toma conocimiento de nuestra Política de privacidad.", "OK", "Más información"],
+  de: ["Über Cookies", "Wir verwenden nur notwendige Cookies für Ihre Sitzung. Einstellungen bleiben in diesem Browser. Wenn Sie weiter surfen, nehmen Sie unsere Datenschutzerklärung zur Kenntnis.", "OK", "Mehr erfahren"],
+  fr: ["À propos des cookies", "Nous utilisons uniquement des cookies essentiels pour votre session. Vos préférences restent dans ce navigateur. En poursuivant votre navigation, vous prenez connaissance de notre Politique de confidentialité.", "OK", "En savoir plus"],
+  it: ["Informazioni sui cookie", "Usiamo solo cookie essenziali per la sessione. Le preferenze restano in questo browser. Continuando a navigare, prendi visione della nostra Informativa sulla privacy.", "OK", "Scopri di più"],
 };
 
-const storageKey = "pronto-essential-cookies-v1";
+const storageKey = "pronto-cookie-notice-seen-v2";
 
 export function CookieNotice() {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const pathname = usePathname();
+  const firstPath = useRef(pathname);
+  const [visible, setVisible] = useState(false);
   const { language } = useInterfaceLanguage();
   const t = copy[language];
 
+  useEffect(() => { setVisible(localStorage.getItem(storageKey) !== "seen"); }, []);
   useEffect(() => {
-    if (localStorage.getItem(storageKey) !== "accepted") dialog.current?.showModal();
+    if (pathname !== firstPath.current) {
+      localStorage.setItem(storageKey, "seen");
+      setVisible(false);
+    }
+  }, [pathname]);
+  useEffect(() => {
+    const onNavigation = (event: MouseEvent) => {
+      const target = event.target;
+      const link = target instanceof Element ? target.closest("a[href]") : null;
+      if (!link) return;
+      const destination = new URL(link.getAttribute("href") ?? "", location.href);
+      if (destination.origin === location.origin && destination.pathname !== location.pathname) {
+        localStorage.setItem(storageKey, "seen");
+        setVisible(false);
+      }
+    };
+    document.addEventListener("click", onNavigation, true);
+    return () => document.removeEventListener("click", onNavigation, true);
   }, []);
 
-  const accept = () => {
-    localStorage.setItem(storageKey, "accepted");
-    dialog.current?.close();
+  const acknowledge = () => {
+    localStorage.setItem(storageKey, "seen");
+    setVisible(false);
   };
 
-  return <dialog ref={dialog} className="cookie-notice" aria-labelledby="cookie-notice-title" aria-describedby="cookie-notice-description">
-    <h2 id="cookie-notice-title">{t[0]}</h2>
-    <p id="cookie-notice-description">{t[1]}</p>
-    <div className="cookie-notice__actions"><Link href="/politica-de-privacidade" onClick={() => dialog.current?.close()}>{t[2]}</Link><button type="button" className="button button--primary" onClick={accept}>{t[3]}</button></div>
-  </dialog>;
+  if (!visible) return null;
+  return <aside className="cookie-notice" aria-label={t[0]}>
+    <div className="cookie-notice__inner"><div><strong>{t[0]}</strong><p>{t[1]}</p></div>
+      <div className="cookie-notice__actions"><button type="button" className="button button--primary" onClick={acknowledge}>{t[2]}</button><Link className="button button--secondary" href="/politica-de-privacidade" onClick={acknowledge}>{t[3]}</Link></div>
+    </div>
+  </aside>;
 }
