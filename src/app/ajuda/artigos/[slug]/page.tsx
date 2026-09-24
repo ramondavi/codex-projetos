@@ -9,9 +9,9 @@ export default async function KnowledgeArticlePage({ params }: { params: Promise
   const article = articles.find((entry) => entry.slug === slug);
   if (!article) notFound();
   const sections: string[] = [];
-  const html = safeKnowledgeHtml(article.body_html).replace(/<h2>(.*?)<\/h2>/g, (_match, heading: string) => {
+  const html = safeKnowledgeHtml(article.body_html).replace(/<h2(\s[^>]*)?>(.*?)<\/h2>/g, (_match, attributes: string | undefined, heading: string) => {
     sections.push(heading.replace(/<[^>]*>/g, ""));
-    return `<h2 id="secao-${sections.length}">${heading}</h2>`;
+    return `<h2${attributes ?? ""} id="secao-${sections.length}">${heading}</h2>`;
   });
   const related = articles.filter((entry) => entry.id !== article.id && entry.category === article.category)
     .concat(articles.filter((entry) => entry.id !== article.id && entry.category !== article.category)).slice(0, 2);

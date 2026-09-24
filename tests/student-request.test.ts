@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { compactDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY } from "../src/domain/student-requests/draft.ts";
+import { compactDraft, emptyStudentRequestDraft, restoreStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY } from "../src/domain/student-requests/draft.ts";
 
 const migration = readFileSync(new URL("../supabase/migrations/202608230000_student_requests.sql", import.meta.url), "utf8");
 const requiredDetailsMigration = readFileSync(new URL("../supabase/migrations/202608310005_require_student_cataloging_details.sql", import.meta.url), "utf8");
@@ -61,4 +61,42 @@ test("preserva membros da banca e a ordem das pessoas relacionadas", () => {
   assert.match(relatedPeopleMigration, /committeeMembers/);
   assert.match(relatedPeopleMigration, /committee_member/);
   assert.match(relatedPeopleMigration, /open_student_request_v7/);
+});
+
+test("recupera rascunhos antigos sem deslocar a equivalência dos termos", () => {
+  const restored = restoreStudentRequestDraft({
+    title: "Título preservado", hasIllustrations: false,
+    people: { author: "Ana Silva", birthYear: 1998 },
+    keywordsPt: ["Arquitetura", null, "Cidade"], keywordsEn: ["Architecture", "Housing", "City"],
+  });
+  assert.equal(restored.title, "Título preservado");
+  assert.equal(restored.people.author, "Ana Silva");
+  assert.equal(restored.people.birthYear, "1998");
+  assert.equal(restored.hasIllustrations, "no");
+  assert.deepEqual(restored.keywordsPt, ["Arquitetura", "", "Cidade"]);
+  assert.deepEqual(restored.keywordsEn, ["Architecture", "Housing", "City"]);
+});
+
+test("restaura trabalho estrangeiro com equivalente português e sem duplicar o idioma original", () => {
+  const restored = restoreStudentRequestDraft({
+    originalLanguage: "fr", equivalentTitles: [
+      { language: "fr", title: "Titre original" },
+      { language: "en", title: "English title" },
+      { language: "pt", title: "Título em português" },
+      { language: "en", title: "Duplicado" },
+    ],
+  });
+  assert.deepEqual(restored.equivalentTitles, [
+    { language: "pt", title: "Título em português" },
+    { language: "en", title: "English title" },
+  ]);
+});
+
+test("tolera rascunho malformado e mantém defaults independentes", () => {
+  const restored = restoreStudentRequestDraft({ originalLanguage: "inválido", people: null, keywordsPt: false });
+  assert.equal(restored.originalLanguage, "pt");
+  assert.equal(restored.people.author, "");
+  assert.deepEqual(restored.keywordsPt, ["", "", ""]);
+  restored.people.committeeMembers.push("Pessoa de exemplo");
+  assert.deepEqual(emptyStudentRequestDraft.people.committeeMembers, []);
 });

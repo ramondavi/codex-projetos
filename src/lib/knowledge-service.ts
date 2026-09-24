@@ -7,8 +7,8 @@ const fields = "id,slug,kind,title,summary,body_html,category,audiences,active,p
 
 export function safeKnowledgeHtml(html: string) {
   return sanitizeHtml(html, {
-    allowedTags: ["p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a"],
-    allowedAttributes: { a: ["href", "target", "rel"] },
+    allowedTags: ["section", "span", "p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a"],
+    allowedAttributes: { section: ["class"], span: ["class", "aria-hidden"], ol: ["class"], a: ["href", "target", "rel"] },
     allowedSchemes: ["https", "mailto"],
     transformTags: { a: (_tag, attrs) => ({ tagName: "a", attribs: { href: attrs.href ?? "#", target: "_blank", rel: "noopener noreferrer" } }) },
   });
