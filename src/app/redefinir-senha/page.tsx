@@ -1,6 +1,9 @@
 import { updatePassword } from "@/app/auth-actions";
 import { AuthFeedback } from "@/components/auth-feedback";
 import { AuthShell } from "@/components/auth-shell";
+import { authPageMetadata } from "@/lib/auth-page-metadata";
+
+export const generateMetadata = () => authPageMetadata("update");
 
 export default async function UpdatePasswordPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;

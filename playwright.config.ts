@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: false,
   retries: process.env.CI ? 2 : 0,
   reporter: [["list"], ["html", { open: "never" }]],
-  use: { baseURL, trace: "retain-on-failure", screenshot: "only-on-failure", video: "retain-on-failure" },
+  use: { baseURL, locale: "pt-BR", trace: "retain-on-failure", screenshot: "only-on-failure", video: "retain-on-failure" },
   webServer: process.env.PLAYWRIGHT_BASE_URL ? undefined : {
     command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
     url: baseURL,

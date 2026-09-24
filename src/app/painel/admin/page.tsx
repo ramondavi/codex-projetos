@@ -22,7 +22,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
     supabase.from("nada_consta_documents").select("id,request_id,object_path,purge_after,cataloging_requests(protocol)").lte("purge_after", new Date().toISOString()).not("object_path", "is", null).order("purge_after"),
     supabase.from("frequently_asked_questions").select("id,question,answer,position,active,featured_position,created_at,updated_at").order("position"),
     supabase.from("cdu_code_descriptions").select("cdu_code,description,composition_notes,auxiliary_codes,related_codes,source_reference,validated").order("cdu_code"),
-    supabase.from("knowledge_base_entries").select("id,slug,kind,title,summary,body_html,category,audiences,active,position,featured_position,created_at,updated_at,published_at").order("position"),
+    supabase.from("knowledge_base_entries").select("id,slug,kind,title,summary,body_html,translations,category,audiences,active,position,featured_position,created_at,updated_at,published_at").order("position"),
   ]);
   const knowledgeEntries: KnowledgeEntry[] = (knowledge.data ? knowledge.data as KnowledgeEntry[] : initialKnowledgeEntries(faqs.data ?? []))
     .map((entry) => ({ ...entry, body_html: safeKnowledgeHtml(entry.body_html) }));

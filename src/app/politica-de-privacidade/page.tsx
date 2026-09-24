@@ -1,11 +1,20 @@
 import { SiteHeader } from "@/components/site-header";
 import type { Metadata } from "next";
+import { getInterfaceLanguage } from "@/lib/server-language";
 
-export const metadata: Metadata = {
-  title: "Política de privacidade",
-  description: "Entenda como o Pronto! trata e protege os dados necessários ao atendimento da BIB/FAUFBA.",
-  alternates: { canonical: "/politica-de-privacidade" },
+const metadataCopy = {
+  pt: ["Política de privacidade", "Entenda como o Pronto! trata e protege os dados necessários ao atendimento da BIB/FAUFBA."],
+  en: ["Privacy policy", "Learn how Pronto! handles and protects the data needed for BIB/FAUFBA services."],
+  es: ["Política de privacidad", "Conozca cómo Pronto! trata y protege los datos necesarios para los servicios de BIB/FAUFBA."],
+  de: ["Datenschutzerklärung", "Erfahren Sie, wie Pronto! die für die Dienste der BIB/FAUFBA erforderlichen Daten verarbeitet und schützt."],
+  fr: ["Politique de confidentialité", "Découvrez comment Pronto! traite et protège les données nécessaires aux services de la BIB/FAUFBA."],
+  it: ["Informativa sulla privacy", "Scopri come Pronto! tratta e protegge i dati necessari ai servizi della BIB/FAUFBA."],
 };
+
+export async function generateMetadata(): Promise<Metadata> {
+  const [title, description] = metadataCopy[await getInterfaceLanguage()];
+  return { title, description, alternates: { canonical: "/politica-de-privacidade" }, openGraph: { title: `${title} | Pronto!`, description, url: "/politica-de-privacidade", images: [{ url: "/opengraph-image", alt: `${title} | Pronto!` }] }, twitter: { title: `${title} | Pronto!`, description, images: ["/opengraph-image"] } };
+}
 
 const summary = [
   ["shield", "Só o necessário", "Dados indispensáveis para sua conta e para o atendimento."],

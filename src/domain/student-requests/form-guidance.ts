@@ -1,7 +1,6 @@
 export const formGuidance = {
   pt: {
     duplicateTerm: "Este termo já aparece nesta coluna. Informe um termo diferente.", memberPosition: "{number}º membro da banca",
-    interfaceNotice: "Este seletor muda apenas os textos da interface. O idioma original do trabalho é definido na etapa Descrição do trabalho.",
     committeeNote: "O orientador é o 1º membro da banca e, quando houver, o coorientador é o 2º. Organize os demais membros na mesma ordem em que aparecem na ata, página ou folha de aprovação. Use as setas ou arraste para reordenar.",
     equivalentLanguage: "Idioma do título equivalente",
     equivalentPlaceholder: "Título e subtítulo, quando houver, neste idioma",
@@ -12,7 +11,6 @@ export const formGuidance = {
   },
   en: {
     duplicateTerm: "This term already appears in this column. Enter a different term.", memberPosition: "Committee member {number}",
-    interfaceNotice: "This selector only changes interface text. Set the work’s original language in the Work description step.",
     committeeNote: "The advisor is the 1st committee member and the co-advisor, if any, is the 2nd. Arrange the remaining members in the order shown in the minutes or approval page. Use the arrows or drag to reorder.",
     equivalentLanguage: "Language of the equivalent title", equivalentPlaceholder: "Title and subtitle, if any, in this language",
     keywordOrder: "On the left, enter one term in the work’s original language. On the right, enter its Portuguese equivalent; if the original is Portuguese, use English on the right. Each row is one equivalent pair.",
@@ -22,7 +20,6 @@ export const formGuidance = {
   },
   es: {
     duplicateTerm: "Este término ya aparece en esta columna. Introduzca otro término.", memberPosition: "Miembro del tribunal {number}",
-    interfaceNotice: "Este selector solo cambia los textos de la interfaz. El idioma original del trabajo se define en el paso Descripción del trabajo.",
     committeeNote: "El director es el 1.er miembro del tribunal y el codirector, si lo hay, es el 2.º. Ordene los demás miembros como aparecen en el acta o la página de aprobación. Use las flechas o arrastre para reordenar.",
     equivalentLanguage: "Idioma del título equivalente", equivalentPlaceholder: "Título y subtítulo, si lo hay, en este idioma",
     keywordOrder: "A la izquierda, un término en el idioma original del trabajo. A la derecha, su equivalente en portugués; si el original es portugués, use inglés a la derecha. Cada fila representa un par equivalente.",
@@ -32,7 +29,6 @@ export const formGuidance = {
   },
   de: {
     duplicateTerm: "Dieser Begriff steht bereits in dieser Spalte. Geben Sie einen anderen Begriff ein.", memberPosition: "Kommissionsmitglied {number}",
-    interfaceNotice: "Diese Auswahl ändert nur die Sprache der Benutzeroberfläche. Die Originalsprache der Arbeit wird im Schritt Werkbeschreibung festgelegt.",
     committeeNote: "Die Betreuungsperson ist das 1. Kommissionsmitglied; eine vorhandene zweite Betreuungsperson steht an 2. Stelle. Ordnen Sie die übrigen Mitglieder wie im Protokoll oder auf der Genehmigungsseite an. Verwenden Sie die Pfeile oder ziehen Sie die Einträge.",
     equivalentLanguage: "Sprache des übersetzten Titels", equivalentPlaceholder: "Titel und gegebenenfalls Untertitel in dieser Sprache",
     keywordOrder: "Links steht ein Begriff in der Originalsprache der Arbeit, rechts seine portugiesische Entsprechung. Bei einem portugiesischen Original steht rechts Englisch. Jede Zeile enthält ein entsprechendes Begriffspaar.",
@@ -42,7 +38,6 @@ export const formGuidance = {
   },
   fr: {
     duplicateTerm: "Ce terme figure déjà dans cette colonne. Saisissez un autre terme.", memberPosition: "Membre du jury {number}",
-    interfaceNotice: "Ce sélecteur change uniquement les textes de l’interface. La langue originale du travail est définie à l’étape Description du travail.",
     committeeNote: "Le directeur est le 1er membre du jury et le codirecteur, le cas échéant, le 2e. Classez les autres membres dans l’ordre du procès-verbal ou de la page d’approbation. Utilisez les flèches ou faites glisser les membres.",
     equivalentLanguage: "Langue du titre équivalent", equivalentPlaceholder: "Titre et sous-titre éventuel dans cette langue",
     keywordOrder: "À gauche, un terme dans la langue originale du travail. À droite, son équivalent portugais ; si l’original est portugais, utilisez l’anglais à droite. Chaque ligne correspond à une paire équivalente.",
@@ -52,7 +47,6 @@ export const formGuidance = {
   },
   it: {
     duplicateTerm: "Questo termine è già presente in questa colonna. Inserite un altro termine.", memberPosition: "Membro della commissione {number}",
-    interfaceNotice: "Questo selettore cambia solo i testi dell’interfaccia. La lingua originale dell’opera si imposta nel passaggio Descrizione dell’opera.",
     committeeNote: "Il relatore è il 1º membro della commissione e il correlatore, se presente, è il 2º. Disponete gli altri membri nell’ordine del verbale o della pagina di approvazione. Usate le frecce o trascinate per riordinare.",
     equivalentLanguage: "Lingua del titolo equivalente", equivalentPlaceholder: "Titolo ed eventuale sottotitolo in questa lingua",
     keywordOrder: "A sinistra, un termine nella lingua originale dell’opera. A destra, il suo equivalente in portoghese; se l’originale è portoghese, usate l’inglese a destra. Ogni riga rappresenta una coppia equivalente.",

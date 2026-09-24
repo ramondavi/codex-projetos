@@ -28,7 +28,8 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(header, /AppIcon name="logout"/);
   assert.match(header, /Sair da conta/);
   assert.match(header, /site-header__access-greeting/);
-  assert.match(header, /Olá, \$\{firstName\}/);
+  assert.match(header, /pt: \["Meu painel", "Olá"/);
+  assert.match(header, /\$\{t\[1\]\}, \$\{firstName\}/);
   assert.match(css, /grid-template-columns: auto max-content/);
   assert.match(help, /bibarq@ufba\.br/);
   assert.match(help, /3283-5888/);

@@ -5,10 +5,12 @@ import { PRIVACY_NOTICE_VERSION } from "@/domain/privacy/notice";
 import { PrivacyAcknowledgement } from "@/components/privacy-acknowledgement";
 import type { Metadata } from "next";
 import { isCurrentServiceAnnouncement } from "@/lib/service-announcements";
+import { getInterfaceLanguage } from "@/lib/server-language";
 
-export const metadata: Metadata = {
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const titles = { pt: "Painel", en: "Dashboard", es: "Panel", de: "Dashboard", fr: "Tableau de bord", it: "Pannello" };
+  return { title: titles[await getInterfaceLanguage()], robots: { index: false, follow: false } };
+}
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
