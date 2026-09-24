@@ -34,6 +34,7 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(help, /3283-5888/);
   assert.match(search, /aria-autocomplete="list"/);
   assert.match(search, /api\/central-de-duvidas/);
-  assert.match(studentForm, /HelpSearch compact/);
+  assert.doesNotMatch(studentForm, /HelpSearch compact/);
+  assert.match(studentForm, /href="\/ajuda\/artigos\/compartilhar-link-publico" target="_blank"/);
   assert.match(article, /getPublishedKnowledge/);
 });
