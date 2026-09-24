@@ -75,11 +75,17 @@ function KnowledgeCard({ entry, expanded, onToggle, onSaved }: {
       <AppIcon name={expanded ? "panelCollapse" : "panelExpand"} className="knowledge-card__toggle-icon" />
     </button>
     {expanded && <form id={formId} className="knowledge-card__editor" onSubmit={save}>
-      <div className="knowledge-language-tabs" role="tablist" aria-label="Idioma do conteúdo">{supportedLanguages.map((language) => <button key={language} type="button" role="tab" aria-selected={editLanguage === language} onClick={() => setEditLanguage(language)}>{languageLabels[language]}</button>)}</div>
       <div className="knowledge-card__fields">
-        <label className="knowledge-card__wide">Título — {languageLabels[editLanguage]}<input value={localized[editLanguage].title} onChange={(event) => updateLocalized("title", event.target.value)} maxLength={300} /></label>
         <label>Tipo de conteúdo<select name="kind" value={kind} onChange={(event) => setKind(event.target.value as KnowledgeEntry["kind"])}><option value="faq">Pergunta frequente</option><option value="answer">Resposta rápida</option><option value="article">Artigo completo</option></select></label>
         <label>Categoria<select name="category" defaultValue={entry.category}>{knowledgeCategories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
+        {kind === "article" && <label>Endereço do artigo<input name="slug" defaultValue={entry.slug ?? ""} required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="ex.: preparar-solicitacao" /></label>}
+        <label>Ordem de exibição<input name="position" type="number" min="0" max="9999" defaultValue={entry.position} required /></label>
+        {kind === "faq" && <label>Destaque na página inicial<select name="featured_position" defaultValue={entry.featured_position ?? ""}><option value="">Não destacar</option><option value="1">Posição 1</option><option value="2">Posição 2</option><option value="3">Posição 3</option></select></label>}
+      </div>
+      <fieldset className="knowledge-card__audiences"><legend>Onde mostrar</legend>{audienceOptions.map(([value, label]) => <label key={value}><input type="checkbox" name="audiences" value={value} defaultChecked={entry.audiences.includes(value)} />{label}</label>)}</fieldset>
+      <div className="knowledge-language-tabs" role="tablist" aria-label="Idioma dos textos">{supportedLanguages.map((language) => <button key={language} type="button" role="tab" aria-selected={editLanguage === language} onClick={() => setEditLanguage(language)}>{languageLabels[language]}</button>)}</div>
+      <div className="knowledge-card__fields">
+        <label className="knowledge-card__wide">Título — {languageLabels[editLanguage]}<input value={localized[editLanguage].title} onChange={(event) => updateLocalized("title", event.target.value)} maxLength={300} /></label>
         <div className="knowledge-card__wide">
           <span className="field-label-with-tooltip">Resumo <FieldTooltip text="Texto curto mostrado nas sugestões da busca e na ajuda flutuante. Use uma resposta direta." /></span>
           <textarea aria-label={`Resumo — ${languageLabels[editLanguage]}`} value={localized[editLanguage].summary} onChange={(event) => updateLocalized("summary", event.target.value)} rows={3} maxLength={1000} />
@@ -88,11 +94,7 @@ function KnowledgeCard({ entry, expanded, onToggle, onSaved }: {
           <span className="field-label-with-tooltip">Conteúdo completo <FieldTooltip text="Explicação exibida ao abrir a resposta. Organize artigos com títulos, passos, listas, links e observações." /></span>
           <RichTextEditor key={editLanguage} value={localized[editLanguage].body_html} onChange={(html) => updateLocalized("body_html", html)} />
         </div>
-        {kind === "article" && <label>Endereço do artigo<input name="slug" defaultValue={entry.slug ?? ""} required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="ex.: preparar-solicitacao" /></label>}
-        <label>Ordem de exibição<input name="position" type="number" min="0" max="9999" defaultValue={entry.position} required /></label>
-        {kind === "faq" && <label>Destaque na página inicial<select name="featured_position" defaultValue={entry.featured_position ?? ""}><option value="">Não destacar</option><option value="1">Posição 1</option><option value="2">Posição 2</option><option value="3">Posição 3</option></select></label>}
       </div>
-      <fieldset className="knowledge-card__audiences"><legend>Onde mostrar</legend>{audienceOptions.map(([value, label]) => <label key={value}><input type="checkbox" name="audiences" value={value} defaultChecked={entry.audiences.includes(value)} />{label}</label>)}</fieldset>
       <div className="knowledge-card__actions"><label className="compact-check"><input type="checkbox" name="active" defaultChecked={entry.active} /> Publicado</label><button className="button button--primary" type="submit" disabled={saving}><AppIcon name="check" />{saving ? "Salvando…" : "Salvar conteúdo"}</button></div>
       {feedback && <p role="status" className="knowledge-card__feedback">{feedback}</p>}
     </form>}

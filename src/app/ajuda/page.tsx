@@ -7,11 +7,11 @@ import { getPublishedKnowledge, safeKnowledgeHtml } from "@/lib/knowledge-servic
 import { getInterfaceLanguage } from "@/lib/server-language";
 import { helpCopy, helpCategoryLabel } from "@/lib/help-copy";
 
-export const metadata: Metadata = {
-  title: "Central de ajuda",
-  description: "Guias, perguntas frequentes e orientações para usar o Pronto!.",
-  alternates: { canonical: "/ajuda" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const language = await getInterfaceLanguage();
+  const { center, intro } = helpCopy[language];
+  return { title: center, description: intro, alternates: { canonical: "/ajuda" }, openGraph: { title: `${center} | Pronto!`, description: intro, url: "/ajuda", locale: language === "pt" ? "pt_BR" : language, images: [{ url: "/opengraph-image", alt: `${center} | Pronto!` }] }, twitter: { title: `${center} | Pronto!`, description: intro, images: ["/opengraph-image"] } };
+}
 
 export default async function HelpPage() {
   const language = await getInterfaceLanguage(); const t = helpCopy[language];

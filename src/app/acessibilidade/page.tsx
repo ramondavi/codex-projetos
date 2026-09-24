@@ -6,7 +6,7 @@ import type { InterfaceLanguage } from "@/lib/interface-language";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = copy[await getInterfaceLanguage()];
-  return { title: t.intro[0], description: t.intro[2], alternates: { canonical: "/acessibilidade" } };
+  return { title: t.intro[0], description: t.intro[2], alternates: { canonical: "/acessibilidade" }, openGraph: { title: `${t.intro[0]} | Pronto!`, description: t.intro[2], url: "/acessibilidade", images: [{ url: "/opengraph-image", alt: `${t.intro[0]} | Pronto!` }] }, twitter: { title: `${t.intro[0]} | Pronto!`, description: t.intro[2], images: ["/opengraph-image"] } };
 }
 
 const copy: Record<InterfaceLanguage, { intro: [string, string, string]; resources: [string, string][]; labels: [string, string, string, string]; shortcuts: string[]; note: string; view: [string, string]; sign: [string, string]; barrier: [string, string] }> = {

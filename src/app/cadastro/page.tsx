@@ -2,6 +2,9 @@ import Link from "next/link";
 import { AuthShell } from "@/components/auth-shell";
 import { AuthFeedback } from "@/components/auth-feedback";
 import { signup } from "@/app/auth-actions";
+import { authPageMetadata } from "@/lib/auth-page-metadata";
+
+export const generateMetadata = () => authPageMetadata("signup");
 
 export default async function SignupPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const { error } = await searchParams;

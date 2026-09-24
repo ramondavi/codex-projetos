@@ -12,15 +12,15 @@ import { cookies, headers } from "next/headers";
 import packageInfo from "../../package.json";
 
 const metadataBase = new URL("https://prontobib.vercel.app");
-const siteTitle = "Pronto! — Assistente de Fichas Catalográficas e Autodepósito";
+const siteTitle = "Pronto! | Assistente de Fichas Catalográficas e Autodepósito";
 const siteDescription = "Serviço da Biblioteca da Faculdade de Arquitetura da UFBA para solicitar ficha catalográfica e orientar o autodepósito.";
 const layoutCopy = {
   pt: [siteTitle, siteDescription, "Pular para o conteúdo principal", "Portal do Governo Brasileiro"],
-  en: ["Pronto! — Catalog Record and Self-deposit Assistant", "BIB/FAUFBA service for requesting a catalog record and guiding self-deposit.", "Skip to main content", "Brazilian Government Portal"],
-  es: ["Pronto! — Asistente de fichas catalográficas y autodepósito", "Servicio de BIB/FAUFBA para solicitar la ficha catalográfica y orientar el autodepósito.", "Ir al contenido principal", "Portal del Gobierno Brasileño"],
-  de: ["Pronto! — Assistent für Katalogeinträge und Selbsteinreichung", "Dienst der BIB/FAUFBA zur Beantragung eines Katalogeintrags und Anleitung zur Selbsteinreichung.", "Zum Hauptinhalt", "Portal der brasilianischen Regierung"],
-  fr: ["Pronto! — Assistant de catalogage et d’auto-dépôt", "Service de la BIB/FAUFBA pour demander une notice de catalogage et guider l’auto-dépôt.", "Aller au contenu principal", "Portail du gouvernement brésilien"],
-  it: ["Pronto! — Assistente per schede catalografiche e autodeposito", "Servizio BIB/FAUFBA per richiedere una scheda catalografica e guidare l’autodeposito.", "Vai al contenuto principale", "Portale del Governo brasiliano"],
+  en: ["Pronto! | Catalog Record and Self-deposit Assistant", "BIB/FAUFBA service for requesting a catalog record and guiding self-deposit.", "Skip to main content", "Brazilian Government Portal"],
+  es: ["Pronto! | Asistente de fichas catalográficas y autodepósito", "Servicio de BIB/FAUFBA para solicitar la ficha catalográfica y orientar el autodepósito.", "Ir al contenido principal", "Portal del Gobierno Brasileño"],
+  de: ["Pronto! | Assistent für Katalogeinträge und Selbsteinreichung", "Dienst der BIB/FAUFBA zur Beantragung eines Katalogeintrags und Anleitung zur Selbsteinreichung.", "Zum Hauptinhalt", "Portal der brasilianischen Regierung"],
+  fr: ["Pronto! | Assistant de catalogage et d’auto-dépôt", "Service de la BIB/FAUFBA pour demander une notice de catalogage et guider l’auto-dépôt.", "Aller au contenu principal", "Portail du gouvernement brésilien"],
+  it: ["Pronto! | Assistente per schede catalografiche e autodeposito", "Servizio BIB/FAUFBA per richiedere una scheda catalografica e guidare l’autodeposito.", "Vai al contenuto principale", "Portale del Governo brasiliano"],
 };
 
 const baseMetadata: Metadata = {
@@ -40,8 +40,9 @@ const baseMetadata: Metadata = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const [title, description] = layoutCopy[await getInterfaceLanguage()];
-  return { ...baseMetadata, title: { default: title, template: "%s | Pronto!" }, description, openGraph: { ...baseMetadata.openGraph, title, description }, twitter: { ...baseMetadata.twitter, title, description } };
+  const language = await getInterfaceLanguage();
+  const [title, description] = layoutCopy[language];
+  return { ...baseMetadata, title: { default: title, template: "%s | Pronto!" }, description, openGraph: { ...baseMetadata.openGraph, locale: language === "pt" ? "pt_BR" : `${language}_${({ en: "US", es: "ES", de: "DE", fr: "FR", it: "IT" } as const)[language]}`, title, description, images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: title }] }, twitter: { ...baseMetadata.twitter, title, description } };
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -51,8 +52,9 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const interfaceLanguage = savedLanguage ? normalizeLanguage(savedLanguage) : deviceLanguage;
   const copy = layoutCopy[interfaceLanguage];
   return (
-    <html lang={interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage} suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang={interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage} translate="no" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
+        <meta name="google" content="notranslate" />
         <ThemeScript />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "Pronto!", url: metadataBase.toString(), inLanguage: interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage, publisher: { "@type": "Organization", name: "Universidade Federal da Bahia", url: "https://ufba.br" } }) }} />
       </head>

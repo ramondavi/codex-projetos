@@ -4,6 +4,16 @@ import { SiteHeader } from "@/components/site-header";
 import { getPublishedKnowledge, safeKnowledgeHtml } from "@/lib/knowledge-service";
 import { getInterfaceLanguage } from "@/lib/server-language";
 import { helpCopy, helpCategoryLabel } from "@/lib/help-copy";
+import type { Metadata } from "next";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const article = (await getPublishedKnowledge()).find((entry) => entry.kind === "article" && entry.slug === slug);
+  if (!article) return {};
+  const title = `${article.title} | Pronto!`;
+  const url = `/ajuda/artigos/${slug}`;
+  return { title: article.title, description: article.summary, alternates: { canonical: url }, openGraph: { title, description: article.summary, url, images: [{ url: "/opengraph-image", alt: title }] }, twitter: { title, description: article.summary, images: ["/opengraph-image"] } };
+}
 
 const articleCopy = {
   pt: ["Neste artigo", "Guia completo", "Voltar à Central de ajuda", "Continue aprendendo", "Artigos relacionados"],
