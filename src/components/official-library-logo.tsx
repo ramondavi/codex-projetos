@@ -11,7 +11,7 @@ export function OfficialLibraryLogo({ decorative = false, variant = "default" }:
         height={434}
         sizes="(max-width: 560px) 76px, 112px"
       />
-      <Image className="official-library-logo__dark" src="/logo-biblioteca-faufba-pronto-dark.png" alt="" aria-hidden="true" width={334} height={161} sizes="(max-width: 560px) 76px, 112px" />
+      <Image className="official-library-logo__dark" src="/logo-biblioteca-faufba-pronto-dark-v2.png" alt="" aria-hidden="true" width={334} height={161} sizes="(max-width: 560px) 76px, 112px" />
     </a>
   );
 }

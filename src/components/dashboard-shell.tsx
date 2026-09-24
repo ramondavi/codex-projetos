@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { logout } from "@/app/auth-actions";
@@ -29,8 +29,9 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
   const t = shellCopy[language];
   const searchParams = useSearchParams();
   const [expanded, setExpanded] = useState(false);
-  const [adminMenuOpen, setAdminMenuOpen] = useState(false);
-  const adminMenuVisible = adminMenuOpen || pathname.startsWith("/painel/admin");
+  const [adminMenuOpen, setAdminMenuOpen] = useState(() => pathname.startsWith("/painel/admin"));
+  useEffect(() => { if (pathname.startsWith("/painel/admin")) setAdminMenuOpen(true); }, [pathname]);
+  const adminMenuVisible = adminMenuOpen;
   const activeClass = (href: string) => {
     const [targetPath, targetQuery] = href.split("?");
     if (targetPath === "/painel/fila" && pathname.startsWith("/painel/atendimento/")) return targetQuery ? undefined : "is-active";

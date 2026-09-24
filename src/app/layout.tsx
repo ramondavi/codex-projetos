@@ -6,6 +6,7 @@ import { AccessibilityControls } from "@/components/accessibility-controls";
 import { SiteFooter } from "@/components/site-footer";
 import { GovernmentBar } from "@/components/government-bar";
 import { InterfaceLanguageProvider } from "@/components/interface-language";
+import { CookieNotice } from "@/components/cookie-notice";
 import { normalizeLanguage } from "@/lib/interface-language";
 import { getInterfaceLanguage } from "@/lib/server-language";
 import { cookies, headers } from "next/headers";
@@ -66,6 +67,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
           <AccessibilityControls />
           <div id="conteudo" tabIndex={-1}>{children}</div>
           <SiteFooter version={packageInfo.version} />
+          <CookieNotice />
         </InterfaceLanguageProvider>
       </body>
     </html>

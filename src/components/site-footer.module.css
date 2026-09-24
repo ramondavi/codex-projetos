@@ -1,9 +1,9 @@
 .footer { position: relative; overflow-x: clip; overflow-y: visible; border-top: 1px solid var(--line); background: var(--surface-raised); color: var(--text-muted); text-align: center; }
 .footer::before,.footer::after { content: ""; position: absolute; z-index: 0; border: 2px solid color-mix(in srgb, var(--institutional) 34%, transparent); pointer-events: none; }
-.footer::before { width: 180px; height: 80px; top: 84px; left: 18px; transform: rotate(14deg) skewX(-14deg); box-shadow: 110px 100px 0 -1px color-mix(in srgb, var(--institutional) 21%, transparent); }
-.footer::after { width: 200px; height: 95px; right: 12px; bottom: 34px; transform: rotate(-18deg); box-shadow: -180px -70px 0 -1px color-mix(in srgb, var(--institutional) 22%, transparent); }
+.footer::before { width: 220px; height: 100px; top: 78px; left: 35px; transform: rotate(12deg) skewX(-14deg); box-shadow: 115px 105px 0 -1px color-mix(in srgb, var(--institutional) 21%, transparent), 205px 145px 0 -1px color-mix(in srgb, var(--institutional) 14%, transparent); }
+.footer::after { width: 190px; height: 90px; right: 35px; bottom: 62px; transform: rotate(-14deg); box-shadow: -155px -66px 0 -1px color-mix(in srgb, var(--institutional) 22%, transparent), -290px -120px 0 -1px color-mix(in srgb, var(--institutional) 13%, transparent); }
 .inner { position: relative; z-index: 1; width: min(1120px, calc(100% - 48px)); margin-inline: auto; padding-block: 32px 24px; }
-.topRow { position: relative; display: grid; grid-template-columns: 1fr auto; align-items: start; }
+.topRow { position: relative; display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; }
 .topRow :global(.language-control) { grid-column: 1; grid-row: 1; justify-self: start; }
 .signature { display: grid; justify-items: center; gap: 9px; }
 .topRow .signature { grid-column: 2; grid-row: 1; }
@@ -32,7 +32,7 @@
 }
 @media (max-width: 480px) {
   .inner { width: calc(100% - 32px); padding-block: 26px 20px; }
-  .topRow { grid-template-columns: 1fr auto; gap: 8px; }
+  .topRow { grid-template-columns: 1fr auto 1fr; gap: 8px; }
   .navigation { gap: 0 18px; }
   .navigation a { min-height: 44px; }
   .credit { max-width: 290px; margin-inline: auto; }
