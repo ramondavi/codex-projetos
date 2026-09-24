@@ -5,6 +5,9 @@ import { ThemeScript } from "@/components/theme-script";
 import { AccessibilityControls } from "@/components/accessibility-controls";
 import { SiteFooter } from "@/components/site-footer";
 import { GovernmentBar } from "@/components/government-bar";
+import { InterfaceLanguageProvider } from "@/components/interface-language";
+import { normalizeLanguage } from "@/lib/interface-language";
+import { cookies, headers } from "next/headers";
 import packageInfo from "../../package.json";
 
 const metadataBase = new URL("https://prontobib.vercel.app");
@@ -27,20 +30,26 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
+  const savedLanguage = cookieStore.get("pronto-language")?.value;
+  const deviceLanguage = normalizeLanguage(requestHeaders.get("accept-language")?.split(",")[0]);
+  const interfaceLanguage = savedLanguage ? normalizeLanguage(savedLanguage) : deviceLanguage;
   return (
-    <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang={interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <ThemeScript />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "Pronto!", url: metadataBase.toString(), inLanguage: "pt-BR", publisher: { "@type": "Organization", name: "Universidade Federal da Bahia", url: "https://ufba.br" } }) }} />
       </head>
       <body>
-        <GovernmentBar />
-        <Script id="barra-brasil-oficial" src="https://barra.brasil.gov.br/barra_2.0.js" strategy="afterInteractive" />
-        <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
-        <AccessibilityControls />
-        <div id="conteudo" tabIndex={-1}>{children}</div>
-        <SiteFooter version={packageInfo.version} />
+        <InterfaceLanguageProvider initialLanguage={interfaceLanguage} initialDeviceLanguage={deviceLanguage} initialPreference={Boolean(savedLanguage)}>
+          <GovernmentBar />
+          <Script id="barra-brasil-oficial" src="https://barra.brasil.gov.br/barra_2.0.js" strategy="afterInteractive" />
+          <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+          <AccessibilityControls />
+          <div id="conteudo" tabIndex={-1}>{children}</div>
+          <SiteFooter version={packageInfo.version} />
+        </InterfaceLanguageProvider>
       </body>
     </html>
   );

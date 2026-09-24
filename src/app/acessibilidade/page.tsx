@@ -22,9 +22,8 @@ export default function AccessibilityPage() {
     <ul>
       <li><strong>Alt + 1:</strong> vai direto ao conteúdo principal.</li>
       <li><strong>Alt + 2:</strong> vai ao menu principal.</li>
-      <li><strong>Alt + 3:</strong> ativa ou desativa o alto contraste.</li>
-      <li><strong>Alt + 4:</strong> abre a Central de ajuda.</li>
-      <li><strong>Alt + 5:</strong> abre esta página.</li>
+      <li><strong>Alt + 3:</strong> abre a Central de ajuda.</li>
+      <li><strong>Alt + 4:</strong> abre esta página.</li>
     </ul>
     <p>Em alguns navegadores, o atalho pode incluir <strong>Shift</strong> ou outra tecla adicional. Os links e botões também podem ser usados normalmente com Tab, Enter e Espaço.</p>
     <h2>Visualização</h2>

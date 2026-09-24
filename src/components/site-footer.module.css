@@ -23,8 +23,7 @@
 .meta a svg { width: 12px; height: 12px; flex: 0 0 auto; }
 .meta a:hover { text-decoration: underline; }
 @media (min-width: 901px) {
-  :global(body:has(.dashboard-shell)) .footer { margin-left: 232px; }
-  :global(body:has(.dashboard-shell--compact)) .footer { margin-left: 76px; }
+  :global(body:has(.dashboard-shell)) .footer { margin-left: 76px; }
   :global(body:has(.dashboard-shell)) .inner { padding-block: 24px 20px; }
 }
 @media (max-width: 480px) {
