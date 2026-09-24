@@ -1533,7 +1533,7 @@ input::placeholder { color: var(--text-muted); opacity: 0.75; }
 .language-control__suggestion .language-control__close { position: absolute; top: 3px; right: 3px; display: grid; place-items: center; width: 22px; height: 22px; }
 .language-control__close svg { width: 14px; height: 14px; }
 .cookie-notice { position: fixed; z-index: 90; right: 0; bottom: 0; left: 0; border-top: 1px solid var(--line); background: var(--surface-raised); box-shadow: 0 -12px 30px rgb(0 0 0 / 12%); color: var(--text); animation: cookie-notice-rise .38s ease-out both; }
-.cookie-notice__inner { width: min(1120px, calc(100% - 48px)); margin-inline: auto; padding-block: 16px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.cookie-notice__inner { width: min(1120px, calc(100% - 48px)); margin-inline: auto; padding: 16px 0 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .cookie-notice strong { font-size: .88rem; }
 .cookie-notice p { max-width: 760px; margin: 4px 0 0; color: var(--text-muted); font-size: .79rem; line-height: 1.45; }
 .cookie-notice__actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
