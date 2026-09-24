@@ -2,15 +2,24 @@ import "server-only";
 import sanitizeHtml from "sanitize-html";
 import { createClient } from "@/lib/supabase/server";
 import { initialKnowledgeEntries, type KnowledgeEntry, type KnowledgeItem } from "@/lib/knowledge-base";
+import { getInterfaceLanguage } from "@/lib/server-language";
 
-const fields = "id,slug,kind,title,summary,body_html,category,audiences,active,position,featured_position,created_at,updated_at,published_at";
+const fields = "id,slug,kind,title,summary,body_html,translations,category,audiences,active,position,featured_position,created_at,updated_at,published_at";
+
+function localizedEntry(entry: KnowledgeEntry, language: string): KnowledgeEntry {
+  const translated = entry.translations?.[language];
+  return translated?.title && translated.summary && translated.body_html
+    ? { ...entry, title: translated.title, summary: translated.summary, body_html: translated.body_html }
+    : entry;
+}
 
 export function safeKnowledgeHtml(html: string) {
   return sanitizeHtml(html, {
-    allowedTags: ["section", "span", "p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a"],
-    allowedAttributes: { section: ["class"], span: ["class", "aria-hidden"], ol: ["class"], a: ["href", "target", "rel"] },
+    allowedTags: ["section", "span", "p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a", "img"],
+    allowedAttributes: { section: ["class"], span: ["class", "aria-hidden"], ol: ["class"], a: ["href", "target", "rel"], img: ["src", "alt", "title", "width", "height"] },
     allowedSchemes: ["https", "mailto"],
-    transformTags: { a: (_tag, attrs) => ({ tagName: "a", attribs: { href: attrs.href ?? "#", target: "_blank", rel: "noopener noreferrer" } }) },
+    allowedSchemesByTag: { img: ["https"] },
+    transformTags: { a: (_tag, attrs) => ({ tagName: "a", attribs: { href: attrs.href ?? "#", target: "_blank", rel: "noopener noreferrer" } }), img: (_tag, attrs) => ({ tagName: "img", attribs: { src: attrs.src ?? "", alt: attrs.alt ?? "", loading: "lazy" } }) },
   });
 }
 
@@ -28,7 +37,7 @@ export async function getPublishedKnowledge(publicOnly = true): Promise<Knowledg
   let query = supabase.from("knowledge_base_entries").select(fields).eq("active", true).order("position");
   if (publicOnly) query = query.contains("audiences", ["public"]);
   const { data, error } = await query;
-  if (!error) return data as KnowledgeEntry[];
+  if (!error) { const language = await getInterfaceLanguage(); return (data as KnowledgeEntry[]).map((entry) => localizedEntry(entry, language)); }
   const { data: faqs } = await supabase.from("frequently_asked_questions")
     .select("id,question,answer,active,position,featured_position,created_at,updated_at").eq("active", true).order("position");
   const defaults = faqs?.length ? faqs : [

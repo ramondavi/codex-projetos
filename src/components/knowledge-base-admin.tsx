@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { knowledgeCategories, type KnowledgeEntry } from "@/lib/knowledge-base";
+import { knowledgeCategories, type KnowledgeEntry, type KnowledgeTranslation } from "@/lib/knowledge-base";
+import { supportedLanguages, languageLabels, type InterfaceLanguage } from "@/lib/interface-language";
 import { AppIcon, type AppIconName } from "./app-icon";
 import { RichTextEditor } from "./rich-text-editor";
 
@@ -23,7 +24,9 @@ function KnowledgeCard({ entry, expanded, onToggle, onSaved }: {
   entry: KnowledgeEntry; expanded: boolean; onToggle: () => void; onSaved: (oldId: string, saved: KnowledgeEntry) => void;
 }) {
   const [kind, setKind] = useState(entry.kind);
-  const [body, setBody] = useState(entry.body_html);
+  const [editLanguage, setEditLanguage] = useState<InterfaceLanguage>("pt");
+  const [localized, setLocalized] = useState<Record<InterfaceLanguage, KnowledgeTranslation>>(() => Object.fromEntries(supportedLanguages.map((language) => [language, language === "pt" ? { title: entry.title, summary: entry.summary, body_html: entry.body_html } : entry.translations?.[language] ?? { title: "", summary: "", body_html: "<p></p>" }])) as Record<InterfaceLanguage, KnowledgeTranslation>);
+  const updateLocalized = (field: keyof KnowledgeTranslation, value: string) => setLocalized((current) => ({ ...current, [editLanguage]: { ...current[editLanguage], [field]: value } }));
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState("");
   const supabase = createClient();
@@ -34,28 +37,30 @@ function KnowledgeCard({ entry, expanded, onToggle, onSaved }: {
     const form = new FormData(event.currentTarget);
     const audiences = form.getAll("audiences").map(String);
     if (!audiences.length) { setFeedback("Selecione pelo menos um público."); return; }
-    if (!body.replace(/<[^>]*>/g, "").trim()) { setFeedback("Preencha o conteúdo completo."); return; }
+    if (!localized.pt.body_html.replace(/<[^>]*>/g, "").trim()) { setFeedback("Preencha o conteúdo completo em português."); return; }
+    if (localized.pt.title.trim().length < 5 || localized.pt.summary.trim().length < 5) { setFeedback("Preencha título e resumo em português."); return; }
     setSaving(true); setFeedback("");
     const payload = {
       entry_id: /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(entry.id) ? entry.id : null,
       entry_slug: kind === "article" ? String(form.get("slug")).trim() : "",
       entry_kind: kind,
-      entry_title: String(form.get("title")).trim(),
-      entry_summary: String(form.get("summary")).trim(),
-      entry_body_html: body,
+      entry_title: localized.pt.title.trim(),
+      entry_summary: localized.pt.summary.trim(),
+      entry_body_html: localized.pt.body_html,
       entry_category: String(form.get("category")),
       entry_audiences: audiences,
       entry_active: form.get("active") === "on",
       entry_position: Number(form.get("position")),
       entry_featured_position: kind === "faq" && form.get("featured_position") ? Number(form.get("featured_position")) : null,
+      entry_translations: Object.fromEntries(supportedLanguages.filter((language) => language !== "pt").map((language) => [language, localized[language]])),
     };
-    const { data: id, error } = await supabase.rpc("admin_save_knowledge_base_entry", payload);
+    const { data: id, error } = await supabase.rpc("admin_save_knowledge_base_entry_localized", payload);
     if (error || !id) {
       setFeedback(error?.code === "PGRST202" || error?.code === "42P01" ? "A nova base ainda precisa ser aplicada ao banco para permitir o salvamento." : "Não foi possível salvar. Confira os campos e tente novamente.");
       setSaving(false); return;
     }
     const { data: saved, error: readError } = await supabase.from("knowledge_base_entries")
-      .select("id,slug,kind,title,summary,body_html,category,audiences,active,position,featured_position,created_at,updated_at,published_at")
+      .select("id,slug,kind,title,summary,body_html,translations,category,audiences,active,position,featured_position,created_at,updated_at,published_at")
       .eq("id", String(id)).single();
     if (readError || !saved) setFeedback("O banco recebeu a alteração, mas não foi possível confirmá-la.");
     else { onSaved(entry.id, saved as KnowledgeEntry); setFeedback("Conteúdo salvo."); }
@@ -70,17 +75,18 @@ function KnowledgeCard({ entry, expanded, onToggle, onSaved }: {
       <AppIcon name={expanded ? "panelCollapse" : "panelExpand"} className="knowledge-card__toggle-icon" />
     </button>
     {expanded && <form id={formId} className="knowledge-card__editor" onSubmit={save}>
+      <div className="knowledge-language-tabs" role="tablist" aria-label="Idioma do conteúdo">{supportedLanguages.map((language) => <button key={language} type="button" role="tab" aria-selected={editLanguage === language} onClick={() => setEditLanguage(language)}>{languageLabels[language]}</button>)}</div>
       <div className="knowledge-card__fields">
-        <label className="knowledge-card__wide">Título<input name="title" defaultValue={entry.title} minLength={5} maxLength={300} required /></label>
+        <label className="knowledge-card__wide">Título — {languageLabels[editLanguage]}<input value={localized[editLanguage].title} onChange={(event) => updateLocalized("title", event.target.value)} maxLength={300} /></label>
         <label>Tipo de conteúdo<select name="kind" value={kind} onChange={(event) => setKind(event.target.value as KnowledgeEntry["kind"])}><option value="faq">Pergunta frequente</option><option value="answer">Resposta rápida</option><option value="article">Artigo completo</option></select></label>
         <label>Categoria<select name="category" defaultValue={entry.category}>{knowledgeCategories.map((category) => <option key={category} value={category}>{category}</option>)}</select></label>
         <div className="knowledge-card__wide">
           <span className="field-label-with-tooltip">Resumo <FieldTooltip text="Texto curto mostrado nas sugestões da busca e na ajuda flutuante. Use uma resposta direta." /></span>
-          <textarea aria-label="Resumo" name="summary" defaultValue={entry.summary} rows={3} minLength={5} maxLength={1000} required />
+          <textarea aria-label={`Resumo — ${languageLabels[editLanguage]}`} value={localized[editLanguage].summary} onChange={(event) => updateLocalized("summary", event.target.value)} rows={3} maxLength={1000} />
         </div>
         <div className="knowledge-card__wide">
           <span className="field-label-with-tooltip">Conteúdo completo <FieldTooltip text="Explicação exibida ao abrir a resposta. Organize artigos com títulos, passos, listas, links e observações." /></span>
-          <RichTextEditor value={body} onChange={setBody} />
+          <RichTextEditor key={editLanguage} value={localized[editLanguage].body_html} onChange={(html) => updateLocalized("body_html", html)} />
         </div>
         {kind === "article" && <label>Endereço do artigo<input name="slug" defaultValue={entry.slug ?? ""} required pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="ex.: preparar-solicitacao" /></label>}
         <label>Ordem de exibição<input name="position" type="number" min="0" max="9999" defaultValue={entry.position} required /></label>

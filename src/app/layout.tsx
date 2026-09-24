@@ -7,14 +7,23 @@ import { SiteFooter } from "@/components/site-footer";
 import { GovernmentBar } from "@/components/government-bar";
 import { InterfaceLanguageProvider } from "@/components/interface-language";
 import { normalizeLanguage } from "@/lib/interface-language";
+import { getInterfaceLanguage } from "@/lib/server-language";
 import { cookies, headers } from "next/headers";
 import packageInfo from "../../package.json";
 
 const metadataBase = new URL("https://prontobib.vercel.app");
 const siteTitle = "Pronto! — Assistente de Fichas Catalográficas e Autodepósito";
 const siteDescription = "Serviço da Biblioteca da Faculdade de Arquitetura da UFBA para solicitar ficha catalográfica e orientar o autodepósito.";
+const layoutCopy = {
+  pt: [siteTitle, siteDescription, "Pular para o conteúdo principal", "Portal do Governo Brasileiro"],
+  en: ["Pronto! — Catalog Record and Self-deposit Assistant", "BIB/FAUFBA service for requesting a catalog record and guiding self-deposit.", "Skip to main content", "Brazilian Government Portal"],
+  es: ["Pronto! — Asistente de fichas catalográficas y autodepósito", "Servicio de BIB/FAUFBA para solicitar la ficha catalográfica y orientar el autodepósito.", "Ir al contenido principal", "Portal del Gobierno Brasileño"],
+  de: ["Pronto! — Assistent für Katalogeinträge und Selbsteinreichung", "Dienst der BIB/FAUFBA zur Beantragung eines Katalogeintrags und Anleitung zur Selbsteinreichung.", "Zum Hauptinhalt", "Portal der brasilianischen Regierung"],
+  fr: ["Pronto! — Assistant de catalogage et d’auto-dépôt", "Service de la BIB/FAUFBA pour demander une notice de catalogage et guider l’auto-dépôt.", "Aller au contenu principal", "Portail du gouvernement brésilien"],
+  it: ["Pronto! — Assistente per schede catalografiche e autodeposito", "Servizio BIB/FAUFBA per richiedere una scheda catalografica e guidare l’autodeposito.", "Vai al contenuto principale", "Portale del Governo brasiliano"],
+};
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase,
   title: { default: siteTitle, template: "%s | Pronto!" },
   description: siteDescription,
@@ -30,22 +39,28 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+export async function generateMetadata(): Promise<Metadata> {
+  const [title, description] = layoutCopy[await getInterfaceLanguage()];
+  return { ...baseMetadata, title: { default: title, template: "%s | Pronto!" }, description, openGraph: { ...baseMetadata.openGraph, title, description }, twitter: { ...baseMetadata.twitter, title, description } };
+}
+
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const [cookieStore, requestHeaders] = await Promise.all([cookies(), headers()]);
   const savedLanguage = cookieStore.get("pronto-language")?.value;
   const deviceLanguage = normalizeLanguage(requestHeaders.get("accept-language")?.split(",")[0]);
   const interfaceLanguage = savedLanguage ? normalizeLanguage(savedLanguage) : deviceLanguage;
+  const copy = layoutCopy[interfaceLanguage];
   return (
     <html lang={interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <ThemeScript />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "Pronto!", url: metadataBase.toString(), inLanguage: "pt-BR", publisher: { "@type": "Organization", name: "Universidade Federal da Bahia", url: "https://ufba.br" } }) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "WebSite", name: "Pronto!", url: metadataBase.toString(), inLanguage: interfaceLanguage === "pt" ? "pt-BR" : interfaceLanguage, publisher: { "@type": "Organization", name: "Universidade Federal da Bahia", url: "https://ufba.br" } }) }} />
       </head>
       <body>
         <InterfaceLanguageProvider initialLanguage={interfaceLanguage} initialDeviceLanguage={deviceLanguage} initialPreference={Boolean(savedLanguage)}>
-          <GovernmentBar />
+          <GovernmentBar portalLabel={copy[3]} />
           <Script id="barra-brasil-oficial" src="https://barra.brasil.gov.br/barra_2.0.js" strategy="afterInteractive" />
-          <a className="skip-link" href="#conteudo">Pular para o conteúdo principal</a>
+          <a className="skip-link" href="#conteudo">{copy[2]}</a>
           <AccessibilityControls />
           <div id="conteudo" tabIndex={-1}>{children}</div>
           <SiteFooter version={packageInfo.version} />

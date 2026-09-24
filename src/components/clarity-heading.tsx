@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function ClarityHeading() {
+export function ClarityHeading({ less = "Menos repetição.", clearer = "Mais clareza." }: { less?: string; clearer?: string }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -19,5 +19,5 @@ export function ClarityHeading() {
     return () => observer.disconnect();
   }, []);
 
-  return <h2 ref={headingRef} className={`section__title section__title--single-line${visible ? " is-visible" : ""}`}><span className="section__title--less-repetition">Menos repetição.</span> Mais clareza.</h2>;
+  return <h2 ref={headingRef} className={`section__title section__title--single-line${visible ? " is-visible" : ""}`}><span className="section__title--less-repetition">{less}</span> {clearer}</h2>;
 }

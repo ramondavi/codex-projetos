@@ -84,6 +84,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   const [error, setError] = useState<string>();
   const [submitting, setSubmitting] = useState(false);
   const [activeStep, setActiveStep] = useState(1);
+  const [furthestStep, setFurthestStep] = useState(1);
   const [highlightedField, setHighlightedField] = useState<string | null>(null);
   const [pendingFormLanguage, setPendingFormLanguage] = useState<FormLanguage | null>(null);
   const { language: interfaceLanguage } = useInterfaceLanguage();
@@ -112,10 +113,19 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   const selectedProgram = programs.find((program) => program.id === draft.academicProgramId);
   const reviewItems = getReviewItems(draft, programs, text);
   const submissionReady = ready && reviewItems.every((item) => item.valid);
-  const snapshot = JSON.stringify({ draft, activeStep });
+  const snapshot = JSON.stringify({ draft, activeStep, furthestStep });
   const draftSaved = !draftStorageError && savedSnapshot === snapshot;
   const isMpCecre = selectedProgram?.code === "mp-cecre-master";
   const isRaue = selectedProgram?.code === "athdc-specialization";
+
+  useEffect(() => {
+    const form = requestFormRef.current;
+    if (!form) return;
+    const invalid = new Set(reviewItems.filter((item) => item.step === activeStep && !item.valid).map((item) => item.field));
+    form.querySelectorAll<HTMLElement>("[data-review-field]").forEach((field) => {
+      field.classList.toggle("is-revisited-pending", activeStep < furthestStep && invalid.has(field.dataset.reviewField ?? ""));
+    });
+  }, [activeStep, furthestStep, reviewItems]);
 
   useEffect(() => {
     try {
@@ -126,7 +136,9 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
         const step = Number.isInteger(parsed?.activeStep) && parsed.activeStep >= 1 && parsed.activeStep <= 5 ? parsed.activeStep : 1;
         setDraft(restored);
         setActiveStep(step);
-        setSavedSnapshot(JSON.stringify({ draft: restored, activeStep: step }));
+        const visited = Number.isInteger(parsed?.furthestStep) && parsed.furthestStep >= step && parsed.furthestStep <= 5 ? parsed.furthestStep : step;
+        setFurthestStep(visited);
+        setSavedSnapshot(JSON.stringify({ draft: restored, activeStep: step, furthestStep: visited }));
         if (typeof parsed?.savedAt === "string" && Number.isFinite(Date.parse(parsed.savedAt))) setSavedAt(parsed.savedAt);
       }
     } catch { setDraftStorageError(true); }
@@ -216,9 +228,9 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
   }
 
   return (
-    <form noValidate ref={requestFormRef} className="request-form" aria-busy={submitting} onSubmit={submit} data-active-step={activeStep}>
+    <form noValidate ref={requestFormRef} className="request-form" aria-busy={submitting} onSubmit={submit} data-active-step={activeStep} data-revisited={activeStep < furthestStep ? "true" : undefined}>
       {error && <div className="auth-feedback auth-feedback--error" role="alert" tabIndex={-1}>{errorText(text, error)}</div>}
-      <nav className="admin-tabs request-steps" aria-label={text.steps.join(", ")}>{steps.map((step, index) => { const pending = reviewItems.filter((item) => (index === 4 || item.step === index + 1) && !item.valid).length; return <button key={index} type="button" disabled={submitting} aria-current={activeStep === index + 1 ? "step" : undefined} className={activeStep === index + 1 ? "is-active" : ""} onClick={() => setActiveStep(index + 1)}><AppIcon name={step.icon} />{step.label}<span className={`request-step-status${pending ? " request-step-status--pending" : " request-step-status--ok"}`} aria-label={pending ? `${pending} ${text.pending}` : text.checked}>{pending || <AppIcon name="check" />}</span></button>; })}</nav>
+      <nav className="admin-tabs request-steps" aria-label={text.steps.join(", ")}>{steps.map((step, index) => { const pending = reviewItems.filter((item) => item.step === index + 1 && !item.valid).length; const statusLabel = ({ pt: ["erro/pendência", "erros/pendências"], en: ["error/pending", "errors/pending"], es: ["error/pendencia", "errores/pendencias"], de: ["Fehler/offen", "Fehler/offen"], fr: ["erreur/à corriger", "erreurs/à corriger"], it: ["errore/in sospeso", "errori/in sospeso"] } as const)[uiLanguage][pending === 1 ? 0 : 1]; return <button key={index} type="button" disabled={submitting} aria-current={activeStep === index + 1 ? "step" : undefined} className={activeStep === index + 1 ? "is-active" : ""} onClick={() => { setActiveStep(index + 1); setFurthestStep((current) => Math.max(current, index + 1)); }}><AppIcon name={step.icon} /><span className="request-step-title">{step.label}</span>{index < 4 && <span className={`request-step-status${pending ? " request-step-status--pending" : " request-step-status--ok"}`} aria-label={pending ? `${pending} ${statusLabel}` : text.checked}>{pending || <AppIcon name="check" />}{pending > 0 && <span className="request-step-status__detail" aria-hidden="true">{statusLabel}</span>}</span>}</button>; })}</nav>
 
       <fieldset disabled={submitting} className="form-section form-step form-step--1">
         <legend className="sr-only">{steps[0].label}</legend>
@@ -306,8 +318,8 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
         {activeStep > 1 && <button disabled={submitting} className="button button--secondary button--with-icon" type="button" onClick={() => setActiveStep((current) => current - 1)}><AppIcon name="arrowRight" className="button__icon--back" />{text.back}: {steps[activeStep - 2].label}</button>}
         <div className={`draft-status${draftStorageError ? " draft-status--error" : ""}`} role="status"><AppIcon name={draftSaved ? "check" : "help"} /><div><strong>{draftSaved ? text.draftSaved : text.saving}</strong><span>{text.thisDevice}{draftSaved && savedAt ? ` · ${new Date(savedAt).toLocaleTimeString(uiLanguage, { hour: "2-digit", minute: "2-digit" })}` : ""}</span><small>{draftStorageError ? guidanceFor(text).savingError : text.resumeLater}</small></div></div>
         {activeStep < 5
-          ? <button disabled={submitting} className="button button--primary button--with-icon" type="button" onClick={() => setActiveStep((current) => current + 1)}>{text.next}: {steps[activeStep].label}<AppIcon name="arrowRight" /></button>
-          : <div className="submit-action"><button className="button button--primary button--with-icon" type="button" onClick={() => void submitRequest()} disabled={submitting || !submissionReady} aria-describedby={!submissionReady ? "submission-pending-help" : undefined}><AppIcon name="upload" />{submitting ? text.sending : text.send}</button>{!submissionReady && <p id="submission-pending-help" className="review-panel__hint">{text.fillPending}</p>}</div>}
+          ? <button disabled={submitting} className="button button--primary button--with-icon" type="button" onClick={() => { setActiveStep((current) => current + 1); setFurthestStep((current) => Math.max(current, activeStep + 1)); }}>{text.next}: {steps[activeStep].label}<AppIcon name="arrowRight" /></button>
+          : <div className="submit-action"><button className="button button--primary button--with-icon" type="button" onClick={() => void submitRequest()} disabled={submitting || !submissionReady}><AppIcon name="upload" /><span>{submitting ? text.sending : text.send}{!submissionReady && <small>{text.fillPending}</small>}</span></button></div>}
       </div>
       {pendingFormLanguage && <OriginalLanguageDialog language={pendingFormLanguage} text={text} onCancel={() => setPendingFormLanguage(null)} onConfirm={() => { selectOriginalLanguage(pendingFormLanguage, true); setPendingFormLanguage(null); }} />}
     </form>
@@ -412,12 +424,10 @@ function ReviewSummary({ items, onNavigate, text }: { items: ReviewItem[]; onNav
   return <>
     <h2>{text.review}</h2><p>{text.reviewIntro}</p>
     <div className={`review-summary review-summary--${invalidCount ? "pending" : "ok"}`} role="status"><AppIcon name={invalidCount ? "help" : "check"} /><span>{invalidCount ? `${invalidCount} ${text.attention}` : text.allValid}</span></div>
-    <div className="review-columns">{[false, true].map((valid) => <div className="review-column" key={String(valid)}><h3>{valid ? text.checked : text.pending}</h3>{grouping.map((group) => { const groupItems = items.filter((item) => item.step === group.step && item.valid === valid); return groupItems.length ? <section className="review-group" key={group.step}>
+    {invalidCount > 0 && <div className="review-pending-list">{grouping.map((group) => { const groupItems = items.filter((item) => item.step === group.step && !item.valid); return groupItems.length ? <section className="review-group" key={group.step}>
       <h4><AppIcon name={stepsIcon(group.step)} />{group.title}</h4>
-      {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-subsection" key={section}>{section !== group.title && <h5>{section}</h5>}{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => item.valid
-        ? <div key={`${item.field}-${index}`} className="review-item review-item--ok"><AppIcon name="check" /><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}</span><strong>{item.optional && !item.value ? text.optional : guidanceFor(text).filled}</strong></div>
-        : <button type="button" key={`${item.field}-${index}`} data-target-field={item.field} data-target-step={item.step} className="review-item review-item--pending" onClick={() => onNavigate(item.step, item.field)}><AppIcon name="help" /><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}</span><strong>{text.pending}</strong><AppIcon name="arrowRight" />{item.issue && <small className="review-item__issue">{item.issue}</small>}</button>)}</div>)}
-    </section> : null; })}</div>)}</div>
+      {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-subsection" key={section}>{section !== group.title && <h5>{section}</h5>}{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => <button type="button" key={`${item.field}-${index}`} data-target-field={item.field} data-target-step={item.step} className="review-item review-item--pending" onClick={() => onNavigate(item.step, item.field)}><AppIcon name="help" /><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}</span><strong>{text.pending}</strong><AppIcon name="arrowRight" />{item.issue && <small className="review-item__issue">{item.issue}</small>}</button>)}</div>)}
+    </section> : null; })}</div>}
   </>;
 }
 

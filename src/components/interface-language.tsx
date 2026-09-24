@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { type InterfaceLanguage, normalizeLanguage } from "@/lib/interface-language";
+import { useRouter } from "next/navigation";
 
 const preferenceKey = "pronto-interface-language";
 
@@ -9,6 +10,7 @@ type LanguageContextValue = { language: InterfaceLanguage; deviceLanguage: Inter
 const LanguageContext = createContext<LanguageContextValue>({ language: "pt", deviceLanguage: "pt", hasPreference: false, setLanguage: () => undefined });
 
 export function InterfaceLanguageProvider({ children, initialLanguage, initialDeviceLanguage, initialPreference }: { children: React.ReactNode; initialLanguage: InterfaceLanguage; initialDeviceLanguage: InterfaceLanguage; initialPreference: boolean }) {
+  const router = useRouter();
   const [language, updateLanguage] = useState<InterfaceLanguage>(initialLanguage);
   const [deviceLanguage, setDeviceLanguage] = useState<InterfaceLanguage>(initialDeviceLanguage);
   const [hasPreference, setHasPreference] = useState(initialPreference);
@@ -28,6 +30,7 @@ export function InterfaceLanguageProvider({ children, initialLanguage, initialDe
     setHasPreference(true);
     localStorage.setItem(preferenceKey, next);
     document.cookie = `pronto-language=${next}; Path=/; Max-Age=31536000; SameSite=Lax`;
+    router.refresh();
   }
 
   return <LanguageContext.Provider value={{ language, deviceLanguage, hasPreference, setLanguage }}>{children}</LanguageContext.Provider>;

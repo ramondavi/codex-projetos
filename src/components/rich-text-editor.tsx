@@ -3,12 +3,16 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
-import type { ReactNode } from "react";
+import Image from "@tiptap/extension-image";
+import { useRef, useState, type ReactNode } from "react";
 import { AppIcon } from "./app-icon";
+import { createClient } from "@/lib/supabase/client";
 
 export function RichTextEditor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
+  const imageInput = useRef<HTMLInputElement>(null);
+  const [imageError, setImageError] = useState("");
   const editor = useEditor({
-    extensions: [StarterKit.configure({ heading: { levels: [2, 3] }, link: false }), Link.configure({ openOnClick: false, autolink: true })],
+    extensions: [StarterKit.configure({ heading: { levels: [2, 3] }, link: false }), Link.configure({ openOnClick: false, autolink: true }), Image.configure({ allowBase64: false })],
     content: value,
     immediatelyRender: false,
     editorProps: { attributes: { "aria-label": "Conteúdo completo", class: "rich-editor__content" } },
@@ -27,6 +31,27 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
     if (!/^https:\/\/[^\s]+$/i.test(url.trim())) { window.alert("Use um endereço HTTPS válido."); return; }
     editor.chain().focus().extendMarkRange("link").setLink({ href: url.trim() }).run();
   };
+  const addImageUrl = () => {
+    const url = window.prompt("URL da imagem (https://)", "https://");
+    if (url === null) return;
+    if (!/^https:\/\/[^\s]+$/i.test(url.trim())) { setImageError("Use uma URL HTTPS válida."); return; }
+    const alt = window.prompt("Descrição da imagem para acessibilidade", "");
+    if (alt === null || !alt.trim()) { setImageError("Informe uma descrição da imagem."); return; }
+    editor.chain().focus().setImage({ src: url.trim(), alt: alt.trim() }).run();
+    setImageError("");
+  };
+  const uploadImage = async (file: File) => {
+    if (!(["image/png", "image/jpeg", "image/webp", "image/gif"].includes(file.type)) || file.size > 2 * 1024 * 1024) { setImageError("Use PNG, JPEG, WebP ou GIF com até 2 MB."); return; }
+    const alt = window.prompt("Descrição da imagem para acessibilidade", "");
+    if (alt === null || !alt.trim()) { setImageError("Informe uma descrição da imagem."); return; }
+    const extension = file.type === "image/jpeg" ? "jpg" : file.type.split("/")[1];
+    const path = `${crypto.randomUUID()}.${extension}`;
+    const storage = createClient().storage.from("knowledge-images");
+    const { error } = await storage.upload(path, file, { contentType: file.type, upsert: false });
+    if (error) { setImageError("Não foi possível enviar a imagem. Confirme que o espaço de imagens está configurado."); return; }
+    editor.chain().focus().setImage({ src: storage.getPublicUrl(path).data.publicUrl, alt: alt.trim() }).run();
+    setImageError("");
+  };
 
   return <div className="rich-editor">
     <div className="rich-editor__toolbar" role="toolbar" aria-label="Formatação do conteúdo">
@@ -38,6 +63,8 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
       {button("Itálico", () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic"), <em>I</em>)}
       {button("Tachado", () => editor.chain().focus().toggleStrike().run(), editor.isActive("strike"), <s>S</s>)}
       {button("Link", editLink, editor.isActive("link"), <AppIcon name="link" />)}
+      {button("Imagem por URL", addImageUrl, false, "Imagem URL")}
+      {button("Imagem do computador", () => imageInput.current?.click(), false, "Imagem arquivo")}
       <span aria-hidden="true" className="rich-editor__divider" />
       {button("Lista com marcadores", () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList"), "• ≡")}
       {button("Lista numerada", () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList"), "1. ≡")}
@@ -47,6 +74,8 @@ export function RichTextEditor({ value, onChange }: { value: string; onChange: (
       {button("Desfazer", () => editor.chain().focus().undo().run(), false, "↶")}
       {button("Refazer", () => editor.chain().focus().redo().run(), false, "↷")}
     </div>
+    <input ref={imageInput} className="sr-only" type="file" accept="image/png,image/jpeg,image/webp,image/gif" onChange={(event) => { const file = event.target.files?.[0]; if (file) void uploadImage(file); event.target.value = ""; }} />
+    {imageError && <p role="alert" className="rich-editor__error">{imageError}</p>}
     <EditorContent editor={editor} />
   </div>;
 }

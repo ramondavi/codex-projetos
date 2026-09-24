@@ -6,12 +6,12 @@ import { AppIcon } from "./app-icon";
 import { useInterfaceLanguage } from "./interface-language";
 
 const accessibilityCopy = {
-  pt: ["Ir para o conteúdo", "Ir para o menu", "Central de ajuda", "Acessibilidade", "Recursos de acessibilidade", "Ajustes de visualização", "Diminuir tamanho do texto", "Usar tamanho padrão do texto", "Aumentar tamanho do texto", "Alternar alto contraste", "Alto contraste"],
-  en: ["Skip to content", "Skip to menu", "Help center", "Accessibility", "Accessibility tools", "Display settings", "Decrease text size", "Use default text size", "Increase text size", "Toggle high contrast", "High contrast"],
-  es: ["Ir al contenido", "Ir al menú", "Centro de ayuda", "Accesibilidad", "Herramientas de accesibilidad", "Ajustes de visualización", "Reducir texto", "Tamaño predeterminado", "Aumentar texto", "Alternar alto contraste", "Alto contraste"],
-  de: ["Zum Inhalt", "Zum Menü", "Hilfe", "Barrierefreiheit", "Barrierefreiheit", "Anzeigeeinstellungen", "Text verkleinern", "Standardgröße", "Text vergrößern", "Hohen Kontrast umschalten", "Hoher Kontrast"],
-  fr: ["Aller au contenu", "Aller au menu", "Centre d’aide", "Accessibilité", "Outils d’accessibilité", "Réglages d’affichage", "Réduire le texte", "Taille par défaut", "Agrandir le texte", "Activer le contraste élevé", "Contraste élevé"],
-  it: ["Vai al contenuto", "Vai al menu", "Centro assistenza", "Accessibilità", "Strumenti di accessibilità", "Impostazioni di visualizzazione", "Riduci testo", "Dimensione predefinita", "Ingrandisci testo", "Attiva alto contrasto", "Alto contrasto"],
+  pt: ["Ir para o conteúdo", "Ir para o menu", "Central de ajuda", "Acessibilidade", "Recursos de acessibilidade", "Ajustes de visualização", "Diminuir tamanho do texto", "Usar tamanho padrão do texto", "Aumentar tamanho do texto", "Alternar alto contraste", "Alto contraste", "Privacidade"],
+  en: ["Skip to content", "Skip to menu", "Help center", "Accessibility", "Accessibility tools", "Display settings", "Decrease text size", "Use default text size", "Increase text size", "Toggle high contrast", "High contrast", "Privacy"],
+  es: ["Ir al contenido", "Ir al menú", "Centro de ayuda", "Accesibilidad", "Herramientas de accesibilidad", "Ajustes de visualización", "Reducir texto", "Tamaño predeterminado", "Aumentar texto", "Alternar alto contraste", "Alto contraste", "Privacidad"],
+  de: ["Zum Inhalt", "Zum Menü", "Hilfe", "Barrierefreiheit", "Barrierefreiheit", "Anzeigeeinstellungen", "Text verkleinern", "Standardgröße", "Text vergrößern", "Hohen Kontrast umschalten", "Hoher Kontrast", "Datenschutz"],
+  fr: ["Aller au contenu", "Aller au menu", "Centre d’aide", "Accessibilité", "Outils d’accessibilité", "Réglages d’affichage", "Réduire le texte", "Taille par défaut", "Agrandir le texte", "Activer le contraste élevé", "Contraste élevé", "Confidentialité"],
+  it: ["Vai al contenuto", "Vai al menu", "Centro assistenza", "Accessibilità", "Strumenti di accessibilità", "Impostazioni di visualizzazione", "Riduci testo", "Dimensione predefinita", "Ingrandisci testo", "Attiva alto contrasto", "Alto contrasto", "Privacy"],
 };
 
 type TextScale = "normal" | "large" | "larger";
@@ -66,6 +66,7 @@ export function AccessibilityControls() {
           <a href="#menu-principal" accessKey="2">{t[1]} <span aria-hidden="true">[2]</span></a>
           <a href="/ajuda" accessKey="3">{t[2]} <span aria-hidden="true">[3]</span></a>
           <a href="/acessibilidade" accessKey="4">{t[3]} <span aria-hidden="true">[4]</span></a>
+          <a href="/politica-de-privacidade" accessKey="5">{t[11]} <span aria-hidden="true">[5]</span></a>
         </div>
         <div className="accessibility-bar__controls" role="group" aria-label={t[5]}>
           <button type="button" onClick={() => changeScale(scales[Math.max(0, scaleIndex - 1)])} disabled={scaleIndex === 0} aria-label={t[6]} title={t[6]}>A−</button>
