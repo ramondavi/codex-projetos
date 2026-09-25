@@ -5,6 +5,8 @@ import { AppIcon } from "./app-icon";
 import { useInterfaceLanguage } from "./interface-language";
 import { languageLabels, supportedLanguages } from "@/lib/interface-language";
 
+const languageFlags = { pt: "🇧🇷", en: "🇬🇧", es: "🇪🇸", de: "🇩🇪", fr: "🇫🇷", it: "🇮🇹" } as const;
+
 const messages = {
   pt: { label: "Idioma da interface", detected: "Idioma do dispositivo: {language}.", keep: "Manter idioma atual", change: "Mudar para {language}", close: "Fechar aviso de idioma" },
   en: { label: "Interface language", detected: "Device language: {language}.", keep: "Keep current language", change: "Switch to {language}", close: "Close language notice" },
@@ -27,8 +29,10 @@ export function LanguageControl() {
   const dismiss = () => { setDismissed(true); setHovered(false); sessionStorage.setItem("pronto-language-notice-dismissed", "true"); };
   const stayOpen = () => { if (closeTimer.current) clearTimeout(closeTimer.current); setHovered(true); };
   const closeAfterPointerLeaves = () => { if (closeTimer.current) clearTimeout(closeTimer.current); closeTimer.current = setTimeout(() => setHovered(false), 180); };
+  const changeLanguage = (value: string) => { setLanguage(value as typeof language); setDismissed(false); };
   return <div className="language-control">
-    <label className="language-control__select"><AppIcon name="globe" /><span className="sr-only">{message.label}</span><select aria-label={message.label} value={language} onChange={(event) => { setLanguage(event.target.value as typeof language); setDismissed(false); }}>{supportedLanguages.map((option) => <option key={option} value={option}>{languageLabels[option]}</option>)}</select></label>
+    <label className="language-control__select language-control__select--desktop"><AppIcon name="globe" /><span className="sr-only">{message.label}</span><select aria-label={message.label} value={language} onChange={(event) => changeLanguage(event.target.value)}>{supportedLanguages.map((option) => <option key={option} value={option}>{languageLabels[option]}</option>)}</select></label>
+    <label className="language-control__select language-control__select--touch"><AppIcon name="globe" /><span className="sr-only">{message.label}</span><select aria-label={message.label} value={language} onChange={(event) => changeLanguage(event.target.value)}>{supportedLanguages.map((option) => <option key={option} value={option}>{languageFlags[option]}</option>)}</select></label>
     {mismatch && <div className="language-control__notice" onMouseEnter={stayOpen} onMouseLeave={closeAfterPointerLeaves} onFocusCapture={stayOpen} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) closeAfterPointerLeaves(); }}><button type="button" className="language-control__info" aria-label={message.detected.replace("{language}", languageLabels[deviceLanguage])} aria-expanded={showSuggestion} onClick={() => setHovered((current) => !current)}><AppIcon name="help" /></button>{showSuggestion && <div className="language-control__suggestion" role="status"><button className="language-control__close" type="button" aria-label={message.close} onClick={dismiss}><AppIcon name="close" /></button><span>{message.detected.replace("{language}", languageLabels[deviceLanguage])}</span><button type="button" onClick={() => { setLanguage(deviceLanguage); dismiss(); }}>{message.change.replace("{language}", languageLabels[deviceLanguage])}</button><button type="button" onClick={dismiss}>{message.keep}</button></div>}</div>}
   </div>;
 }

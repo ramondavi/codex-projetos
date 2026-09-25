@@ -12,7 +12,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
     <AuthShell title="Entre na sua conta" description="Acompanhe sua solicitação e veja sempre qual é a próxima etapa.">
       <AuthFeedback error={error} message={message} />
       <form className="form-stack" action={login}>
-        <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="seunome@ufba.br" required /></label>
+        <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="Seu e-mail institucional" required /></label>
         <label>Senha<input type="password" name="password" autoComplete="current-password" placeholder="Sua senha" required /></label>
         <div className="form-row form-row--between">
           <label className="check"><input type="checkbox" /> <span>Lembrar de mim</span></label>

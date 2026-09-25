@@ -13,6 +13,15 @@ function localizedEntry(entry: KnowledgeEntry, language: string): KnowledgeEntry
     : entry;
 }
 
+function protectPublicContacts(entry: KnowledgeEntry): KnowledgeEntry {
+  const hideContacts = (value: string) => value
+    .replace(/mailto:[^"'\s<>]+/gi, "/ajuda#contato-ajuda")
+    .replace(/tel:[^"'\s<>]+/gi, "/ajuda#contato-ajuda")
+    .replace(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/gi, "e-mail disponível na Central de Ajuda")
+    .replace(/(?:\+?55[\s.-]?)?\(?\d{2}\)?[\s.-]?\d{4,5}[\s.-]?\d{4}/g, "telefone disponível na Central de Ajuda");
+  return { ...entry, title: hideContacts(entry.title), summary: hideContacts(entry.summary), category: hideContacts(entry.category), body_html: hideContacts(entry.body_html) };
+}
+
 export function safeKnowledgeHtml(html: string) {
   return sanitizeHtml(html, {
     allowedTags: ["section", "span", "p", "br", "h2", "h3", "strong", "em", "s", "ul", "ol", "li", "blockquote", "hr", "a", "img"],
@@ -37,7 +46,7 @@ export async function getPublishedKnowledge(publicOnly = true): Promise<Knowledg
   let query = supabase.from("knowledge_base_entries").select(fields).eq("active", true).order("position");
   if (publicOnly) query = query.contains("audiences", ["public"]);
   const { data, error } = await query;
-  if (!error) { const language = await getInterfaceLanguage(); return (data as KnowledgeEntry[]).map((entry) => localizedEntry(entry, language)); }
+  if (!error) { const language = await getInterfaceLanguage(); return (data as KnowledgeEntry[]).map((entry) => { const localized = localizedEntry(entry, language); return publicOnly ? protectPublicContacts(localized) : localized; }); }
   const { data: faqs } = await supabase.from("frequently_asked_questions")
     .select("id,question,answer,active,position,featured_position,created_at,updated_at").eq("active", true).order("position");
   const defaults = faqs?.length ? faqs : [
@@ -45,5 +54,6 @@ export async function getPublishedKnowledge(publicOnly = true): Promise<Knowledg
     { id: "fallback-2", question: "O trabalho completo é enviado ao Pronto!?", answer: "Não. O estudante informa um link público para análise e o PDF completo permanece no próprio dispositivo durante a mesclagem da ficha.", active: true, position: 20 },
     { id: "fallback-3", question: "Quando posso baixar a ficha?", answer: "Depois que a ficha for homologada pela biblioteca e o Nada Consta for aprovado.", active: true, position: 30 },
   ];
-  return initialKnowledgeEntries(defaults);
+  const initial = initialKnowledgeEntries(defaults);
+  return publicOnly ? initial.map(protectPublicContacts) : initial;
 }

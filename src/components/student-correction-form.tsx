@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { isPublicWorkUrlCandidate } from "@/domain/student-requests/public-work-url";
 
 type PendingField = { fieldKey: string; fieldLabel: string; justification: string; kind: string; value: string | string[] };
 type Program = { id: string; name: string; level: string };
@@ -16,6 +17,12 @@ export function StudentCorrectionForm({ requestId, fields, programs }: { request
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setSubmitting(true); setError(undefined);
+    const workLink = values.public_work_url;
+    if (typeof workLink === "string" && !isPublicWorkUrlCandidate(workLink)) {
+      setError("Informe o link HTTPS direto para o arquivo ou pasta compartilhada, não apenas o endereço do serviço.");
+      setSubmitting(false);
+      return;
+    }
     const corrections = fields.map((field) => ({ fieldKey: field.fieldKey, value: values[field.fieldKey] }));
     const supabase = createClient();
     const { error: rpcError } = await supabase.rpc("submit_request_corrections", { target_request_id: requestId, corrections });

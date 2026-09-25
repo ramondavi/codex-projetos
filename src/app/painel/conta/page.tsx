@@ -27,7 +27,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         <div>
           <p className="eyebrow">E-mail institucional</p>
           <h2>Alterar e-mail</h2>
-          <p>O novo endereço deve pertencer ao domínio @ufba.br. A alteração só será concluída após as confirmações de segurança configuradas no Supabase.</p>
+          <p>O novo e-mail deve ser institucional da UFBA (@ufba.br).</p>
         </div>
         <AuthFeedback error={error} message={message} />
         <form className="form-stack" action={requestEmailChange}>

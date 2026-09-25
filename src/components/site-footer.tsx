@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { OfficialLibraryLogo } from "@/components/official-library-logo";
 import { AppIcon } from "@/components/app-icon";
 import styles from "./site-footer.module.css";
@@ -19,12 +21,35 @@ const footerCopy = {
 
 export function SiteFooter({ version }: { version: string }) {
   const { language } = useInterfaceLanguage();
+  const pathname = usePathname();
   const t = footerCopy[language];
+  useEffect(() => {
+    const footerRow = document.querySelector<HTMLElement>("[data-language-alignment]");
+    const pageContent = document.querySelector<HTMLElement>("main.dashboard-main")
+      ?? document.querySelector<HTMLElement>("main .container")
+      ?? document.querySelector<HTMLElement>("main");
+    if (!footerRow || !pageContent) return;
+
+    const alignLanguageControl = () => {
+      const offset = pageContent.getBoundingClientRect().left - footerRow.getBoundingClientRect().left;
+      footerRow.style.setProperty("--language-align-offset", `${offset}px`);
+    };
+    alignLanguageControl();
+    const observer = new ResizeObserver(alignLanguageControl);
+    observer.observe(pageContent);
+    observer.observe(footerRow);
+    window.addEventListener("resize", alignLanguageControl);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", alignLanguageControl);
+      footerRow.style.removeProperty("--language-align-offset");
+    };
+  }, [pathname]);
   return (
     <footer className={styles.footer} id="creditos">
       <div className={styles.decoration} aria-hidden="true" />
       <div className={styles.inner}>
-        <div className={styles.topRow}>
+        <div className={styles.topRow} data-language-alignment>
           <LanguageControl />
           <div className={styles.signature}>
             <div className={styles.libraryBrand}><OfficialLibraryLogo variant="footer" /></div>

@@ -16,7 +16,7 @@ const copy = {
   it: ["La mia area", "Ciao", "Panoramica", "La mia richiesta", "Autodeposito", "Il mio account", "Richieste", "I miei casi", "Amministrazione", "Navigazione principale", "Come funziona", "Centro assistenza", "Esci", "Accedi"],
 };
 
-export async function SiteHeader() {
+export async function SiteHeader({ articleTitle }: { articleTitle?: string } = {}) {
   const t = copy[await getInterfaceLanguage()];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -34,12 +34,12 @@ export async function SiteHeader() {
         <nav id="menu-principal" aria-label={t[9]} className="site-header__nav" tabIndex={-1}>
           <Link href="/#como-funciona"><AppIcon name="review" />{t[10]}</Link>
           <Link href="/ajuda"><AppIcon name="help" />{t[11]}</Link>
-          {user ? <div className="site-header__account"><Link className="site-header__access" href={accessHref} aria-label={`${accessLabel}. ${accessGreeting}`}><AppIcon name="account" /><span className="site-header__access-label">{accessLabel}</span><span className="site-header__access-greeting" aria-hidden="true">{accessGreeting}</span></Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></div> : <Link className="site-header__access" href={accessHref}><AppIcon name="account" />{t[13]}</Link>}
+          {user ? <><div className="site-header__account site-header__account--desktop"><Link className="site-header__access" href={accessHref} aria-label={`${accessLabel}. ${accessGreeting}`}><AppIcon name="account" /><span className="site-header__access-label">{accessLabel}</span><span className="site-header__access-greeting" aria-hidden="true">{accessGreeting}</span></Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></div><details className="site-header__account site-header__account--touch"><summary className="site-header__access" aria-label={accessLabel}><AppIcon name="account" /><span>{accessLabel}</span></summary><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></details></> : <Link className="site-header__access" href={accessHref}><AppIcon name="account" />{t[13]}</Link>}
           <LibrarySocialLinks />
         </nav>
         </div>
       </header>
-      <PublicBreadcrumbs />
+      <PublicBreadcrumbs articleTitle={articleTitle} />
     </>
   );
 }

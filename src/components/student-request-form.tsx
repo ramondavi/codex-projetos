@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { compactDraft, restoreStudentRequestDraft, emptyStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY, type StudentRequestDraft } from "@/domain/student-requests/draft";
+import { isPublicWorkUrlCandidate } from "@/domain/student-requests/public-work-url";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
 import { formGuidance } from "@/domain/student-requests/form-guidance";
 import { useInterfaceLanguage } from "@/components/interface-language";
@@ -68,8 +69,23 @@ function languageName(language: FormLanguage, copy: Copy) {
   return new Intl.DisplayNames([copyLanguage(copy)], { type: "language" }).of(language) ?? language;
 }
 
+function languageOptionName(language: FormLanguage, copy: Copy) {
+  const name = languageName(language, copy);
+  return name.charAt(0).toLocaleUpperCase(copyLanguage(copy)) + name.slice(1);
+}
+
+const formFieldHints: Record<FormLanguage, { advisorNames: string; finalDeliveryYear: string; keywordPairs: string; publicResource: string; equivalentTitle: (language: string) => string }> = {
+  pt: { advisorNames: "Escreva os nomes do orientador e do coorientador como aparecem na ata, folha ou página de aprovação.", finalDeliveryYear: "Ano de entrega da versão final", keywordPairs: "Informe pelo menos três pares de palavras-chave, com um termo em cada idioma por par.", publicResource: "Use o link HTTPS específico do arquivo ou da pasta compartilhada. O endereço inicial do serviço não serve.", equivalentTitle: (language) => `Título e subtítulo (quando houver) em ${language}` },
+  en: { advisorNames: "Enter the advisor's and co-advisor's names as they appear in the defense record or approval page.", finalDeliveryYear: "Year of final version submission", keywordPairs: "Enter at least three keyword pairs, with one term in each language per pair.", publicResource: "Use the specific HTTPS link to the shared file or folder. The service homepage is not enough.", equivalentTitle: (language) => `Title and subtitle (if any) in ${language}` },
+  es: { advisorNames: "Escriba los nombres del director y codirector tal como aparecen en el acta o la página de aprobación.", finalDeliveryYear: "Año de entrega de la versión final", keywordPairs: "Indique al menos tres pares de palabras clave, con un término en cada idioma por par.", publicResource: "Use el enlace HTTPS específico del archivo o carpeta compartidos. La página inicial del servicio no sirve.", equivalentTitle: (language) => `Título y subtítulo (si lo hay) en ${language}` },
+  de: { advisorNames: "Geben Sie die Namen der Betreuungspersonen so ein, wie sie im Prüfungsprotokoll oder auf der Genehmigungsseite stehen.", finalDeliveryYear: "Jahr der Abgabe der endgültigen Fassung", keywordPairs: "Geben Sie mindestens drei Schlagwortpaare mit je einem Begriff pro Sprache ein.", publicResource: "Verwenden Sie den konkreten HTTPS-Link zur freigegebenen Datei oder zum Ordner, nicht die Startseite des Dienstes.", equivalentTitle: (language) => `Titel und Untertitel (falls vorhanden) auf ${language}` },
+  fr: { advisorNames: "Saisissez les noms du directeur et du codirecteur tels qu'ils figurent dans le procès-verbal ou sur la page d'approbation.", finalDeliveryYear: "Année de remise de la version finale", keywordPairs: "Saisissez au moins trois paires de mots-clés, avec un terme dans chaque langue par paire.", publicResource: "Utilisez le lien HTTPS précis vers le fichier ou le dossier partagé, pas la page d'accueil du service.", equivalentTitle: (language) => `Titre et sous-titre (le cas échéant) en ${language}` },
+  it: { advisorNames: "Inserisci i nomi del relatore e del correlatore come compaiono nel verbale o nella pagina di approvazione.", finalDeliveryYear: "Anno di consegna della versione finale", keywordPairs: "Inserisci almeno tre coppie di parole chiave, con un termine per lingua in ogni coppia.", publicResource: "Usa il link HTTPS specifico del file o della cartella condivisa, non la pagina iniziale del servizio.", equivalentTitle: (language) => `Titolo e sottotitolo (se presente) in ${language}` },
+};
+
 function errorText(copy: Copy, code: string) {
   const language = copyLanguage(copy);
+  if (code === "public_https_url_required") return formFieldHints[language].publicResource;
   return translatedErrors[language][code] ?? translatedErrors[language].unknown_error;
 }
 
@@ -261,7 +277,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
             <OriginalLanguageField draft={draft} text={text} onLanguageChange={selectOriginalLanguage} />
             <p className="field-help title-language-instruction"><AppIcon name="help" /> <span>{text.titleInstruction}</span></p>
             <label data-review-field="title"><FieldTitle icon="document">{text.titleOriginal} ({languageName(draft.originalLanguage, text)})</FieldTitle><textarea required minLength={3} maxLength={500} rows={2} value={draft.title} onChange={(e) => set("title", e.target.value)} /></label>
-            <label data-review-field="subtitle"><FieldTitle icon="document">{text.subtitle}</FieldTitle><input maxLength={500} value={draft.subtitle} onChange={(e) => set("subtitle", e.target.value)} placeholder={text.optional} /></label>
+            <label data-review-field="subtitle"><FieldTitle icon="document">{text.subtitle} ({languageName(draft.originalLanguage, text)})</FieldTitle><input maxLength={500} value={draft.subtitle} onChange={(e) => set("subtitle", e.target.value)} placeholder={text.optional} /></label>
             <EquivalentTitlesFields draft={draft} text={text} onChange={(equivalentTitles, originalLanguage) => setDraft((current) => ({ ...current, equivalentTitles, originalLanguage }))} />
           </div>
         </section>
@@ -269,6 +285,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
           <h3 id="request-committee-heading">{text.advising}</h3>
           <div className="form-subsection__fields">
           <div className="form-row"><label data-review-field="advisor"><FieldTitle icon="person">{text.advisor}</FieldTitle><input required minLength={3} maxLength={300} value={draft.people.advisor} onChange={(e) => set("people", { ...draft.people, advisor: e.target.value })} /></label><label data-review-field="coadvisor"><FieldTitle icon="person">{text.coadvisor}</FieldTitle><input minLength={3} maxLength={300} value={draft.people.coadvisor} onChange={(e) => set("people", { ...draft.people, coadvisor: e.target.value })} placeholder={text.optional} /></label></div>
+            <FieldNote>{formFieldHints[uiLanguage].advisorNames}</FieldNote>
             <CommitteeFields values={draft.people.committeeMembers} hasCoadvisor={Boolean(draft.people.coadvisor.trim())} onChange={(committeeMembers) => set("people", { ...draft.people, committeeMembers })} text={text} />
           </div>
         </section>
@@ -276,7 +293,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
           <h3 id="request-cataloging-heading">{text.catalogingData}</h3>
           <div className="form-subsection__fields">
             <div className="special-cases"><span>{text.specialCases}</span>{[["cotutelle", text.cotutelle, text.cotutelleHelp], ["double_degree", text.doubleDegree, text.doubleDegreeHelp]].map(([value, label, help]) => <label className="check special-case-label" key={value}><input type="checkbox" checked={draft.specialCases.includes(value)} onChange={(e) => set("specialCases", e.target.checked ? [...draft.specialCases, value] : draft.specialCases.filter((item) => item !== value))} /><span className="request-field-title"><AppIcon name={value === "cotutelle" ? "account" : "book"} />{label}</span><span className="tooltip" tabIndex={0} aria-label={`${text.optional}: ${label}`}>i<span role="tooltip">{help}</span></span></label>)}</div>
-            <div className="form-row"><label data-review-field="deposit-year"><FieldTitle icon="calendar">{text.depositYear}</FieldTitle><input required type="number" min="1900" max="9999" value={draft.depositYear} onChange={(e) => set("depositYear", e.target.value)} /></label><label data-review-field="defense-year"><FieldTitle icon="calendar">{text.defenseYear}</FieldTitle><input required type="number" min="1900" max={draft.depositYear || "9999"} value={draft.defenseYear} onChange={(e) => set("defenseYear", e.target.value)} /></label></div>
+            <div className="form-row"><label data-review-field="deposit-year"><FieldTitle icon="calendar">{formFieldHints[uiLanguage].finalDeliveryYear}</FieldTitle><input required type="number" min="1900" max="9999" value={draft.depositYear} onChange={(e) => set("depositYear", e.target.value)} /></label><label data-review-field="defense-year"><FieldTitle icon="calendar">{text.defenseYear}</FieldTitle><input required type="number" min="1900" max={draft.depositYear || "9999"} value={draft.defenseYear} onChange={(e) => set("defenseYear", e.target.value)} /></label></div>
             <div className="form-row">
               {isMpCecre ? <label data-review-field="extent"><FieldTitle icon="book">{text.volumeCount}</FieldTitle><select required value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)}><option value="2">2</option><option value="3">3</option></select></label> : <label data-review-field="extent"><FieldTitle icon="document">{text.pageCount}</FieldTitle><input required type="number" min="1" max="99999" value={draft.extentCount} onChange={(e) => set("extentCount", e.target.value)} /></label>}
               <label data-review-field="illustrations"><FieldTitle icon="review">{text.illustrations}</FieldTitle><select required value={draft.hasIllustrations} onChange={(e) => set("hasIllustrations", e.target.value as "" | "yes" | "no")}><option value="">{text.select}</option><option value="yes">{text.yes}</option><option value="no">{text.no}</option></select></label>
@@ -288,7 +305,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
       <fieldset disabled={submitting} className="form-section form-step form-step--3">
         <legend className="sr-only">{steps[2].label}</legend>
         <p className="form-section__intro">{text.intro}</p>
-        <FieldNote>{guidanceFor(text).keywordOrder}</FieldNote>
+        <FieldNote>{formFieldHints[uiLanguage].keywordPairs}</FieldNote>
         <section className="keyword-pairs" aria-label={text.keywords}>
           <div className="keyword-pairs__labels"><h3>{draft.originalLanguage === "pt" ? text.keywordPortuguese : tr(text.keywordOther)}</h3><h3>{draft.originalLanguage === "pt" ? text.keywordEnglish : text.keywordPortuguese}</h3></div>
           {Array.from({ length: Math.max(draft.keywordsPt.length, draft.keywordsEn.length) }, (_, index) => <div className="keyword-pair" key={index}>
@@ -304,7 +321,7 @@ export function StudentRequestForm({ programs }: { programs: Program[] }) {
       <fieldset disabled={submitting} className="form-section form-step form-step--4">
         <legend className="sr-only">{steps[3].label}</legend>
         <label data-review-field="public-url"><FieldTitle icon="link">{text.publicLink}</FieldTitle><input required type="url" pattern="https://.*" value={draft.publicWorkUrl} onChange={(e) => set("publicWorkUrl", e.target.value)} placeholder="https://..." /></label>
-        <div className="public-link-guidance"><FieldNote>{text.linkNote} {text.noPdf}</FieldNote><Link className="public-link-guidance__guide" href="/ajuda/artigos/compartilhar-link-publico" target="_blank" rel="noopener noreferrer"><AppIcon name="external" />{text.guide}</Link></div>
+        <div className="public-link-guidance"><FieldNote>{formFieldHints[uiLanguage].publicResource} {text.noPdf}<br />{text.linkNote}<br /><Link className="public-link-guidance__guide" href="/ajuda/artigos/compartilhar-link-publico" target="_blank" rel="noopener noreferrer"><AppIcon name="external" />{text.guide}</Link></FieldNote></div>
         <div className="declarations">
           <label className="check" data-review-field="declaration-approved"><input required type="checkbox" checked={draft.defendedAndApproved} onChange={(e) => set("defendedAndApproved", e.target.checked)} /> {text.declarations[0]}</label>
           <label className="check" data-review-field="declaration-file"><input required type="checkbox" checked={draft.finalFileConfirmed} onChange={(e) => set("finalFileConfirmed", e.target.checked)} /> {text.declarations[1]}</label>
@@ -346,7 +363,7 @@ function CommitteeFields({ values, hasCoadvisor, onChange, text }: { values: str
 type TitleLanguage = "pt" | "en" | "es" | "de" | "fr" | "it";
 function OriginalLanguageField({ draft, text, onLanguageChange }: { draft: StudentRequestDraft; text: Copy; onLanguageChange: (language: FormLanguage) => void }) {
   const languages: TitleLanguage[] = ["en", "es", "de", "fr", "it"];
-  return <label className="original-language-first" data-review-field="original-language"><FieldTitle icon="book">{text.originalLanguage}</FieldTitle><select value={draft.originalLanguage} onChange={(event) => onLanguageChange(event.target.value as FormLanguage)}><option value="pt">{languageName("pt", text)}</option>{languages.map((language) => <option key={language} value={language}>{languageName(language, text)}</option>)}</select></label>;
+  return <label className="original-language-first" data-review-field="original-language"><FieldTitle icon="book">{text.originalLanguage}</FieldTitle><select value={draft.originalLanguage} onChange={(event) => onLanguageChange(event.target.value as FormLanguage)}><option value="pt">{languageOptionName("pt", text)}</option>{languages.map((language) => <option key={language} value={language}>{languageOptionName(language, text)}</option>)}</select></label>;
 }
 
 function EquivalentTitlesFields({ draft, onChange, text }: { draft: StudentRequestDraft; onChange: (titles: StudentRequestDraft["equivalentTitles"], originalLanguage: StudentRequestDraft["originalLanguage"]) => void; text: Copy }) {
@@ -355,7 +372,7 @@ function EquivalentTitlesFields({ draft, onChange, text }: { draft: StudentReque
   const update = (index: number, patch: Partial<StudentRequestDraft["equivalentTitles"][number]>) => onChange(titles.map((item, position) => position === index ? { ...item, ...patch } : item), draft.originalLanguage);
   const isForeign = draft.originalLanguage !== "pt";
   const titles: StudentRequestDraft["equivalentTitles"] = isForeign && !draft.equivalentTitles.some((item) => item.language === "pt") ? [{ language: "pt", title: "" }, ...draft.equivalentTitles] : draft.equivalentTitles;
-  return <section className="equivalent-titles"><div className="equivalent-titles__heading"><strong><FieldTitle icon="document">{text.titleEquivalents}</FieldTitle></strong><p>{isForeign ? text.titleForeignRequired.replace("{language}", languageName(draft.originalLanguage, text)) : text.titleForeignAtLeast}</p></div>{isForeign && <FieldNote>{text.originalLanguageNotice.replace("{language}", languageName(draft.originalLanguage, text))}</FieldNote>}{titles.map((item, index) => { const selectable: TitleLanguage[] = isForeign && index === 0 ? ["pt"] : available(index); return <div className="form-row equivalent-title-row" key={`${item.language}-${index}`}><label><FieldTitle icon="book">{guidanceFor(text).equivalentLanguage}</FieldTitle><select value={item.language} disabled={isForeign && index === 0} onChange={(event) => update(index, { language: event.target.value as TitleLanguage })}>{selectable.map((language) => <option key={language} value={language}>{languageName(language, text)}</option>)}</select></label><label data-review-field={`title-equivalent-${item.language}`}><FieldTitle icon="document">{text.titleEquivalents}: {languageName(item.language, text)}</FieldTitle><input required minLength={3} maxLength={500} value={item.title} onChange={(event) => update(index, { title: event.target.value })} placeholder={guidanceFor(text).equivalentPlaceholder} /></label>{titles.length > 1 && !(isForeign && index === 0) && <button className="text-button text-button--remove" type="button" onClick={() => onChange(titles.filter((_, position) => position !== index), draft.originalLanguage)}>{text.remove}</button>}</div>})}{titles.length < 5 && available(titles.length).length > 0 && <button className="add-field" type="button" onClick={() => onChange([...titles, { language: available(titles.length)[0] ?? ("en" as const), title: "" }], draft.originalLanguage)}>{text.addEquivalentTitle}</button>}</section>;
+  return <section className="equivalent-titles"><div className="equivalent-titles__heading"><strong><FieldTitle icon="document">{text.titleEquivalents}</FieldTitle></strong><p>{isForeign ? text.titleForeignRequired.replace("{language}", languageName(draft.originalLanguage, text)) : text.titleForeignAtLeast}</p></div>{isForeign && <FieldNote>{text.originalLanguageNotice.replace("{language}", languageName(draft.originalLanguage, text))}</FieldNote>}{titles.map((item, index) => { const selectable: TitleLanguage[] = isForeign && index === 0 ? ["pt"] : available(index); return <div className="form-row equivalent-title-row" key={`${item.language}-${index}`}><label><FieldTitle icon="book">{guidanceFor(text).equivalentLanguage}</FieldTitle><select value={item.language} disabled={isForeign && index === 0} onChange={(event) => update(index, { language: event.target.value as TitleLanguage })}>{selectable.map((language) => <option key={language} value={language}>{languageOptionName(language, text)}</option>)}</select></label><label data-review-field={`title-equivalent-${item.language}`}><FieldTitle icon="document">{formFieldHints[copyLanguage(text)].equivalentTitle(languageName(item.language, text))}</FieldTitle><input required minLength={3} maxLength={500} value={item.title} onChange={(event) => update(index, { title: event.target.value })} placeholder={guidanceFor(text).equivalentPlaceholder} /></label>{titles.length > 1 && !(isForeign && index === 0) && <button className="text-button text-button--remove" type="button" onClick={() => onChange(titles.filter((_, position) => position !== index), draft.originalLanguage)}>{text.remove}</button>}</div>})}{titles.length < 5 && available(titles.length).length > 0 && <button className="add-field" type="button" onClick={() => onChange([...titles, { language: available(titles.length)[0] ?? ("en" as const), title: "" }], draft.originalLanguage)}>{text.addEquivalentTitle}</button>}</section>;
 }
 
 type ReviewItem = { label: string; step: number; field: string; optional?: boolean; value?: string; issue?: string; valid: boolean };
@@ -382,16 +399,17 @@ function getReviewItems(draft: StudentRequestDraft, programs: Program[], text: C
     { label: text.advisorReview, step: 2, field: "advisor", valid: validName(draft.people.advisor) },
     { label: text.coadvisorReview, step: 2, field: "coadvisor", optional: true, valid: !draft.people.coadvisor.trim() || validName(draft.people.coadvisor) },
     { label: text.subtitle, step: 2, field: "subtitle", optional: true, valid: draft.subtitle.length <= 500 },
-    ...draft.equivalentTitles.map((item) => ({ label: `${text.titleEquivalents}: ${languageName(item.language, text)}`, step: 2, field: `title-equivalent-${item.language}`, optional: draft.originalLanguage === "pt" && item.language === "pt", valid: validTitle(item.title) && item.language !== draft.originalLanguage && draft.equivalentTitles.filter((other) => other.language === item.language).length === 1 })),
+    ...draft.equivalentTitles.map((item) => ({ label: `${formFieldHints[copyLanguage(text)].equivalentTitle(languageName(item.language, text))}`, step: 2, field: `title-equivalent-${item.language}`, optional: draft.originalLanguage === "pt" && item.language === "pt", valid: validTitle(item.title) && item.language !== draft.originalLanguage && draft.equivalentTitles.filter((other) => other.language === item.language).length === 1 })),
     { label: text.birthReview, step: 2, field: "birth-year", optional: true, valid: !draft.people.birthYear || (/^\d{4}$/.test(draft.people.birthYear) && Number(draft.people.birthYear) >= 1900 && Number(draft.people.birthYear) <= currentYear) },
     { label: text.birthAckReview, step: 2, field: "birth-year-acknowledgement", optional: !draft.people.birthYear, valid: !draft.people.birthYear || draft.people.birthYearAcknowledged },
     ...draft.people.committeeMembers.map((member, index) => ({ label: guidanceFor(text).memberPosition.replace("{number}", String(index + (draft.people.coadvisor.trim() ? 3 : 2))), step: 2, field: `committee-${index}`, optional: true, valid: !member.trim() || validName(member) })),
     ...portugueseKeywords.flatMap((portuguese, index) => draft.originalLanguage === "pt" ? [portuguese, otherKeywords[index]] : [otherKeywords[index], portuguese]),
-    { label: text.publicHttps, step: 4, field: "public-url", valid: isPublicHttpsUrl(draft.publicWorkUrl) },
-    { label: text.depositYear, step: 2, field: "deposit-year", valid: /^\d{4}$/.test(draft.depositYear) && Number(draft.depositYear) >= 1900 },
+    { label: text.publicHttps, step: 4, field: "public-url", valid: isPublicWorkUrlCandidate(draft.publicWorkUrl), issue: formFieldHints[copyLanguage(text)].publicResource },
+    { label: formFieldHints[copyLanguage(text)].finalDeliveryYear, step: 2, field: "deposit-year", valid: /^\d{4}$/.test(draft.depositYear) && Number(draft.depositYear) >= 1900 },
     { label: text.defenseYear, step: 2, field: "defense-year", valid: /^\d{4}$/.test(draft.defenseYear) && Number(draft.defenseYear) >= 1900 && Number(draft.defenseYear) <= Number(draft.depositYear) },
     { label: text.pageOrVolumeReview, step: 2, field: "extent", valid: program?.code === "mp-cecre-master" ? ["2", "3"].includes(draft.extentCount) : /^\d+$/.test(draft.extentCount) && Number(draft.extentCount) >= 1 && Number(draft.extentCount) <= 99999 },
     { label: text.illustrationsReview, step: 2, field: "illustrations", valid: ["yes", "no"].includes(draft.hasIllustrations) },
+    ...draft.specialCases.map((specialCase) => ({ label: specialCase === "cotutelle" ? text.cotutelle : text.doubleDegree, step: 2, field: `special-case-${specialCase}`, valid: true })),
     { label: text.libraryNote, step: 4, field: "library-note", optional: true, valid: draft.libraryNote.length <= 2000 },
     ...text.declarationReview.map((label, index) => ({ label, step: 4, field: ["declaration-approved", "declaration-file", "declaration-approval"][index], valid: [draft.defendedAndApproved, draft.finalFileConfirmed, draft.approvalPageConfirmed][index] })),
   ];
@@ -403,7 +421,12 @@ function getReviewItems(draft: StudentRequestDraft, programs: Program[], text: C
     "public-url": draft.publicWorkUrl, "deposit-year": draft.depositYear,
     "defense-year": draft.defenseYear, extent: draft.extentCount,
     illustrations: draft.hasIllustrations === "yes" ? text.yes : draft.hasIllustrations === "no" ? text.no : "",
+    "birth-year-acknowledgement": draft.people.birthYearAcknowledged ? text.yes : "",
+    "declaration-approved": draft.defendedAndApproved ? text.yes : "",
+    "declaration-file": draft.finalFileConfirmed ? text.yes : "",
+    "declaration-approval": draft.approvalPageConfirmed ? text.yes : "",
   };
+  draft.specialCases.forEach((specialCase) => { values[`special-case-${specialCase}`] = text.yes; });
   [draft.people.author, ...draft.people.additionalAuthors].forEach((name, index) => { values[`author-${index}`] = name; });
   draft.people.committeeMembers.forEach((name, index) => { values[`committee-${index}`] = name; });
   draft.equivalentTitles.forEach((item) => { values[`title-equivalent-${item.language}`] = item.title; });
@@ -412,22 +435,21 @@ function getReviewItems(draft: StudentRequestDraft, programs: Program[], text: C
   return items.map((item) => ({ ...item, value: values[item.field] }));
 }
 
-function isPublicHttpsUrl(value: string) {
-  try { const url = new URL(value.trim()); return url.protocol === "https:" && Boolean(url.hostname) && !/\s/.test(value.trim()); }
-  catch { return false; }
-}
-
 function ReviewSummary({ items, onNavigate, text }: { items: ReviewItem[]; onNavigate: (step: number, field: string) => void; text: Copy }) {
   const invalidCount = items.filter((item) => !item.valid).length;
   const grouping = [{ title: text.steps[0], step: 1 }, { title: text.steps[1], step: 2 }, { title: text.steps[2], step: 3 }, { title: text.steps[3], step: 4 }];
   const sectionFor = (item: ReviewItem) => item.step === 1 ? text.steps[0] : item.step === 3 ? text.keywords : item.step === 4 ? (item.field.startsWith("declaration") ? text.steps[3] : text.publicLink) : /^(author|birth|advisor|coadvisor|committee)/.test(item.field) ? text.people : /^(title|subtitle|original-language)/.test(item.field) ? text.titleAndLanguage : text.catalogingData;
   return <>
-    <h2>{text.review}</h2><p>{text.reviewIntro}</p>
+    <h2>{text.review}</h2>{invalidCount > 0 && <p>{text.reviewIntro}</p>}
     <div className={`review-summary review-summary--${invalidCount ? "pending" : "ok"}`} role="status"><AppIcon name={invalidCount ? "help" : "check"} /><span>{invalidCount ? `${invalidCount} ${text.attention}` : text.allValid}</span></div>
     {invalidCount > 0 && <div className="review-pending-list">{grouping.map((group) => { const groupItems = items.filter((item) => item.step === group.step && !item.valid); return groupItems.length ? <section className="review-group" key={group.step}>
-      <h4><AppIcon name={stepsIcon(group.step)} />{group.title}</h4>
-      {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-subsection" key={section}>{section !== group.title && <h5>{section}</h5>}{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => <button type="button" key={`${item.field}-${index}`} data-target-field={item.field} data-target-step={item.step} className="review-item review-item--pending" onClick={() => onNavigate(item.step, item.field)}><AppIcon name="help" /><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}</span><strong>{text.pending}</strong><AppIcon name="arrowRight" />{item.issue && <small className="review-item__issue">{item.issue}</small>}</button>)}</div>)}
+      <h4><span><AppIcon name={stepsIcon(group.step)} />{group.title}</span><small>{groupItems.length}</small></h4>
+      {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-subsection" key={section}>{section !== group.title && <h5>{section}</h5>}{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => <button type="button" key={`${item.field}-${index}`} data-target-field={item.field} data-target-step={item.step} className="review-item review-item--pending" onClick={() => onNavigate(item.step, item.field)}><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}{item.issue && <small className="review-item__issue">{item.issue}</small>}</span><AppIcon name="arrowRight" /></button>)}</div>)}
     </section> : null; })}</div>}
+    {invalidCount === 0 && <div className="review-complete-list">{[0, 1].map((column) => <div className="review-complete-column" key={column}>{grouping.filter((group) => column === 0 ? group.step !== 2 : group.step === 2).map((group) => { const groupItems = items.filter((item) => item.step === group.step && item.value?.trim()); return <section className="review-complete-group" key={group.step} style={{ order: group.step }}>
+      <div className="review-complete-group__heading"><h3><AppIcon name={stepsIcon(group.step)} />{group.title}</h3><button type="button" onClick={() => onNavigate(group.step, groupItems[0]?.field ?? "")}>{text.reviewOptional}</button></div>
+      {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-complete-subsection" key={section}>{section !== group.title && <h4>{section}</h4>}<dl>{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => <div key={`${item.field}-${index}`}><dt>{item.label}</dt><dd>{item.value}</dd></div>)}</dl></div>)}
+    </section>; })}</div>)}</div>}
   </>;
 }
 
