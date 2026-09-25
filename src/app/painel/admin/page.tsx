@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { AdminOperations } from "@/components/admin-operations";
-import { CduCatalogAdmin } from "@/components/cdu-catalog-admin";
 import { createClient } from "@/lib/supabase/server";
 import { initialKnowledgeEntries, type KnowledgeEntry } from "@/lib/knowledge-base";
 import { safeKnowledgeHtml } from "@/lib/knowledge-service";
@@ -26,5 +25,5 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ]);
   const knowledgeEntries: KnowledgeEntry[] = (knowledge.data ? knowledge.data as KnowledgeEntry[] : initialKnowledgeEntries(faqs.data ?? []))
     .map((entry) => ({ ...entry, body_html: safeKnowledgeHtml(entry.body_html) }));
-  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} /><CduCatalogAdmin entries={cduDescriptions.data ?? []} /></main>;
+  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} cduEntries={cduDescriptions.data ?? []} /></main>;
 }

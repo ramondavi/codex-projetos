@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ComponentProps } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { KnowledgeBaseAdmin, type KnowledgeEntry } from "./knowledge-base-admin";
+import { CduCatalogAdmin } from "./cdu-catalog-admin";
 
 type User = {
   id: string;
@@ -95,6 +96,7 @@ export function AdminOperations(props: {
   logs: Log[];
   purgeDocuments: Purge[];
   knowledge: KnowledgeEntry[];
+  cduEntries: ComponentProps<typeof CduCatalogAdmin>["entries"];
 }) {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState("");
@@ -478,7 +480,7 @@ export function AdminOperations(props: {
           : user.role !== "student")) &&
       (userStatus === "all" || user.status === userStatus),
   );
-  const adminTabs: Record<typeof props.area, [string, string][]> = { operacao: [["users", "Equipe e acessos"], ["programs", "Programas e SLA"], ["library", "Calendário e mural"]], conteudo: [["service", "Pendências"], ["faq", "Ajuda e FAQ"]], controle: [["stats", "Indicadores"], ["retention", "Arquivos e retenção"], ["audit", "Auditoria"]] };
+  const adminTabs: Record<typeof props.area, [string, string][]> = { operacao: [["users", "Equipe e acessos"], ["programs", "Programas e SLA"], ["library", "Calendário e mural"]], conteudo: [["service", "Pendências"], ["faq", "Ajuda e FAQ"], ["cdu", "Vocabulário técnico"]], controle: [["stats", "Indicadores"], ["retention", "Arquivos e retenção"], ["audit", "Auditoria"]] };
   useEffect(() => {
     setActiveTab(props.area === "conteudo" ? "service" : props.area === "controle" ? "stats" : "users");
   }, [props.area]);
@@ -866,26 +868,30 @@ export function AdminOperations(props: {
             action={(f) => saveTemplate(t, f)}
             key={t.id}
           >
-            <code>{t.code}</code>
-            <label>
-              Rótulo
-              <input name="label" defaultValue={t.label} />
-            </label>
-            <label className="admin-wide">
-              Texto
-              <textarea name="message" defaultValue={t.message} />
-            </label>
-            <label>
-              Ordem
-              <input name="position" type="number" defaultValue={t.position} />
-            </label>
-            <label>
-              <input name="active" type="checkbox" defaultChecked={t.active} />{" "}
-              Ativo
-            </label>
-            <button className="button button--secondary button--small">
-              Salvar
-            </button>
+            <code className="admin-template__code">{t.code}</code>
+            <div className="admin-template__fields">
+              <label>
+                Rótulo
+                <input name="label" defaultValue={t.label} />
+              </label>
+              <label>
+                Texto
+                <textarea name="message" rows={4} defaultValue={t.message} />
+              </label>
+            </div>
+            <div className="admin-template__settings">
+              <label>
+                Ordem
+                <input name="position" type="number" defaultValue={t.position} />
+              </label>
+              <label className="admin-template__active">
+                <input name="active" type="checkbox" defaultChecked={t.active} />
+                Ativo
+              </label>
+              <button className="button button--secondary button--small">
+                Salvar
+              </button>
+            </div>
           </form>
         ))}
       </section>
@@ -992,6 +998,7 @@ export function AdminOperations(props: {
         <p>Edite o conteúdo publicado, seus públicos e a forma como aparece na Central.</p>
         <KnowledgeBaseAdmin entries={props.knowledge} />
       </section>
+      <CduCatalogAdmin entries={props.cduEntries} />
     </div>
   );
 }

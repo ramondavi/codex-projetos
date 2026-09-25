@@ -21,9 +21,10 @@ function Trail({ items, variant }: { items: Crumb[]; variant: "public" | "dashbo
   return <nav className={`breadcrumb breadcrumb--${variant}`} aria-label={copy[language][0]}><ol>{items.map((item, index) => <li key={`${item.label}-${index}`}>{item.href && index < items.length - 1 ? <Link href={item.href}>{item.label}</Link> : <span aria-current={index === items.length - 1 ? "page" : undefined}>{item.label}</span>}</li>)}</ol></nav>;
 }
 
-export function PublicBreadcrumbs() {
+export function PublicBreadcrumbs({ articleTitle }: { articleTitle?: string }) {
   const pathname = usePathname();
   const { language } = useInterfaceLanguage(); const t = copy[language];
+  if (pathname.startsWith("/ajuda/artigos/") && articleTitle) return <Trail variant="public" items={[{ label: t[1], href: "/" }, { label: t[2], href: "/ajuda" }, { label: articleTitle }]} />;
   const labels: Record<string, string> = { "/ajuda": t[2], "/perguntas-frequentes": t[2], "/politica-de-privacidade": t[3], "/acessibilidade": t[4] };
   const label = labels[pathname];
   return label ? <Trail variant="public" items={[{ label: t[1], href: "/" }, { label }]} /> : null;

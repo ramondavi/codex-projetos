@@ -20,7 +20,7 @@ export function PasswordRecoveryForm() {
   }
 
   return <form className="form-stack" onSubmit={submit}>
-    <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="seunome@ufba.br" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
+    <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="Seu e-mail institucional" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
     {message && <p className="auth-feedback" role="status">{message}</p>}
     <button className="button button--primary button--full" type="submit" disabled={busy}>{busy ? "Enviando…" : "Enviar link de recuperação"}</button>
   </form>;

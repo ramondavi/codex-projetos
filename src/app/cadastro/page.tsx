@@ -14,7 +14,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
       <form className="form-stack" action={signup}>
         <label>Nome completo<input name="name" autoComplete="name" required /></label>
         <label>CPF<input name="cpf" inputMode="numeric" autoComplete="off" placeholder="000.000.000-00" required /></label>
-        <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="seunome@ufba.br" required /></label>
+        <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="Seu e-mail institucional" required /></label>
         <div className="form-row">
           <label>Senha<input type="password" name="password" autoComplete="new-password" required /></label>
           <label>Confirmar senha<input type="password" name="passwordConfirmation" autoComplete="new-password" required /></label>

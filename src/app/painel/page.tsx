@@ -18,20 +18,20 @@ export default async function StudentDashboardPage() {
     <main className="dashboard-main">
       <div className="page-heading">
         <div><p className="eyebrow">Visão geral</p><h1>Seu acompanhamento</h1></div>
-        <span className="sla-card"><strong>3</strong> dias úteis<br />prazo médio atual</span>
       </div>
 
-      <section className="dashboard-grid">
+      <section className={`dashboard-grid${activeRequest ? " dashboard-grid--active-request" : ""}`}>
         <article className="next-action">
           <div className="next-action__content">
             <p className="eyebrow">Sua próxima ação</p>
             <h2>{activeRequest ? activeRequest.protocol : "Inicie sua solicitação"}</h2>
             <p>{activeRequest ? `Seu trabalho “${activeRequest.title}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
+            {!activeRequest && <p className="next-action__draft-note"><AppIcon name="document" /><span>Você pode começar agora e continuar depois. O rascunho é salvo automaticamente neste dispositivo.</span></p>}
             {activeRequest ? <Link className="button button--primary button--with-icon" href="/painel/solicitacao"><AppIcon name="request" />Acompanhar protocolo</Link> : <StudentRequestShortcut className="button button--primary" />}
           </div>
         </article>
         <aside className="dashboard-side">
-          <section className="panel">
+          {!activeRequest && <section className="panel before-request-panel">
             <p className="eyebrow"><AppIcon name="check" /> Antes de solicitar</p>
             <ul className="check-list">
               <li>Trabalho defendido e aprovado</li>
@@ -39,11 +39,14 @@ export default async function StudentDashboardPage() {
               <li>Folha de aprovação, quando aplicável</li>
               <li>Link público de visualização</li>
             </ul>
-          </section>
+            <Link className="before-request-panel__guide" href="/ajuda/artigos/preparar-solicitacao">Leia o guia completo de preparação <AppIcon name="arrowRight" /></Link>
+          </section>}
           <section className="panel panel--institutional calendar-panel">
             <strong className="panel-heading-with-icon"><AppIcon name="calendar" />Avisos e prazos</strong>
-            <p>Atendimento normal. Acompanhe por aqui os avisos e as datas informadas pela biblioteca.</p>
-            {calendarDates?.length ? <ul>{calendarDates.map((item) => <li key={item.id}><time>{new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(item.starts_at))}</time><span>{item.title} <small>{item.type === "holiday" ? "Feriado" : "Ponto facultativo"}</small></span></li>)}</ul> : <p className="calendar-panel__empty">Não há feriados ou pontos facultativos cadastrados para este mês.</p>}
+            <div className="calendar-panel__status"><span className="calendar-panel__status-dot" aria-hidden="true" /><strong>Agora - Atendimento normal</strong></div>
+            <div className="calendar-panel__deadline"><span><strong>Prazo de referência</strong><small>Para análise da solicitação após o envio</small></span><strong>3 <span>dias úteis</span></strong></div>
+            <p>Acompanhe por aqui os avisos e as datas informadas pela biblioteca.</p>
+            {calendarDates?.length ? <ul>{calendarDates.map((item) => <li key={item.id}><time>{new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short" }).format(new Date(item.starts_at))}</time><span><strong>{item.title}</strong><small>{item.type === "holiday" ? "Feriado · sem atendimento; prazo pausado" : "Ponto facultativo · prazo pausado; atendimento a confirmar"}</small></span></li>)}</ul> : <p className="calendar-panel__empty">Não há feriados ou pontos facultativos cadastrados para este mês.</p>}
           </section>
         </aside>
       </section>
@@ -81,6 +84,6 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
     </section>
     {administrator && <section className="overview-context"><article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article><article className="panel"><p className="eyebrow">Prioridade da fila</p><h2>{unassigned ? `${unassigned} solicitações aguardam responsável` : "Fila distribuída"}</h2><p>{unassigned ? "Reveja a fila para distribuir ou assumir os atendimentos disponíveis." : "No momento, não há solicitações sem responsável."}</p><Link className="button button--secondary button--small" href="/painel/fila">Gerenciar fila</Link></article></section>}
     {administrator && <AdminProvisioningAlert candidates={candidates ?? []} />}
-    <section className="overview-announcements"><div><p className="eyebrow"><AppIcon name="inbox" /> Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><AppIcon name="inbox" /><span>{announcementLabels[item.type] ?? "Aviso"}</span><strong>{item.title}</strong><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
+    <section className="overview-announcements"><div><p className="eyebrow"><AppIcon name="inbox" /> Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{announcementLabels[item.type] ?? "Aviso"}</span><div className="overview-announcements__item-heading"><AppIcon name="inbox" /><strong>{item.title}</strong></div><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
   </main>;
 }

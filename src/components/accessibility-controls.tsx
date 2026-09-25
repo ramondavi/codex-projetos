@@ -13,6 +13,10 @@ const accessibilityCopy = {
   fr: ["Aller au contenu", "Aller au menu", "Centre d’aide", "Accessibilité", "Outils d’accessibilité", "Réglages d’affichage", "Réduire le texte", "Taille par défaut", "Agrandir le texte", "Activer le contraste élevé", "Contraste élevé", "Confidentialité"],
   it: ["Vai al contenuto", "Vai al menu", "Centro assistenza", "Accessibilità", "Strumenti di accessibilità", "Impostazioni di visualizzazione", "Riduci testo", "Dimensione predefinita", "Ingrandisci testo", "Attiva alto contrasto", "Alto contrasto", "Privacy"],
 };
+const mobileLinkCopy = {
+  pt: ["Conteúdo", "Menu", "Ajuda", "Acessib.", "Privacidade"], en: ["Content", "Menu", "Help", "Access.", "Privacy"], es: ["Contenido", "Menú", "Ayuda", "Acces.", "Privac."],
+  de: ["Inhalt", "Menü", "Hilfe", "Barrieref.", "Datenschutz"], fr: ["Contenu", "Menu", "Aide", "Access.", "Confid."], it: ["Contenuto", "Menu", "Aiuto", "Accessib.", "Privacy"],
+} as const;
 
 type TextScale = "normal" | "large" | "larger";
 
@@ -77,11 +81,11 @@ export function AccessibilityControls() {
     <nav className="accessibility-bar" aria-label={t[4]}>
       <div className="container accessibility-bar__inner">
         <div className="accessibility-bar__links">
-          <a href="#conteudo" accessKey="1">{t[0]} <span aria-hidden="true">[1]</span></a>
-          <a href="#menu-principal" accessKey="2">{t[1]} <span aria-hidden="true">[2]</span></a>
-          <a href="/ajuda" accessKey="3">{t[2]} <span aria-hidden="true">[3]</span></a>
-          <a href="/acessibilidade" accessKey="4">{t[3]} <span aria-hidden="true">[4]</span></a>
-          <a href="/politica-de-privacidade" accessKey="5">{t[11]} <span aria-hidden="true">[5]</span></a>
+          <a href="#conteudo" accessKey="1" aria-label={t[0]}><span className="accessibility-bar__link-label">{t[0]}</span><span className="accessibility-bar__link-mobile">{mobileLinkCopy[language][0]}</span><span className="accessibility-bar__link-short" aria-hidden="true">[1]</span></a>
+          <a href="#menu-principal" accessKey="2" aria-label={t[1]}><span className="accessibility-bar__link-label">{t[1]}</span><span className="accessibility-bar__link-mobile">{mobileLinkCopy[language][1]}</span><span className="accessibility-bar__link-short" aria-hidden="true">[2]</span></a>
+          <a href="/ajuda" accessKey="3" aria-label={t[2]}><span className="accessibility-bar__link-label">{t[2]}</span><span className="accessibility-bar__link-mobile">{mobileLinkCopy[language][2]}</span><span className="accessibility-bar__link-short" aria-hidden="true">[3]</span></a>
+          <a href="/acessibilidade" accessKey="4" aria-label={t[3]}><span className="accessibility-bar__link-label">{t[3]}</span><span className="accessibility-bar__link-mobile">{mobileLinkCopy[language][3]}</span><span className="accessibility-bar__link-short" aria-hidden="true">[4]</span></a>
+          <a href="/politica-de-privacidade" accessKey="5" aria-label={t[11]}><span className="accessibility-bar__link-label">{t[11]}</span><span className="accessibility-bar__link-mobile">{mobileLinkCopy[language][4]}</span><span className="accessibility-bar__link-short" aria-hidden="true">[5]</span></a>
         </div>
         <div className="accessibility-bar__controls" role="group" aria-label={t[5]}>
           <button type="button" onClick={() => changeScale(scales[Math.max(0, scaleIndex - 1)])} disabled={scaleIndex === 0} aria-label={t[6]} title={t[6]}>A−</button>

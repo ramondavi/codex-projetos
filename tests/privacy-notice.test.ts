@@ -11,7 +11,8 @@ describe("política de privacidade", () => {
 
   it("informa direitos, contatos e os serviços técnicos declarados", async () => {
     const page = await readFile("src/app/politica-de-privacidade/page.tsx", "utf8");
-    assert.match(page, /ouvidoria@ufba\.br/);
+    assert.match(page, /<ProtectedEmail recipient="privacy" \/>/);
+    assert.doesNotMatch(page, /ouvidoria@ufba\.br/);
     assert.match(page, /Você pode confirmar o tratamento/);
     assert.match(page, /Supabase/);
     assert.match(page, /Vercel/);
