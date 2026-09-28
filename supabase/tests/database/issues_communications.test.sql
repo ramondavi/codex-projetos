@@ -3,8 +3,8 @@ create extension if not exists pgtap with schema extensions;
 select plan(29);
 
 insert into auth.users (id,email,email_confirmed_at,raw_user_meta_data) values
- ('70000000-0000-4000-8000-000000000001','pendencia.estudante1@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Pendência Um","cpf":"81000000508"}'::jsonb),
- ('70000000-0000-4000-8000-000000000002','pendencia.estudante2@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Pendência Dois","cpf":"81000000699"}'::jsonb),
+ ('70000000-0000-4000-8000-000000000001','pendencia.estudante1@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Pendência Um","cpf":"81000000508"}'::jsonb),
+ ('70000000-0000-4000-8000-000000000002','pendencia.estudante2@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Pendência Dois","cpf":"81000000699"}'::jsonb),
  ('70000000-0000-4000-8000-000000000003','pendencia.catalogador@ufba.br',now(),'{}'::jsonb),
  ('70000000-0000-4000-8000-000000000004','pendencia.admin@ufba.br',now(),'{}'::jsonb);
 insert into public.profiles (id,full_name,email,role,status) values
@@ -16,11 +16,13 @@ insert into public.staff_profiles (profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='70000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),
  'registrationNumber','PEND2026','title','Título original','subtitle','Subtítulo aprovado',
- 'publicWorkUrl','https://example.org/original.pdf','people',jsonb_build_object('author','Estudante Pendência Um','advisor','Orientador Correto'),
- 'keywordsPt',jsonb_build_array('Arquitetura'),'specialCases',jsonb_build_array(),
+ 'publicWorkUrl','https://example.org/original.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,
+ 'people',jsonb_build_object('author','Estudante Pendência Um','advisor','Orientador Correto','advisorNoteLabel','Orientador'),
+ 'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),
+ 'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','Original title')),'hasIllustrations',false,'specialCases',jsonb_build_array(),
  'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre solicitação');
 reset role;
 select is((select count(*)::integer from public.email_outbox where event_type='request_opened'),1,'abertura gera um e-mail na outbox');

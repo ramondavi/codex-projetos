@@ -3,7 +3,7 @@ create extension if not exists pgtap with schema extensions;
 select plan(21);
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Nada","cpf":"81000000770"}'),
+ ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Nada","cpf":"81000000770"}'),
  ('94000000-0000-4000-8000-000000000002','nada.catalogador@ufba.br',now(),'{}'),
  ('94000000-0000-4000-8000-000000000003','nada.outro@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values
@@ -13,7 +13,7 @@ insert into public.staff_profiles(profile_id,professional_name,crb) values
  ('94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111'),('94000000-0000-4000-8000-000000000003','Outro Nada','CRB-5/2222');
 
 set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request(jsonb_build_object('academicProgramId',(select id from public.academic_programs limit 1),'registrationNumber','NADA2026','title','Teste Nada','publicWorkUrl','https://example.org/work.pdf','people',jsonb_build_object('author','Ana','advisor','Bia'),'keywordsPt',jsonb_build_array('Arquitetura'),'keywordsEn',jsonb_build_array('Architecture'),'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
+select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object('academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),'registrationNumber','NADA2026','title','Teste Nada','publicWorkUrl','https://example.org/work.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'people',jsonb_build_object('author','Ana','advisor','Bia','advisorNoteLabel','Orientador'),'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','No pending obligations')),'hasIllustrations',false,'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
 reset role;
 update public.cataloging_requests set status='approved',assigned_to='94000000-0000-4000-8000-000000000002';
 set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000001';

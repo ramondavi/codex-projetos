@@ -18,7 +18,8 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 - Avaliar após o piloto se a página da coordenação precisa de outros dados além da identificação básica do trabalho, status, SLA e timeline operacional já implementados.
 - Cadastrar os e-mails oficiais das coordenações por curso/programa.
 - Confirmar a viabilidade e as políticas do SMTP institucional da biblioteca; se inviável, escolher o serviço transacional externo gratuito.
-- Definir retenção, preferências e a regra de arquivamento/leitura da central de notificações autenticadas, sem expor dados sensíveis.
+- Após o MVP, avaliar integração das notificações da equipe com notificações nativas do navegador/sistema e Web Push, inclusive com a aba do Pronto! fechada; definir consentimento, compatibilidade, operação e retenção das assinaturas antes de implementar.
+- Antes da publicação da exigência de data de nascimento no cadastro, validar institucionalmente a minuta v1.1 da Política de Privacidade, que descreve esse dado e o uso opcional do ano na ficha. A v1.0 aprovada e seus registros de ciência permanecem preservados.
 
 ## Atendimento e operação
 

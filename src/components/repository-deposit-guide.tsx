@@ -19,14 +19,21 @@ export function RepositoryDepositGuide({ requestId, startedAt, fields }: { reque
     setBusy(false);
   }
   async function copy(label: string, value: string) {
-    await navigator.clipboard.writeText(value); setCopied(label); window.setTimeout(() => setCopied(""), 1600);
+    const plain = value.replace(/\*\*/g, "");
+    if (label === "Citação do trabalho" && typeof ClipboardItem !== "undefined") {
+      const escaped = (part: string) => part.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const html = value.split(/(\*\*[^*]+\*\*)/g).map((part) => part.startsWith("**") && part.endsWith("**") ? `<strong>${escaped(part.slice(2, -2))}</strong>` : escaped(part)).join("");
+      try { await navigator.clipboard.write([new ClipboardItem({ "text/plain": new Blob([plain], { type: "text/plain" }), "text/html": new Blob([html], { type: "text/html" }) })]); }
+      catch { await navigator.clipboard.writeText(plain); }
+    } else await navigator.clipboard.writeText(plain);
+    setCopied(label); window.setTimeout(() => setCopied(""), 1600);
   }
   if (!started) return <section className="repository-start panel"><p className="eyebrow">Etapa liberada</p><h2>Inicie quando estiver diante do RI/UFBA</h2><p>O Pronto! registra somente que você começou. O trabalho continua no seu computador e será enviado diretamente ao Repositório Institucional.</p><button className="button button--primary button--with-icon" disabled={busy} onClick={begin}><AppIcon name="upload" />{busy ? "Registrando…" : "Iniciar autodepósito assistido"}</button>{error && <p className="auth-feedback" role="alert">{error}</p>}</section>;
   const steps = [
     ["01", "Coleção", "No RI/UFBA, clique em “Iniciar um novo depósito” e escolha exatamente a coleção indicada abaixo."],
     ["02", "Tipo de documento", "Selecione o tipo observado para seu curso ou programa."],
     ["03", "Metadados", "Use os botões para reduzir a redigitação. Confira cada valor no RI antes de avançar."],
-    ["04", "Campos preenchidos diretamente no RI", "Informe data da defesa, acesso e eventual embargo, área CNPq, resumo/abstract, referências, DOI, ORCID/Lattes e banca conforme o trabalho. A área CNPq é escolhida na janela “Categorias de assuntos” do próprio RI."],
+    ["04", "Campos preenchidos diretamente no RI", "Informe data da defesa, acesso e eventual embargo, área CNPq, resumo/abstract, referências, DOI, ORCID/Lattes e banca conforme o trabalho. Copie a citação validada e confira como ela aparece no RI. A área CNPq é escolhida na janela “Categorias de assuntos” do próprio RI."],
     ["05", "Upload no RI", "Selecione no RI o PDF final que você já baixou do Pronto!. Use nome claro, sem vírgula, confira formato, tamanho, arquivo primário e configurações de acesso. Nenhum arquivo é enviado ao Pronto! nesta etapa."],
     ["06", "Verificação", "Revise todos os blocos. Use “Correção de um campo” quando necessário e confirme o arquivo carregado."],
     ["07", "Licença", "Escolha você mesmo entre as opções exibidas no RI e leia a licença de distribuição não exclusiva. O Pronto! não escolhe licença, acesso nem embargo."],
@@ -34,7 +41,7 @@ export function RepositoryDepositGuide({ requestId, startedAt, fields }: { reque
   ];
   return <>
     <section className="repository-progress"><strong>Autodepósito iniciado</strong><span>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "long", timeStyle: "short" }).format(new Date(started))}</span></section>
-    <section className="repository-map panel"><p className="eyebrow">Dados disponíveis para copiar</p><h2>Mapa Pronto! → RI/UFBA</h2><div>{fields.map((field) => <article key={field.label}><div><span>{field.label}</span>{field.value ? <strong>{field.value}</strong> : <em>{field.note ?? "Preencha diretamente no RI/UFBA."}</em>}</div>{field.value && <button className="button button--secondary button--small" onClick={() => copy(field.label, field.value!)}>{copied === field.label ? "Copiado" : "Copiar"}</button>}</article>)}</div></section>
+    <section className="repository-map panel"><p className="eyebrow">Dados disponíveis para copiar</p><h2>Mapa Pronto! → RI/UFBA</h2><div>{fields.map((field) => <article key={field.label}><div><span>{field.label}</span>{field.value ? field.label === "Citação do trabalho" ? <p className="repository-citation">{field.value.split(/(\*\*[^*]+\*\*)/g).map((part, index) => part.startsWith("**") && part.endsWith("**") ? <strong key={index}>{part.slice(2, -2)}</strong> : part)}</p> : <strong>{field.value}</strong> : <em>{field.note ?? "Preencha diretamente no RI/UFBA."}</em>}</div>{field.value && <button className="button button--secondary button--small" onClick={() => copy(field.label, field.value!)}>{copied === field.label ? "Copiado" : "Copiar"}</button>}</article>)}</div></section>
     <section className="repository-steps">{steps.map(([index,title,body]) => <article className="panel" key={index}><span>{index}</span><div><h2>{title}</h2><p>{body}</p></div></article>)}</section>
     <section className="pdfa-guidance"><strong>PDF/A é uma orientação de preservação</strong><p>Consulte o tutorial oficial de conversão antes do upload. O Pronto! não converte nem valida automaticamente PDF/A.</p></section>
     <a className="button button--primary button--with-icon repository-ri-link" href="https://repositorio.ufba.br/submit" target="_blank" rel="noreferrer"><AppIcon name="external" />Abrir o RI/UFBA em nova aba</a>

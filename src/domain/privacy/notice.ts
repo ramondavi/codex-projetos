@@ -1,1 +1,1 @@
-export const PRIVACY_NOTICE_VERSION = "1.0";
+export const PRIVACY_NOTICE_VERSION = "1.1";

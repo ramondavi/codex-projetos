@@ -6,6 +6,9 @@ import { PrivacyAcknowledgement } from "@/components/privacy-acknowledgement";
 import type { Metadata } from "next";
 import { isCurrentServiceAnnouncement } from "@/lib/service-announcements";
 import { getInterfaceLanguage } from "@/lib/server-language";
+import { AuthShell } from "@/components/auth-shell";
+import { AuthFeedback } from "@/components/auth-feedback";
+import Link from "next/link";
 
 export async function generateMetadata(): Promise<Metadata> {
   const titles = { pt: "Painel", en: "Dashboard", es: "Panel", de: "Dashboard", fr: "Tableau de bord", it: "Pannello" };
@@ -16,8 +19,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/entrar");
-  const { data: profile } = await supabase.from("profiles").select("full_name, role, status").eq("id", user.id).single();
-  if (!profile || profile.status !== "active") {
+  const { data: profile, error: profileError } = await supabase.from("profiles").select("full_name, role, status, avatar_choice").eq("id", user.id).single();
+  if (profileError || !profile) return <AuthShell title="Não foi possível carregar sua conta" description="Sua sessão foi mantida. Tente abrir o painel novamente em instantes."><AuthFeedback error="Falha temporária ao consultar os dados da conta." /><Link href="/painel">Tentar novamente</Link></AuthShell>;
+  if (profile.status !== "active") {
     await supabase.auth.signOut();
     redirect("/entrar?error=Esta%20conta%20n%C3%A3o%20est%C3%A1%20ativa.");
   }
@@ -28,7 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const serviceStatusIsExceptional = Boolean(currentAnnouncement);
   const { data: acknowledgement } = await supabase.from("privacy_notice_acknowledgements").select("id").eq("profile_id", user.id).eq("notice_version", PRIVACY_NOTICE_VERSION).maybeSingle();
   if (!acknowledgement) {
-    return <DashboardShell fullName={profile.full_name} role={profile.role} serviceStatus={serviceStatus} serviceStatusIsExceptional={serviceStatusIsExceptional}><main className="dashboard-main dashboard-main--narrow privacy-acknowledgement"><p className="eyebrow">Antes de continuar</p><h1>Política de Privacidade</h1><p>O Pronto! atualizou sua Política de Privacidade. Leia o documento e registre sua ciência para acessar o painel.</p><PrivacyAcknowledgement /></main></DashboardShell>;
+    return <DashboardShell fullName={profile.full_name} role={profile.role} userId={user.id} avatarChoice={profile.avatar_choice} showNotifications={false} serviceStatus={serviceStatus} serviceStatusIsExceptional={serviceStatusIsExceptional}><main className="dashboard-main dashboard-main--narrow" aria-hidden="true" /><PrivacyAcknowledgement /></DashboardShell>;
   }
-  return <DashboardShell fullName={profile.full_name} role={profile.role} serviceStatus={serviceStatus} serviceStatusIsExceptional={serviceStatusIsExceptional}>{children}</DashboardShell>;
+  return <DashboardShell fullName={profile.full_name} role={profile.role} userId={user.id} avatarChoice={profile.avatar_choice} serviceStatus={serviceStatus} serviceStatusIsExceptional={serviceStatusIsExceptional}>{children}</DashboardShell>;
 }

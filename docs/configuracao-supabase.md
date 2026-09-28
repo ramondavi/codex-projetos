@@ -7,6 +7,12 @@ Este guia operacional complementa o Documento-Mestre. Nunca cole senhas, chaves 
 - Plano Free, organização `BIB/FAUFBA`, projeto `Pronto!` e região `South America (São Paulo)` (`sa-east-1`).
 - Postgres padrão, Data API habilitada, exposição automática de tabelas desabilitada e RLS automático habilitado.
 - Cadastro por e-mail habilitado, confirmação de e-mail obrigatória, login anônimo e vinculação manual desabilitados.
+
+### Modelos de e-mail de autenticação
+
+Os arquivos em `supabase/templates/` personalizam localmente as mensagens de confirmação de cadastro, recuperação de senha e alteração de e-mail. A configuração está em `supabase/config.toml`. No projeto hospedado, esses arquivos não são aplicados automaticamente: antes da publicação, configure os mesmos assuntos e conteúdos em **Authentication → Email Templates** no painel do Supabase. Mantenha o endereço público do site correto para que o logo carregue e os links de confirmação apontem para o ambiente esperado. Essa configuração remota exige a autorização aplicável.
+
+A regra de senha exige 8 caracteres, letra maiúscula, número e caractere especial. No Supabase hospedado, configure o comprimento mínimo como 8 em **Authentication → Settings**. Deixe a composição nativa sem exigência adicional: sua opção com símbolo também obrigaria letra minúscula, que não faz parte da regra aprovada. O Pronto! valida a composição antes do envio ao Auth.
 - Site URL local `http://localhost:3000` e redirecionamento local `http://localhost:3000/**`.
 
 ## Variáveis locais

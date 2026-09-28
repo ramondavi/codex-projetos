@@ -41,12 +41,12 @@ test("compacts repeatable draft fields without losing structured people", () => 
     ...emptyStudentRequestDraft,
     title: "  Um trabalho  ",
     keywordsPt: [" Arquitetura ", "", " Cidade "],
-    people: { author: "  Ana Silva ", additionalAuthors: [], committeeMembers: [" Prof.ª Lia "], birthYear: "1998", birthYearAcknowledged: true, advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+    people: { author: "  Ana Silva ", additionalAuthors: [], committeeMembers: [" Prof.ª Lia "], birthYearAcknowledged: true, advisor: " Prof. José ", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   });
   assert.equal(compact.title, "Um trabalho");
   assert.deepEqual(compact.keywordsPt, ["Arquitetura", "Cidade"]);
   assert.equal(compact.people.author, "Ana Silva");
-  assert.equal(compact.people.birthYear, 1998);
+  assert.equal(compact.people.birthYearAcknowledged, true);
   assert.deepEqual(compact.people.committeeMembers, ["Prof.ª Lia"]);
   assert.match(STUDENT_REQUEST_DRAFT_KEY, /^pronto:student-request-draft:/);
 });
@@ -71,7 +71,7 @@ test("recupera rascunhos antigos sem deslocar a equivalência dos termos", () =>
   });
   assert.equal(restored.title, "Título preservado");
   assert.equal(restored.people.author, "Ana Silva");
-  assert.equal(restored.people.birthYear, "1998");
+  assert.equal("birthYear" in restored.people, false);
   assert.equal(restored.hasIllustrations, "no");
   assert.deepEqual(restored.keywordsPt, ["Arquitetura", "", "Cidade"]);
   assert.deepEqual(restored.keywordsEn, ["Architecture", "Housing", "City"]);

@@ -12,6 +12,7 @@ export type QueueRequest = {
   level: string;
   advisorName: string;
   hasInternalNote: boolean;
+  isPriority: boolean;
   progressLabel: string;
   progressTone: "waiting" | "active" | "ready" | "done" | "attention";
 };
