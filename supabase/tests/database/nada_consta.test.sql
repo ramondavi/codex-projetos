@@ -42,6 +42,12 @@ insert into public.request_controlled_terms(request_id,controlled_term_id,label_
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000010','Arquitetura','Architecture',true,0),
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000011','Habitação','Housing',false,1),
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000012','Urbanismo','Urbanism',false,2);
+update public.cataloging_requests set status='in_review';
+set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000002';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'ANA. Teste Nada. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
+reset role;
+update public.cataloging_requests set status='approved';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
   values ((select id from public.cataloging_requests limit 1),'{}'::jsonb,'94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111');
 update public.cataloging_requests set status='in_review';

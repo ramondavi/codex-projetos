@@ -45,6 +45,8 @@ select lives_ok($$select public.save_assisted_cataloging((select id from public.
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000003';
 select throws_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'P0001','request_not_ready_for_homologation','outro catalogador não homologa o ticket');
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'SILVA, Ana. Arquitetura social. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
 select lives_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'responsável homologa a ficha');
 select is((select status from public.cataloging_requests limit 1),'approved'::public.request_status,'solicitação fica homologada');
 select is((select count(*)::integer from public.cataloging_card_homologations),1,'homologação cria um snapshot único');

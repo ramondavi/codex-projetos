@@ -36,7 +36,12 @@ with created_terms as (
   insert into public.controlled_terms(preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by)
   values ('arquitetura','arquitetura','architecture','architecture','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('habitação','habitação','housing','housing','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('urbanismo','urbanismo','urbanism','urbanism','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003') returning id,preferred_label_pt,preferred_label_en
 ) insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position) select (select id from public.cataloging_requests),id,preferred_label_pt,preferred_label_en,preferred_label_pt='arquitetura',row_number() over(order by preferred_label_pt)-1 from created_terms;
-update public.cataloging_requests set status='approved',assigned_to='98000000-0000-4000-8000-000000000003';
+update public.cataloging_requests set status='in_review',assigned_to='98000000-0000-4000-8000-000000000003';
+set local role authenticated; set local request.jwt.claim.sub='98000000-0000-4000-8000-000000000003';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'ANA. Trabalho para o RI. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
+reset role;
+update public.cataloging_requests set status='approved';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
  select id,'{}','98000000-0000-4000-8000-000000000003','Catalogador Depósito','CRB-5/4001' from public.cataloging_requests;
 insert into public.nada_consta_documents(request_id,object_path,original_name,size_bytes,mime_type,sha256,status,uploaded_by,validated_by,validated_at,released_at)
