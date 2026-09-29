@@ -15,6 +15,8 @@ export default async function StudentDashboardPage() {
   if (profile.role === "cataloger" || profile.role === "administrator") return <StaffOverview role={profile.role} userId={user.id} />;
   const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
   const { data: programs } = activeRequest ? { data: [] } : await supabase.from("academic_programs").select("id,code,name,level,work_type").eq("active", true);
+  const { data: feedbackInvitations } = await supabase.from("feedback_invitations").select("responded");
+  const hasPendingFeedback = (feedbackInvitations ?? []).some((invitation) => !invitation.responded);
   const now = new Date(); const monthStart = new Date(now.getFullYear(), now.getMonth(), 1); const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
   const { data: calendarDates } = await supabase.from("library_announcements").select("id,type,title,starts_at").eq("active", true).in("type", ["holiday", "optional_day"]).gte("starts_at", monthStart.toISOString()).lt("starts_at", nextMonth.toISOString()).order("starts_at");
   return (
@@ -22,6 +24,8 @@ export default async function StudentDashboardPage() {
       <div className="page-heading">
         <div><p className="eyebrow">Visão geral</p><h1>Seu acompanhamento</h1></div>
       </div>
+
+      {hasPendingFeedback && <section className="feedback-invite panel"><span aria-hidden="true">✦</span><div><p className="eyebrow">Sua opinião faz diferença</p><h2>Como foi sua experiência com o Pronto!?</h2><p>Sua avaliação leva cerca de 3 minutos e ajuda a melhorar o sistema e o atendimento da BIB/FA.</p></div><Link className="button button--primary" href="/painel/avaliacao">Responder avaliação</Link></section>}
 
       <section className={`dashboard-grid${activeRequest ? " dashboard-grid--active-request" : ""}`}>
         <article className="next-action">
