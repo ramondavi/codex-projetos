@@ -43,6 +43,7 @@ export function AccessibilityControls() {
       setHighContrast(initialContrast);
       applyPreferences(initialScale, initialContrast);
     }
+    document.documentElement.dataset.appReady = "true";
   }, []);
 
   useEffect(() => {

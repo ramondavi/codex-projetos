@@ -1,11 +1,13 @@
 import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { PRIVACY_NOTICE_VERSION } from "../src/domain/privacy/notice.ts";
 
 describe("política de privacidade", () => {
   it("identifica a versão publicada", async () => {
     const page = await readFile("src/app/politica-de-privacidade/page.tsx", "utf8");
-    assert.match(page, /Política de privacidade · versão 1\.0/);
+    assert.match(page, /Política de privacidade · versão \{PRIVACY_NOTICE_VERSION\}/);
+    assert.equal(PRIVACY_NOTICE_VERSION, "1.1");
     assert.doesNotMatch(page, /Política aprovada institucionalmente/);
   });
 

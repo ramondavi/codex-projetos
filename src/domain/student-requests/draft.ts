@@ -10,7 +10,7 @@ export type StudentRequestDraft = {
   equivalentTitles: { language: "pt" | "en" | "es" | "de" | "fr" | "it"; title: string }[];
   otherTitles: string[];
   publicWorkUrl: string;
-  people: { author: string; additionalAuthors: string[]; committeeMembers: string[]; birthYear: string; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
+  people: { author: string; additionalAuthors: string[]; committeeMembers: string[]; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
   keywordsPt: string[];
   keywordsEn: string[];
   specialCases: string[];
@@ -36,7 +36,7 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   equivalentTitles: [{ language: "en", title: "" }],
   otherTitles: [],
   publicWorkUrl: "",
-  people: { author: "", additionalAuthors: [], committeeMembers: [], birthYear: "", birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
+  people: { author: "", additionalAuthors: [], committeeMembers: [], birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   keywordsPt: ["", "", ""],
   keywordsEn: ["", "", ""],
   specialCases: [],
@@ -69,8 +69,7 @@ export function compactDraft(draft: StudentRequestDraft) {
       author: draft.people.author.trim(),
       additionalAuthors: compact(draft.people.additionalAuthors),
       committeeMembers: compact(draft.people.committeeMembers),
-      birthYear: draft.people.birthYear ? Number(draft.people.birthYear) : null,
-      birthYearAcknowledged: draft.people.birthYear ? draft.people.birthYearAcknowledged : false,
+      birthYearAcknowledged: draft.people.birthYearAcknowledged,
       advisor: draft.people.advisor.trim(),
       advisorNoteLabel: "Orientador",
       coadvisor: draft.people.coadvisor.trim(),
@@ -100,8 +99,7 @@ export function restoreStudentRequestDraft(value: unknown): StudentRequestDraft 
   for (const key of ["author", "advisor", "coadvisor", "advisorNoteLabel", "coadvisorNoteLabel"] as const) {
     if (typeof people[key] === "string") restored.people[key] = people[key];
   }
-  restored.people.birthYear = typeof people.birthYear === "string" || typeof people.birthYear === "number" ? String(people.birthYear) : "";
-  restored.people.birthYearAcknowledged = people.birthYearAcknowledged === true;
+  restored.people.birthYearAcknowledged = people.birthYear === undefined && people.birthYearAcknowledged === true;
   restored.people.additionalAuthors = strings(people.additionalAuthors);
   restored.people.committeeMembers = strings(people.committeeMembers);
   const pairedStrings = (item: unknown) => Array.isArray(item) ? item.map((entry) => typeof entry === "string" ? entry : "") : [];

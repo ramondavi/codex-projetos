@@ -1,4 +1,4 @@
-import { bigint, boolean, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { bigint, boolean, date, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const userRole = pgEnum("user_role", ["student", "cataloger", "administrator"]);
 export const accountStatus = pgEnum("account_status", ["active", "blocked", "inactive"]);
@@ -21,6 +21,7 @@ export const profiles = pgTable("profiles", {
   email: text("email").notNull().unique(),
   role: userRole("role").default("student").notNull(),
   status: accountStatus("status").default("active").notNull(),
+  avatarChoice: integer("avatar_choice"),
   lastSignInAt: timestamp("last_sign_in_at", { withTimezone: true }),
   ...timestamps,
 });
@@ -29,6 +30,7 @@ export const studentProfiles = pgTable("student_profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
   profileId: uuid("profile_id").references(() => profiles.id, { onDelete: "cascade" }).notNull().unique(),
   cpf: text("cpf").notNull().unique(),
+  birthDate: date("birth_date"),
   ...timestamps,
 });
 
@@ -85,6 +87,10 @@ export const requestAnalyses = pgTable("request_analyses", {
   lastEditedBy: uuid("last_edited_by").references(() => profiles.id, { onDelete: "restrict" }).notNull(),
   reviewCompletedAt: timestamp("review_completed_at", { withTimezone: true }),
   reviewCompletedBy: uuid("review_completed_by").references(() => profiles.id, { onDelete: "restrict" }),
+  citationText: text("citation_text"),
+  citationSourceSignature: text("citation_source_signature"),
+  citationValidatedAt: timestamp("citation_validated_at", { withTimezone: true }),
+  citationValidatedBy: uuid("citation_validated_by").references(() => profiles.id, { onDelete: "restrict" }),
   ...timestamps,
 });
 
@@ -359,4 +365,28 @@ export const auditLogs = pgTable("audit_logs", {
   entityId: text("entity_id"),
   metadata: jsonb("metadata").$type<Record<string, unknown>>().default({}).notNull(),
   occurredAt: timestamp("occurred_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const staffNotifications = pgTable("staff_notifications", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  recipientId: uuid("recipient_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "set null" }),
+  sourceKey: text("source_key").notNull(),
+  kind: text("kind").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  href: text("href").notNull(),
+  readAt: timestamp("read_at", { withTimezone: true }),
+  archivedAt: timestamp("archived_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [uniqueIndex("staff_notifications_recipient_source").on(table.recipientId, table.sourceKey)]);
+
+export const staffMessages = pgTable("staff_messages", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  senderId: uuid("sender_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  recipientId: uuid("recipient_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  requestId: uuid("request_id").references(() => catalogingRequests.id, { onDelete: "set null" }),
+  body: text("body").notNull(),
+  readAt: timestamp("read_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

@@ -12,6 +12,7 @@ type User = {
   status: string;
   created_at: string;
   staff_profiles: { professional_name: string; crb: string }[];
+  student_profiles: { birth_date: string | null }[];
 };
 type StaffCandidate = { user_id: string; email: string };
 type Program = {
@@ -190,6 +191,27 @@ export function AdminOperations(props: {
       setMessage(
         "Não foi possível confirmar o salvamento. Confira os dados e tente novamente.",
       );
+    setBusy("");
+  }
+  async function correctBirthDate(user: User, form: FormData) {
+    const birthDate = String(form.get("birth_date") ?? "");
+    if (birthDate === user.student_profiles?.[0]?.birth_date) {
+      setMessage("Informe uma data diferente da atual para registrar a correção.");
+      return;
+    }
+    setBusy(`birth-${user.id}`);
+    setMessage("");
+    const { error } = await supabase.rpc("admin_correct_student_birth_date", {
+      target_profile_id: user.id,
+      target_birth_date: birthDate,
+    });
+    const { data: saved, error: readError } = error
+      ? { data: null, error: true }
+      : await supabase.from("student_profiles").select("birth_date").eq("profile_id", user.id).single();
+    if (!readError && saved?.birth_date === birthDate) {
+      setUsers((current) => current.map((item) => item.id === user.id ? { ...item, student_profiles: [{ birth_date: birthDate }] } : item));
+      setMessage("Data de nascimento corrigida e confirmada no banco de dados.");
+    } else setMessage("Não foi possível confirmar a correção da data de nascimento.");
     setBusy("");
   }
   async function provision(form: FormData) {
@@ -594,6 +616,8 @@ export function AdminOperations(props: {
               user={user}
               busy={busy === `u-${user.id}`}
               onSave={saveUser}
+              birthBusy={busy === `birth-${user.id}`}
+              onCorrectBirthDate={correctBirthDate}
             />
           ))}
         </div>
@@ -1019,15 +1043,21 @@ function UserRow({
   user,
   busy,
   onSave,
+  birthBusy,
+  onCorrectBirthDate,
 }: {
   user: User;
   busy: boolean;
   onSave: (user: User, form: FormData) => Promise<void>;
+  birthBusy: boolean;
+  onCorrectBirthDate: (user: User, form: FormData) => Promise<void>;
 }) {
   const [role, setRole] = useState(user.role);
   const staff = role !== "student";
   const details = user.staff_profiles?.[0];
+  const birthDate = user.student_profiles?.[0]?.birth_date;
   return (
+    <div className="admin-user-entry">
     <form
       className={`admin-row ${staff ? "admin-row--staff" : "admin-row--student"}`}
       action={(form) => onSave(user, form)}
@@ -1083,5 +1113,13 @@ function UserRow({
         Salvar
       </button>
     </form>
+    {!staff && <details className="admin-birth-date"><summary>Corrigir data de nascimento</summary>
+      <form action={(form) => onCorrectBirthDate(user, form)}>
+        <span>Data atual: <strong>{birthDate ? birthDate.split("-").reverse().join("/") : "não informada"}</strong></span>
+        <label>Nova data de nascimento<input type="date" name="birth_date" min="1900-01-01" max={new Date().toISOString().slice(0, 10)} defaultValue={birthDate ?? ""} required /></label>
+        <button className="button button--secondary button--small" type="submit" disabled={birthBusy}>{birthBusy ? "Salvando..." : "Salvar correção"}</button>
+      </form>
+    </details>}
+    </div>
   );
 }

@@ -6,12 +6,13 @@ import { authPageMetadata } from "@/lib/auth-page-metadata";
 
 export const generateMetadata = () => authPageMetadata("login");
 
-export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string }> }) {
-  const { error, message } = await searchParams;
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string; next?: string }> }) {
+  const { error, message, next } = await searchParams;
   return (
     <AuthShell title="Entre na sua conta" description="Acompanhe sua solicitação e veja sempre qual é a próxima etapa.">
       <AuthFeedback error={error} message={message} />
       <form className="form-stack" action={login}>
+        {next === "/painel/solicitacao/corrigir" && <input type="hidden" name="next" value={next} />}
         <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="Seu e-mail institucional" required /></label>
         <label>Senha<input type="password" name="password" autoComplete="current-password" placeholder="Sua senha" required /></label>
         <div className="form-row form-row--between">

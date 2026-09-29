@@ -25,7 +25,8 @@ export function SiteFooter({ version }: { version: string }) {
   const t = footerCopy[language];
   useEffect(() => {
     const footerRow = document.querySelector<HTMLElement>("[data-language-alignment]");
-    const pageContent = document.querySelector<HTMLElement>("main.dashboard-main")
+    const pageContent = document.querySelector<HTMLElement>("body:has(.auth-shell) .accessibility-bar__inner")
+      ?? document.querySelector<HTMLElement>("main.dashboard-main")
       ?? document.querySelector<HTMLElement>("main .container")
       ?? document.querySelector<HTMLElement>("main");
     if (!footerRow || !pageContent) return;

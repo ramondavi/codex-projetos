@@ -3,7 +3,7 @@ create extension if not exists pgtap with schema extensions;
 select plan(26);
 
 insert into auth.users (id,email,email_confirmed_at,raw_user_meta_data) values
- ('92000000-0000-4000-8000-000000000001','ficha.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Ficha","cpf":"81000000850"}'::jsonb),
+ ('92000000-0000-4000-8000-000000000001','ficha.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Ficha","cpf":"81000000850"}'::jsonb),
  ('92000000-0000-4000-8000-000000000002','ficha.catalogador@ufba.br',now(),'{}'::jsonb),
  ('92000000-0000-4000-8000-000000000003','ficha.outro@ufba.br',now(),'{}'::jsonb);
 insert into public.profiles (id,full_name,email,role,status) values
@@ -15,13 +15,14 @@ insert into public.staff_profiles (profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request_v2(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),
  'registrationNumber','FICHA2026','title','Arquitetura social','subtitle','Um estudo aplicado','equivalentTitle','Social architecture',
  'publicWorkUrl','https://example.org/ficha.pdf',
  'depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'hasIllustrations',true,
  'people',jsonb_build_object('author','Ana Silva','advisor','Bruno Souza','advisorNoteLabel','Orientador'),
- 'keywordsPt',jsonb_build_array('Arquitetura','Habitação'),'keywordsEn',jsonb_build_array('Architecture','Housing'),
+ 'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),
+ 'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','Social architecture')),
  'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre a solicitação');
 
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
@@ -44,6 +45,8 @@ select lives_ok($$select public.save_assisted_cataloging((select id from public.
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000003';
 select throws_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'P0001','request_not_ready_for_homologation','outro catalogador não homologa o ticket');
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'SILVA, Ana. Arquitetura social. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
 select lives_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'responsável homologa a ficha');
 select is((select status from public.cataloging_requests limit 1),'approved'::public.request_status,'solicitação fica homologada');
 select is((select count(*)::integer from public.cataloging_card_homologations),1,'homologação cria um snapshot único');

@@ -9,7 +9,7 @@ select function_returns('public','set_repository_deposit_enabled',array['uuid','
 select ok((select not repository_deposit_enabled from public.academic_programs where code='architecture-urbanism-undergraduate'),'TFG de graduação começa desativado');
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('98000000-0000-4000-8000-000000000001','deposito.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Depósito","cpf":"81000000346"}'),
+ ('98000000-0000-4000-8000-000000000001','deposito.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Depósito","cpf":"81000000346"}'),
  ('98000000-0000-4000-8000-000000000002','deposito.admin@ufba.br',now(),'{}'),
  ('98000000-0000-4000-8000-000000000003','deposito.catalogador@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values
@@ -21,11 +21,13 @@ insert into public.staff_profiles(profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='98000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where repository_deposit_enabled order by code limit 1),
  'registrationNumber','RI2026','title','Trabalho para o RI','publicWorkUrl','https://example.org/work.pdf',
- 'people',jsonb_build_object('author','Ana','advisor','Bia'),'keywordsPt',jsonb_build_array('Arquitetura'),
- 'keywordsEn',jsonb_build_array('Architecture'),'specialCases',jsonb_build_array(),
+ 'depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,
+ 'people',jsonb_build_object('author','Ana','advisor','Bia','advisorNoteLabel','Orientador'),'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),
+ 'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),
+ 'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','Repository deposit work')),'hasIllustrations',false,'specialCases',jsonb_build_array(),
  'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
 select throws_ok($$select public.start_repository_deposit((select id from public.cataloging_requests limit 1))$$,'P0001','repository_deposit_not_available','não inicia antes da liberação completa');
 reset role;
@@ -34,7 +36,12 @@ with created_terms as (
   insert into public.controlled_terms(preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by)
   values ('arquitetura','arquitetura','architecture','architecture','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('habitação','habitação','housing','housing','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003'),('urbanismo','urbanismo','urbanism','urbanism','98000000-0000-4000-8000-000000000003','98000000-0000-4000-8000-000000000003') returning id,preferred_label_pt,preferred_label_en
 ) insert into public.request_controlled_terms(request_id,controlled_term_id,label_pt_snapshot,label_en_snapshot,is_primary,position) select (select id from public.cataloging_requests),id,preferred_label_pt,preferred_label_en,preferred_label_pt='arquitetura',row_number() over(order by preferred_label_pt)-1 from created_terms;
-update public.cataloging_requests set status='approved',assigned_to='98000000-0000-4000-8000-000000000003';
+update public.cataloging_requests set status='in_review',assigned_to='98000000-0000-4000-8000-000000000003';
+set local role authenticated; set local request.jwt.claim.sub='98000000-0000-4000-8000-000000000003';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'ANA. Trabalho para o RI. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
+reset role;
+update public.cataloging_requests set status='approved';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
  select id,'{}','98000000-0000-4000-8000-000000000003','Catalogador Depósito','CRB-5/4001' from public.cataloging_requests;
 insert into public.nada_consta_documents(request_id,object_path,original_name,size_bytes,mime_type,sha256,status,uploaded_by,validated_by,validated_at,released_at)

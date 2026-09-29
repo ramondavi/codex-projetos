@@ -5,7 +5,7 @@ select plan(21);
 
 insert into auth.users (id, email, email_confirmed_at, raw_user_meta_data)
 values
-  ('50000000-0000-4000-8000-000000000001', 'fila.estudante@ufba.br', now(), '{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante da Fila","cpf":"81000000427"}'::jsonb),
+  ('50000000-0000-4000-8000-000000000001', 'fila.estudante@ufba.br', now(), '{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante da Fila","cpf":"81000000427"}'::jsonb),
   ('50000000-0000-4000-8000-000000000002', 'fila.catalogador1@ufba.br', now(), '{}'::jsonb),
   ('50000000-0000-4000-8000-000000000003', 'fila.catalogador2@ufba.br', now(), '{}'::jsonb),
   ('50000000-0000-4000-8000-000000000004', 'fila.administrador@ufba.br', now(), '{}'::jsonb),
@@ -27,12 +27,14 @@ values
 set local role authenticated;
 set local request.jwt.claim.sub = '50000000-0000-4000-8000-000000000001';
 select lives_ok(
-  $$select * from public.open_student_request(jsonb_build_object(
+  $$select * from public.open_student_request_v7(jsonb_build_object(
     'academicProgramId', (select id from public.academic_programs where code = 'architecture-urbanism-undergraduate'),
     'registrationNumber', 'FILA2026', 'title', 'Trabalho para a fila',
     'publicWorkUrl', 'https://example.org/fila.pdf',
-    'people', jsonb_build_object('author', 'Estudante da Fila', 'advisor', 'Orientador da Fila'),
-    'keywordsPt', jsonb_build_array('Arquitetura'), 'specialCases', jsonb_build_array(),
+    'depositYear', 2026, 'defenseYear', 2025, 'extentUnit', 'pages', 'extentCount', 204,
+    'people', jsonb_build_object('author', 'Estudante da Fila', 'advisor', 'Orientador da Fila', 'advisorNoteLabel', 'Orientador'),
+    'keywordsPt', jsonb_build_array('Arquitetura','Habitação','Urbanismo'), 'keywordsEn', jsonb_build_array('Architecture','Housing','Urbanism'),
+    'equivalentTitles', jsonb_build_array(jsonb_build_object('language','en','title','Queue work')), 'hasIllustrations',false,'specialCases', jsonb_build_array(),
     'defendedAndApproved', true, 'finalFileConfirmed', true, 'approvalPageConfirmed', true
   ))$$,
   'estudante cria solicitação para a fila'

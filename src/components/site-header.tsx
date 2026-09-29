@@ -6,6 +6,7 @@ import { PublicBreadcrumbs } from "./breadcrumbs";
 import { logout } from "@/app/auth-actions";
 import { AppIcon } from "./app-icon";
 import { getInterfaceLanguage } from "@/lib/server-language";
+import { LiteraryAvatar } from "./literary-avatar";
 
 const copy = {
   pt: ["Meu painel", "Olá", "Visão geral", "Minha solicitação", "Autodepósito", "Minha conta", "Fila de solicitações", "Meus atendimentos", "Administração", "Navegação principal", "Como funciona", "Central de ajuda", "Sair da conta", "Entrar"],
@@ -20,7 +21,7 @@ export async function SiteHeader({ articleTitle }: { articleTitle?: string } = {
   const t = copy[await getInterfaceLanguage()];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  const { data: profile } = user ? await supabase.from("profiles").select("role, full_name").eq("id", user.id).maybeSingle() : { data: null };
+  const { data: profile } = user ? await supabase.from("profiles").select("role, full_name, avatar_choice").eq("id", user.id).maybeSingle() : { data: null };
   const firstName = profile?.full_name?.trim().split(/\s+/)[0];
   const accessLabel = t[0];
   const accessGreeting = firstName ? `${t[1]}, ${firstName}` : `${t[1]}!`;
@@ -34,7 +35,7 @@ export async function SiteHeader({ articleTitle }: { articleTitle?: string } = {
         <nav id="menu-principal" aria-label={t[9]} className="site-header__nav" tabIndex={-1}>
           <Link href="/#como-funciona"><AppIcon name="review" />{t[10]}</Link>
           <Link href="/ajuda"><AppIcon name="help" />{t[11]}</Link>
-          {user ? <><div className="site-header__account site-header__account--desktop"><Link className="site-header__access" href={accessHref} aria-label={`${accessLabel}. ${accessGreeting}`}><AppIcon name="account" /><span className="site-header__access-label">{accessLabel}</span><span className="site-header__access-greeting" aria-hidden="true">{accessGreeting}</span></Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></div><details className="site-header__account site-header__account--touch"><summary className="site-header__access" aria-label={accessLabel}><AppIcon name="account" /><span>{accessLabel}</span></summary><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></details></> : <Link className="site-header__access" href={accessHref}><AppIcon name="account" />{t[13]}</Link>}
+          {user ? <><div className="site-header__account site-header__account--desktop"><Link className="site-header__access" href={accessHref} aria-label={`${accessLabel}. ${accessGreeting}`}><span className="site-header__access-icon"><AppIcon name="account" />{(profile?.role === "cataloger" || profile?.role === "administrator") && <LiteraryAvatar id={user.id} label={profile.full_name} choice={profile.avatar_choice} small />}</span><span className="site-header__access-label">{accessLabel}</span><span className="site-header__access-greeting" aria-hidden="true">{accessGreeting}</span></Link><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></div><details className="site-header__account site-header__account--touch"><summary className="site-header__access" aria-label={accessLabel}><AppIcon name="account" /><span>{accessLabel}</span></summary><div className="site-header__submenu">{panelLinks.map(([label, href]) => <Link key={href} href={href}>{label}</Link>)}<form action={logout}><button className="site-header__logout" type="submit"><AppIcon name="logout" />{t[12]}</button></form></div></details></> : <Link className="site-header__access" href={accessHref}><AppIcon name="account" />{t[13]}</Link>}
           <LibrarySocialLinks />
         </nav>
         </div>

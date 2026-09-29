@@ -30,25 +30,26 @@ test("validates all signup decisions together", () => {
   assert.equal(validateSignup({
     fullName: "Maria da Silva",
     cpf: "529.982.247-25",
+    birthDate: "2000-01-15",
     email: "maria@ufba.br",
-    password: "uma-senha-segura",
-    passwordConfirmation: "uma-senha-segura",
+    password: "Uma-senha1!",
+    passwordConfirmation: "Uma-senha1!",
     privacyAccepted: true,
   }), null);
 });
 
 test("requires acknowledgement of the privacy policy", () => {
   assert.equal(validateSignup({
-    fullName: "Maria da Silva", cpf: "529.982.247-25", email: "maria@ufba.br",
-    password: "uma-senha-segura", passwordConfirmation: "uma-senha-segura", privacyAccepted: false,
+    fullName: "Maria da Silva", cpf: "529.982.247-25", birthDate: "2000-01-15", email: "maria@ufba.br",
+    password: "Uma-senha1!", passwordConfirmation: "Uma-senha1!", privacyAccepted: false,
   }), "É necessário declarar ciência da Política de Privacidade.");
 });
 
 test("student metadata never accepts a client-provided role", () => {
   const metadata = normalizedSignupMetadata({
-    fullName: "Maria da Silva", cpf: "529.982.247-25", email: "maria@ufba.br",
-    password: "uma-senha-segura", passwordConfirmation: "uma-senha-segura", privacyAccepted: true,
+    fullName: "Maria da Silva", cpf: "529.982.247-25", birthDate: "2000-01-15", email: "maria@ufba.br",
+    password: "Uma-senha1!", passwordConfirmation: "Uma-senha1!", privacyAccepted: true,
   });
-  assert.deepEqual(metadata, { registration_source: "student", full_name: "Maria da Silva", cpf: "52998224725" });
+  assert.deepEqual(metadata, { registration_source: "student", full_name: "Maria da Silva", cpf: "52998224725", birth_date: "2000-01-15" });
   assert.equal("role" in metadata, false);
 });

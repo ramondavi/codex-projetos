@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
 
 const steps = [
@@ -10,10 +11,18 @@ const steps = [
 ] as const;
 
 export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode }) {
-  const [active, setActive] = useState<"metadata" | "cataloging" | "documentation">("metadata");
+  const requestedStep = useSearchParams().get("etapa");
+  const [active, setActive] = useState<"metadata" | "cataloging" | "documentation">(
+    requestedStep === "cataloging" || requestedStep === "documentation" ? requestedStep : "metadata",
+  );
   const activeStep = steps.findIndex((step) => step.id === active);
   const currentStep = steps[activeStep];
   const isMetadata = active === "metadata";
+  useEffect(() => {
+    if (requestedStep && steps.some((step) => step.id === requestedStep)) {
+      setActive(requestedStep as typeof active);
+    }
+  }, [requestedStep]);
   useEffect(() => {
     const navigateToField = (event: Event) => {
       const detail = (event as CustomEvent<{ tab?: typeof active; fieldId?: string }>).detail;

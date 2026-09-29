@@ -12,7 +12,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
   if (profile?.role !== "administrator") redirect("/painel");
   const [users, candidates, programs, announcements, templates, logs, purge, faqs, cduDescriptions, knowledge] = await Promise.all([
-    supabase.from("profiles").select("id,full_name,email,role,status,created_at,staff_profiles(professional_name,crb)").order("full_name"),
+    supabase.from("profiles").select("id,full_name,email,role,status,created_at,staff_profiles(professional_name,crb),student_profiles(birth_date)").order("full_name"),
     supabase.rpc("list_confirmed_staff_candidates"),
     supabase.from("academic_programs").select("id,name,level,service_level_business_days,repository_deposit_enabled,coordination_magic_link_enabled,coordination_contacts(name,email,active)").eq("active", true).order("name"),
     supabase.from("library_announcements").select("id,type,title,message,starts_at,ends_at,active,calendar_source,source_reference").order("starts_at", { ascending: false }),

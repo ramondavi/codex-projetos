@@ -9,6 +9,8 @@ import { DashboardBreadcrumbs } from "./breadcrumbs";
 import { AppIcon, type AppIconName } from "./app-icon";
 import { BackendHelpWidget } from "./backend-help-widget";
 import { useInterfaceLanguage } from "./interface-language";
+import { StaffCommunications } from "./staff-communications";
+import { LiteraryAvatar } from "./literary-avatar";
 
 const shellCopy = {
   pt: { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador", overview: "Visão geral", queue: "Fila de solicitações", work: "Meus atendimentos", admin: "Administração", operation: "Operação", content: "Conteúdo", control: "Controle", account: "Minha conta", request: "Minha solicitação", deposit: "Autodepósito", public: "Abrir site público", greeting: "Olá", logout: "Sair da conta", library: "Área da biblioteca", studentArea: "Área do estudante", adminSections: "Subseções administrativas" },
@@ -31,7 +33,7 @@ const logoutDialogCopy = {
 const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "admin", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
 function SidebarIcon({ name }: { name: keyof typeof navIcons }) { return <AppIcon className="dashboard-nav__icon" name={navIcons[name]} />; }
 
-export function DashboardShell({ children, fullName, role, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
+export function DashboardShell({ children, fullName, role, userId, avatarChoice, showNotifications = true, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; userId: string; avatarChoice?: number | null; showNotifications?: boolean; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
   const isStaff = role === "cataloger" || role === "administrator";
   const pathname = usePathname();
   const { language } = useInterfaceLanguage();
@@ -81,10 +83,10 @@ export function DashboardShell({ children, fullName, role, serviceStatus, servic
         </nav>}
       </aside>
       <div className="dashboard-content">
-        <header className="dashboard-header">
-          <div className={`dashboard-header__service-status${serviceStatusIsExceptional ? " is-exceptional" : ""}`}><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>
+        <header className={`dashboard-header${isStaff ? " dashboard-header--staff" : ""}`}>
+          {isStaff ? (showNotifications && <StaffCommunications userId={userId} />) : <div className={`dashboard-header__service-status${serviceStatusIsExceptional ? " is-exceptional" : ""}`}><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>}
           <div className="dashboard-header__actions">
-            <div className="user-identity"><span className="user-greeting">{t.greeting}, {firstName}</span><span className="user-chip" title={fullName}>{t[role as keyof typeof t] ?? role}</span></div>
+            <div className="user-identity">{isStaff && <LiteraryAvatar id={userId} label={fullName} choice={avatarChoice} small />}<span className="user-identity__copy"><Link className="user-greeting" href="/painel/conta" title={t.account}>{t.greeting}, {firstName}</Link><span className="user-chip" title={fullName}>{t[role as keyof typeof t] ?? role}</span></span></div>
             <form id="dashboard-logout-form" ref={logoutFormRef} action={logout}><button className="logout-icon" type="button" onClick={() => { if (window.matchMedia("(max-width: 1100px), (pointer: coarse), (any-pointer: coarse)").matches) setLogoutDialogOpen(true); else logoutFormRef.current?.requestSubmit(); }} aria-label={t.logout} title={t.logout}><AppIcon name="logout" /></button></form>
           </div>
         </header>

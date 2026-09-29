@@ -1,0 +1,55 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { StaffNotifications } from "./staff-notifications";
+import { StaffMessageCenter } from "./staff-message-center";
+
+export function StaffCommunications({ userId }: { userId: string }) {
+  const [noticeCount, setNoticeCount] = useState(0);
+  const [messageCount, setMessageCount] = useState(0);
+  const originalTitle = useRef<string | null>(null);
+  const updateNotices = useCallback((count: number) => setNoticeCount(count), []);
+  const updateMessages = useCallback((count: number) => setMessageCount(count), []);
+
+  useEffect(() => {
+    if (!noticeCount && !messageCount) return;
+    originalTitle.current ??= document.title;
+    const parts = [messageCount && `${messageCount} ${messageCount === 1 ? "mensagem nova" : "mensagens novas"}`, noticeCount && `${noticeCount} ${noticeCount === 1 ? "aviso novo" : "avisos novos"}`].filter(Boolean);
+    const alertTitle = `(${messageCount + noticeCount}) ${parts.join(" · ")} · Pronto!`;
+    let showingAlert = true;
+    document.title = alertTitle;
+    const timer = window.setInterval(() => { showingAlert = !showingAlert; document.title = showingAlert ? alertTitle : (originalTitle.current ?? "Pronto!"); }, 1000);
+    return () => { window.clearInterval(timer); document.title = originalTitle.current ?? "Pronto!"; };
+  }, [noticeCount, messageCount]);
+
+  useEffect(() => {
+    if (!noticeCount && !messageCount) return;
+    const icon = document.createElement("link");
+    icon.rel = "icon";
+    icon.type = "image/png";
+    icon.dataset.staffAttentionIcon = "true";
+    const image = new window.Image();
+    let active = true;
+    image.onload = () => {
+      if (!active) return;
+      const canvas = document.createElement("canvas");
+      canvas.width = 64;
+      canvas.height = 64;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.drawImage(image, 0, 0, 64, 64);
+      const dot = (x: number, y: number, color: string) => {
+        context.beginPath(); context.arc(x, y, 15, 0, Math.PI * 2); context.fillStyle = "#fff"; context.fill();
+        context.beginPath(); context.arc(x, y, 12, 0, Math.PI * 2); context.fillStyle = color; context.fill();
+      };
+      if (noticeCount) dot(49, 15, "#b91c1c");
+      if (messageCount) dot(noticeCount ? 15 : 49, 15, "#2563eb");
+      icon.href = canvas.toDataURL("image/png");
+      document.head.appendChild(icon);
+    };
+    image.src = "/icon.png";
+    return () => { active = false; icon.remove(); };
+  }, [noticeCount, messageCount]);
+
+  return <div className="staff-communications"><StaffNotifications userId={userId} onUnreadChange={updateNotices} /><StaffMessageCenter userId={userId} onUnreadChange={updateMessages} /></div>;
+}

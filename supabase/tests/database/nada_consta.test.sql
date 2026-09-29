@@ -3,7 +3,7 @@ create extension if not exists pgtap with schema extensions;
 select plan(21);
 
 insert into auth.users(id,email,email_confirmed_at,raw_user_meta_data) values
- ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.0","full_name":"Estudante Nada","cpf":"81000000770"}'),
+ ('94000000-0000-4000-8000-000000000001','nada.estudante@ufba.br',now(),'{"registration_source":"student","privacy_notice_version":"1.1","birth_date":"2000-01-01","full_name":"Estudante Nada","cpf":"81000000770"}'),
  ('94000000-0000-4000-8000-000000000002','nada.catalogador@ufba.br',now(),'{}'),
  ('94000000-0000-4000-8000-000000000003','nada.outro@ufba.br',now(),'{}');
 insert into public.profiles(id,full_name,email,role,status) values
@@ -13,7 +13,7 @@ insert into public.staff_profiles(profile_id,professional_name,crb) values
  ('94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111'),('94000000-0000-4000-8000-000000000003','Outro Nada','CRB-5/2222');
 
 set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request(jsonb_build_object('academicProgramId',(select id from public.academic_programs limit 1),'registrationNumber','NADA2026','title','Teste Nada','publicWorkUrl','https://example.org/work.pdf','people',jsonb_build_object('author','Ana','advisor','Bia'),'keywordsPt',jsonb_build_array('Arquitetura'),'keywordsEn',jsonb_build_array('Architecture'),'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
+select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object('academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),'registrationNumber','NADA2026','title','Teste Nada','publicWorkUrl','https://example.org/work.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'people',jsonb_build_object('author','Ana','advisor','Bia','advisorNoteLabel','Orientador'),'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','No pending obligations')),'hasIllustrations',false,'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
 reset role;
 update public.cataloging_requests set status='approved',assigned_to='94000000-0000-4000-8000-000000000002';
 set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000001';
@@ -42,6 +42,12 @@ insert into public.request_controlled_terms(request_id,controlled_term_id,label_
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000010','Arquitetura','Architecture',true,0),
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000011','Habitação','Housing',false,1),
   ((select id from public.cataloging_requests limit 1),'94000000-0000-4000-8000-000000000012','Urbanismo','Urbanism',false,2);
+update public.cataloging_requests set status='in_review';
+set local role authenticated; set local request.jwt.claim.sub='94000000-0000-4000-8000-000000000002';
+select public.validate_request_citation((select id from public.cataloging_requests limit 1),'ANA. Teste Nada. 2026. Trabalho Final de Graduação.');
+select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
+reset role;
+update public.cataloging_requests set status='approved';
 insert into public.cataloging_card_homologations(request_id,snapshot,homologated_by,librarian_name_snapshot,librarian_crb_snapshot)
   values ((select id from public.cataloging_requests limit 1),'{}'::jsonb,'94000000-0000-4000-8000-000000000002','Catalogador Nada','CRB-5/1111');
 update public.cataloging_requests set status='in_review';

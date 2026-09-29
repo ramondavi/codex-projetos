@@ -17,5 +17,5 @@ test("a ciência da política é registrada por versão e não depende de consen
   assert.match(signup, /revalidatePath\("\/painel", "layout"\)/);
   assert.match(layout, /PrivacyAcknowledgement/);
   assert.match(acknowledgement, /Li e estou ciente/);
-  assert.match(acknowledgement, /window\.location\.replace\("\/painel"\)/);
+  assert.match(acknowledgement, /window\.location\.replace\(window\.location\.pathname \+ window\.location\.search\)/);
 });

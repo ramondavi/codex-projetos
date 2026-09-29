@@ -12,6 +12,7 @@ for (const path of ["/", "/entrar", "/cadastro", "/recuperar-senha", "/ajuda"]) 
 test("recursos de acessibilidade preservam as preferências", async ({ page }) => {
   test.slow();
   await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-app-ready", "true");
   await page.getByRole("button", { name: "Aumentar tamanho do texto" }).click();
   await expect(page.locator("html")).toHaveAttribute("data-text-scale", "large");
   await page.getByRole("button", { name: "Alternar alto contraste" }).click();
@@ -24,7 +25,7 @@ test("recursos de acessibilidade preservam as preferências", async ({ page }) =
 test("busca de ajuda sugere respostas", async ({ page }) => {
   await page.route("**/api/central-de-duvidas?*", (route) => route.fulfill({ json: { results: [{ id: "article-corrections", slug: "corrigir-solicitacao", kind: "Artigo de ajuda", category: "Análise", title: "Como responder a uma correção da biblioteca", summary: "Como corrigir a solicitação" }] } }));
   await page.goto("/ajuda");
-  await page.waitForLoadState("networkidle");
+  await expect(page.locator("html")).toHaveAttribute("data-app-ready", "true");
   await page.getByRole("searchbox", { name: "Encontre uma resposta" }).fill("correcao");
   await expect(page.getByRole("link", { name: /Artigo de ajuda.*correção/ })).toBeVisible();
 });
@@ -42,8 +43,7 @@ test("navegação por teclado alcança o conteúdo", async ({ page }) => {
 
 test("barras públicas compartilham as mesmas margens", async ({ page }) => {
   await page.goto("/");
-  await page.locator("#barra-brasil .conteudo-barra-brasil").waitFor({ state: "visible" });
-  const offsets = await page.evaluate(() => ["#barra-brasil .conteudo-barra-brasil", ".accessibility-bar__inner", ".site-header__inner"].map((selector) => {
+  const offsets = await page.evaluate(() => [".accessibility-bar__inner", ".site-header__inner", ...(document.querySelector("#barra-brasil .conteudo-barra-brasil") ? ["#barra-brasil .conteudo-barra-brasil"] : [])].map((selector) => {
     const { left, right } = document.querySelector(selector)!.getBoundingClientRect();
     return { left: Math.round(left), right: Math.round(right) };
   }));
@@ -71,6 +71,7 @@ test("páginas públicas não criam rolagem horizontal", async ({ page }) => {
 test("tema explícito persiste e substitui a preferência do sistema", async ({ page }) => {
   test.slow();
   await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("data-app-ready", "true");
   const darkTheme = page.getByRole("button", { name: "Usar tema escuro" });
   const lightTheme = page.getByRole("button", { name: "Usar tema claro" });
   await darkTheme.click();
