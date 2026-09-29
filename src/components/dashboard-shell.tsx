@@ -11,6 +11,7 @@ import { BackendHelpWidget } from "./backend-help-widget";
 import { useInterfaceLanguage } from "./interface-language";
 import { StaffCommunications } from "./staff-communications";
 import { LiteraryAvatar } from "./literary-avatar";
+import { quoteForDay } from "@/lib/daily-literary-quotes";
 
 const shellCopy = {
   pt: { student: "Estudante", cataloger: "Catalogador", administrator: "Administrador", overview: "Visão geral", queue: "Fila de solicitações", work: "Meus atendimentos", admin: "Administração", operation: "Operação", content: "Conteúdo", control: "Controle", account: "Minha conta", request: "Minha solicitação", deposit: "Autodepósito", public: "Abrir site público", greeting: "Olá", logout: "Sair da conta", library: "Área da biblioteca", studentArea: "Área do estudante", adminSections: "Subseções administrativas" },
@@ -43,10 +44,17 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
   const [expanded, setExpanded] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [dailyQuote, setDailyQuote] = useState(() => quoteForDay(new Date()));
   const logoutDialogRef = useRef<HTMLDialogElement>(null);
   const logoutFormRef = useRef<HTMLFormElement>(null);
   const [adminMenuOpen, setAdminMenuOpen] = useState(() => pathname.startsWith("/painel/admin"));
   useEffect(() => { if (pathname.startsWith("/painel/admin")) setAdminMenuOpen(true); setMobileMenuOpen(false); }, [pathname]);
+  useEffect(() => {
+    const refreshQuote = () => setDailyQuote(quoteForDay(new Date()));
+    const interval = window.setInterval(refreshQuote, 60_000);
+    document.addEventListener("visibilitychange", refreshQuote);
+    return () => { window.clearInterval(interval); document.removeEventListener("visibilitychange", refreshQuote); };
+  }, []);
   useEffect(() => {
     const dialog = logoutDialogRef.current;
     if (logoutDialogOpen && dialog && !dialog.open) dialog.showModal();
@@ -73,7 +81,7 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel")} href="/painel" aria-label={t.overview} title={t.overview}><SidebarIcon name="overview" /><span className="dashboard-nav__label">{t.overview}</span></Link>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/fila")} href="/painel/fila" aria-label={t.queue} title={t.queue}><SidebarIcon name="queue" /><span className="dashboard-nav__label">{t.queue}</span></Link>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/fila?responsavel=me")} href="/painel/fila?responsavel=me" aria-label={t.work} title={t.work}><SidebarIcon name="work" /><span className="dashboard-nav__label">{t.work}</span></Link>
-          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuVisible} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title={t.admin}><SidebarIcon name="admin" /><span className="dashboard-nav__label">{t.admin}</span></button><div className={`dashboard-nav__admin-menu${adminMenuVisible ? " is-visible" : ""}`} id="submenu-administracao" aria-label={t.adminSections}><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">{t.operation}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">{t.content}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">{t.control}</Link></div></div>}
+          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuVisible} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title={t.admin}><SidebarIcon name="admin" /><span className="dashboard-nav__label">{t.admin}</span></button><div className={`dashboard-nav__admin-menu${adminMenuVisible ? " is-visible" : ""}`} id="submenu-administracao" aria-label={t.adminSections}><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">{t.operation}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">{t.content}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">{t.control}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin/avaliacoes")} href="/painel/admin/avaliacoes">Avaliações</Link></div></div>}
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/conta")} href="/painel/conta" aria-label={t.account} title={t.account}><SidebarIcon name="account" /><span className="dashboard-nav__label">{t.account}</span></Link>
         </nav> : <nav className={`dashboard-nav__menu${mobileMenuOpen ? " is-open" : ""}`} id="menu-painel" aria-label={t.studentArea}>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel")} href="/painel" aria-label={t.overview} title={t.overview}><SidebarIcon name="overview" /><span className="dashboard-nav__label">{t.overview}</span></Link>
@@ -92,6 +100,10 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
         </header>
         <DashboardBreadcrumbs />
         {children}
+        <figure className="dashboard-daily-quote">
+          <blockquote><span>{dailyQuote.text}</span></blockquote>
+          <figcaption><a href={dailyQuote.source} target="_blank" rel="noopener noreferrer">{dailyQuote.author} em <cite>{dailyQuote.work}</cite> ({dailyQuote.year})<span className="sr-only"> (abre em nova aba)</span></a></figcaption>
+        </figure>
         <BackendHelpWidget role={role} />
       </div>
       <dialog ref={logoutDialogRef} className="dashboard-logout-dialog" aria-labelledby="dashboard-logout-title" aria-describedby="dashboard-logout-description" onCancel={() => setLogoutDialogOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) setLogoutDialogOpen(false); }}>

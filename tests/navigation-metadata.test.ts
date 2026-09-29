@@ -30,7 +30,7 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(header, /site-header__access-greeting/);
   assert.match(header, /pt: \["Meu painel", "Olá"/);
   assert.match(header, /\$\{t\[1\]\}, \$\{firstName\}/);
-  assert.match(css, /grid-template-columns: auto max-content/);
+  assert.match(css, /\.site-header__access \{[^}]*grid-template-columns: 22px max-content/);
   assert.match(help, /<ProtectedEmail recipient="library" \/>/);
   assert.match(help, /<ProtectedPhone \/>/);
   assert.doesNotMatch(help, /bibarq@ufba\.br|3283-5888/);

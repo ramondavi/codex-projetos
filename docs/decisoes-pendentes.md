@@ -20,6 +20,7 @@ Este arquivo contém somente pontos que o Documento-Mestre Consolidado ainda nã
 - Confirmar a viabilidade e as políticas do SMTP institucional da biblioteca; se inviável, escolher o serviço transacional externo gratuito.
 - Após o MVP, avaliar integração das notificações da equipe com notificações nativas do navegador/sistema e Web Push, inclusive com a aba do Pronto! fechada; definir consentimento, compatibilidade, operação e retenção das assinaturas antes de implementar.
 - Antes da publicação da exigência de data de nascimento no cadastro, validar institucionalmente a minuta v1.1 da Política de Privacidade, que descreve esse dado e o uso opcional do ano na ficha. A v1.0 aprovada e seus registros de ciência permanecem preservados.
+- Definir o prazo de retenção das respostas anônimas da pesquisa de experiência antes da ativação pública da campanha. O controle de convite guarda somente se a pessoa respondeu, para limitar a uma resposta e interromper lembretes; não há vínculo entre esse controle e o conteúdo da resposta.
 
 ## Atendimento e operação
 

@@ -11,6 +11,7 @@ Leia somente o assunto da tarefa. Seções abaixo pertencem ao Documento-Mestre.
 | Nada Consta | src/app/api/nada-consta/, src/components/nada-consta-*.tsx | 6, 19 |
 | Autodepósito/coordenação | src/components/repository-deposit-guide.tsx, src/components/protocol-closure.tsx, src/app/coordenacao/ | 12–14, 25 |
 | Administração/SLA/FAQ | src/components/admin-operations.tsx, src/lib/service-announcements.ts, src/app/painel/admin/ | 15–17, 20, 26 |
+| Lacunas futuras de ajuda | docs/lacunas-ajuda.md, src/lib/knowledge-base.ts, src/app/ajuda/ | 20.1 |
 | Interface/SEO | src/app/, src/components/, src/app/globals.css | 1, 20 |
 | Banco | src/db/schema.ts, supabase/migrations/, supabase/tests/database/ | 18–19 e assunto |
 | Verificação | package.json, tests/, tests/e2e/, .github/workflows/ci.yml | 27 |
