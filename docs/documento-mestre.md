@@ -486,6 +486,15 @@ VM Linux UFBA/STI, Docker/Docker Compose, Nginx, Let's Encrypt ou certificado in
 - infraestrutura UFBA; portal robusto da coordenação; módulo docente/pesquisador;
 - login único, bases acadêmicas e sistemas internos, se viável; auditoria institucional avançada.
 
+### 21.4. Possibilidades estratégicas a avaliar — sem aprovação de escopo
+
+- Avaliar, com o SIBI/UFBA e as unidades envolvidas, se o Pronto! poderá evoluir para apoiar outros fluxos da produção acadêmica. A expansão dependerá de necessidades demonstradas no piloto, responsáveis institucionais, custos e integração viável; não altera o escopo do MVP nem substitui Pergamum, SIGAA ou RI/UFBA.
+- Estudar o reaproveitamento seguro de metadados homologados em outros sistemas e padrões, além do MARC 21 já previsto, com mapeamento por destino, controle de proveniência e indicação do que foi informado pelo estudante, corrigido ou validado pelo bibliotecário. Nenhuma transferência automática ou escolha catalográfica é presumida.
+- Avaliar integração com registros de autoridade e vocabulários controlados, validações automatizadas baseadas em regras explícitas e indicadores de qualidade dos metadados e do serviço. A decisão profissional permanece com o bibliotecário; fontes, permissões, manutenção e tratamento de dados exigem definição prévia.
+- Planejar a governança de uma possível adoção mais ampla como software de código aberto: licença e direitos sobre o código, documentação, responsabilidades de manutenção, revisão de segurança, contribuição de outras bibliotecas e condições para operação institucional. A publicação do repositório, por si só, não resolve essas definições.
+- Registrar o desenvolvimento conduzido por bibliotecários com apoio de ferramentas de *vibe coding* como experiência de apropriação tecnológica a ser avaliada institucionalmente. A IA auxilia a construção do software, sem se tornar requisito para seu funcionamento nem substituir homologação profissional, testes ou revisão técnica.
+- Preparar, para eventual apresentação à Coordenação do SIBI/UFBA, uma narrativa visual do percurso completo do protocolo: painel do estudante, fila e análise bibliotecária, ficha homologada, autodepósito, administração e acompanhamento pela coordenação. Produzir capturas próprias com dados fictícios consistentes; as evidências atuais de desenvolvimento não equivalem a material institucional aprovado.
+
 ## 22. Funcionalidades descartadas
 
 - WhatsApp/API de mensagens; OCR no navegador; capturadores Lattes e Pergamum;
