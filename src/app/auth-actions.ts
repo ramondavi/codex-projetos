@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { canChangeAuthenticatedEmail, isUfbaEmail, isValidBirthDate, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignup } from "@/domain/auth/account";
+import { canChangeAuthenticatedEmail, isUfbaEmail, isValidBirthDate, normalizeEmail, normalizedSignupMetadata, validateEmailChange, validateSignupFields, type SignupErrors } from "@/domain/auth/account";
 import { validatePassword } from "@/domain/auth/password";
 import { createClient } from "@/lib/supabase/server";
 import { PRIVACY_NOTICE_VERSION } from "@/domain/privacy/notice";
@@ -17,7 +17,9 @@ async function siteOrigin() {
   return process.env.NEXT_PUBLIC_SITE_URL ?? headerStore.get("origin") ?? "http://localhost:3000";
 }
 
-export async function signup(formData: FormData) {
+export type SignupState = { errors: SignupErrors; formError: string | null };
+
+export async function signup(_previousState: SignupState, formData: FormData): Promise<SignupState> {
   const input = {
     fullName: String(formData.get("name") ?? ""),
     cpf: String(formData.get("cpf") ?? ""),
@@ -27,8 +29,8 @@ export async function signup(formData: FormData) {
     passwordConfirmation: String(formData.get("passwordConfirmation") ?? ""),
     privacyAccepted: formData.get("privacyAccepted") === "on",
   };
-  const validationError = validateSignup(input);
-  if (validationError) redirect(destination("/cadastro", "error", validationError));
+  const errors = validateSignupFields(input);
+  if (Object.keys(errors).length > 0) return { errors, formError: null };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
@@ -39,7 +41,7 @@ export async function signup(formData: FormData) {
       emailRedirectTo: `${await siteOrigin()}/auth/callback`,
     },
   });
-  if (error) redirect(destination("/cadastro", "error", "Não foi possível criar a conta. Confira os dados ou tente novamente."));
+  if (error) return { errors: {}, formError: "Não foi possível criar a conta. Confira os dados ou tente novamente." };
   redirect(destination("/entrar", "message", "Conta criada. Confirme seu e-mail @ufba.br antes de entrar."));
 }
 

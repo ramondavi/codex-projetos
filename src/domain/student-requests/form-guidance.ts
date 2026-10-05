@@ -1,7 +1,7 @@
 export const formGuidance = {
   pt: {
     duplicateTerm: "Este termo já aparece nesta coluna. Informe um termo diferente.", memberPosition: "{number}º membro da banca",
-    committeeNote: "O orientador é o 1º membro da banca e, quando houver, o coorientador é o 2º. Organize os demais membros na mesma ordem em que aparecem na ata, página ou folha de aprovação. Use as setas ou arraste para reordenar.",
+    committeeNote: "O orientador informado já fica como 1º membro da banca. Se houver coorientador, ele já fica como 2º membro. Adicione apenas os demais membros, na ordem em que aparecem na ata, página ou folha de aprovação. Use as setas ou arraste para reordená-los.",
     equivalentLanguage: "Idioma do título equivalente",
     equivalentPlaceholder: "Título e subtítulo, quando houver, neste idioma",
     keywordOrder: "À esquerda, um termo no idioma original do trabalho. À direita, o mesmo termo em português; se o original for português, use inglês à direita. Cada linha representa um único par equivalente.",
@@ -11,7 +11,7 @@ export const formGuidance = {
   },
   en: {
     duplicateTerm: "This term already appears in this column. Enter a different term.", memberPosition: "Committee member {number}",
-    committeeNote: "The advisor is the 1st committee member and the co-advisor, if any, is the 2nd. Arrange the remaining members in the order shown in the minutes or approval page. Use the arrows or drag to reorder.",
+    committeeNote: "The advisor you entered is already the 1st committee member. If there is a co-advisor, that person is already the 2nd. Add only the remaining members in the order shown in the minutes or approval page. Use the arrows or drag to reorder them.",
     equivalentLanguage: "Language of the equivalent title", equivalentPlaceholder: "Title and subtitle, if any, in this language",
     keywordOrder: "On the left, enter one term in the work’s original language. On the right, enter its Portuguese equivalent; if the original is Portuguese, use English on the right. Each row is one equivalent pair.",
     originalChange: "Check the title, subtitle, and keywords after changing the original language. Existing text is not translated automatically.",
@@ -20,7 +20,7 @@ export const formGuidance = {
   },
   es: {
     duplicateTerm: "Este término ya aparece en esta columna. Introduzca otro término.", memberPosition: "Miembro del tribunal {number}",
-    committeeNote: "El director es el 1.er miembro del tribunal y el codirector, si lo hay, es el 2.º. Ordene los demás miembros como aparecen en el acta o la página de aprobación. Use las flechas o arrastre para reordenar.",
+    committeeNote: "El director indicado ya ocupa el 1.er puesto del tribunal. Si hay codirector, ya ocupa el 2.º. Añada solo los demás miembros en el orden del acta o la página de aprobación. Use las flechas o arrastre para reordenarlos.",
     equivalentLanguage: "Idioma del título equivalente", equivalentPlaceholder: "Título y subtítulo, si lo hay, en este idioma",
     keywordOrder: "A la izquierda, un término en el idioma original del trabajo. A la derecha, su equivalente en portugués; si el original es portugués, use inglés a la derecha. Cada fila representa un par equivalente.",
     originalChange: "Revise el título, el subtítulo y las palabras clave después de cambiar el idioma original. Los textos existentes no se traducen automáticamente.",
@@ -29,7 +29,7 @@ export const formGuidance = {
   },
   de: {
     duplicateTerm: "Dieser Begriff steht bereits in dieser Spalte. Geben Sie einen anderen Begriff ein.", memberPosition: "Kommissionsmitglied {number}",
-    committeeNote: "Die Betreuungsperson ist das 1. Kommissionsmitglied; eine vorhandene zweite Betreuungsperson steht an 2. Stelle. Ordnen Sie die übrigen Mitglieder wie im Protokoll oder auf der Genehmigungsseite an. Verwenden Sie die Pfeile oder ziehen Sie die Einträge.",
+    committeeNote: "Die angegebene Betreuungsperson steht bereits an 1. Stelle der Kommission. Falls eine zweite Betreuungsperson vorhanden ist, steht sie bereits an 2. Stelle. Fügen Sie nur die übrigen Mitglieder in der Reihenfolge des Protokolls oder der Genehmigungsseite hinzu. Verwenden Sie zum Sortieren die Pfeile oder ziehen Sie die Einträge.",
     equivalentLanguage: "Sprache des übersetzten Titels", equivalentPlaceholder: "Titel und gegebenenfalls Untertitel in dieser Sprache",
     keywordOrder: "Links steht ein Begriff in der Originalsprache der Arbeit, rechts seine portugiesische Entsprechung. Bei einem portugiesischen Original steht rechts Englisch. Jede Zeile enthält ein entsprechendes Begriffspaar.",
     originalChange: "Prüfen Sie nach einem Sprachwechsel Titel, Untertitel und Schlagwörter. Vorhandene Texte werden nicht automatisch übersetzt.",
@@ -38,7 +38,7 @@ export const formGuidance = {
   },
   fr: {
     duplicateTerm: "Ce terme figure déjà dans cette colonne. Saisissez un autre terme.", memberPosition: "Membre du jury {number}",
-    committeeNote: "Le directeur est le 1er membre du jury et le codirecteur, le cas échéant, le 2e. Classez les autres membres dans l’ordre du procès-verbal ou de la page d’approbation. Utilisez les flèches ou faites glisser les membres.",
+    committeeNote: "Le directeur indiqué figure déjà en 1re position du jury. Si un codirecteur est indiqué, il figure déjà en 2e position. Ajoutez seulement les autres membres dans l’ordre du procès-verbal ou de la page d’approbation. Utilisez les flèches ou faites-les glisser pour les réordonner.",
     equivalentLanguage: "Langue du titre équivalent", equivalentPlaceholder: "Titre et sous-titre éventuel dans cette langue",
     keywordOrder: "À gauche, un terme dans la langue originale du travail. À droite, son équivalent portugais ; si l’original est portugais, utilisez l’anglais à droite. Chaque ligne correspond à une paire équivalente.",
     originalChange: "Vérifiez le titre, le sous-titre et les mots-clés après avoir changé la langue originale. Les textes existants ne sont pas traduits automatiquement.",
@@ -47,7 +47,7 @@ export const formGuidance = {
   },
   it: {
     duplicateTerm: "Questo termine è già presente in questa colonna. Inserite un altro termine.", memberPosition: "Membro della commissione {number}",
-    committeeNote: "Il relatore è il 1º membro della commissione e il correlatore, se presente, è il 2º. Disponete gli altri membri nell’ordine del verbale o della pagina di approvazione. Usate le frecce o trascinate per riordinare.",
+    committeeNote: "Il relatore indicato occupa già il 1º posto nella commissione. Se è presente un correlatore, occupa già il 2º. Aggiungete solo gli altri membri nell’ordine del verbale o della pagina di approvazione. Usate le frecce o trascinate per riordinarli.",
     equivalentLanguage: "Lingua del titolo equivalente", equivalentPlaceholder: "Titolo ed eventuale sottotitolo in questa lingua",
     keywordOrder: "A sinistra, un termine nella lingua originale dell’opera. A destra, il suo equivalente in portoghese; se l’originale è portoghese, usate l’inglese a destra. Ogni riga rappresenta una coppia equivalente.",
     originalChange: "Controllate titolo, sottotitolo e parole chiave dopo aver cambiato la lingua originale. I testi esistenti non vengono tradotti automaticamente.",

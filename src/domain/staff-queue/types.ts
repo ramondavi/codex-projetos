@@ -13,6 +13,9 @@ export type QueueRequest = {
   advisorName: string;
   hasInternalNote: boolean;
   isPriority: boolean;
+  priorityReasonCode: string | null;
+  priorityReasonDetail: string | null;
+  canRevisitDeclarations: boolean;
   progressLabel: string;
   progressTone: "waiting" | "active" | "ready" | "done" | "attention";
 };

@@ -1,4 +1,12 @@
-export const STUDENT_REQUEST_DRAFT_KEY = "pronto:student-request-draft:v2";
+export function studentRequestDraftKey(userId: string) {
+  return `pronto:student-request-draft:v3:${userId}`;
+}
+
+export type RequestLanguage = "pt" | "en" | "es" | "de" | "fr" | "it";
+
+export function requiredEquivalentLanguages(original: RequestLanguage): RequestLanguage[] {
+  return original === "pt" ? ["en"] : original === "en" ? ["pt"] : ["pt", "en"];
+}
 
 export type StudentRequestDraft = {
   academicProgramId: string;
@@ -6,13 +14,16 @@ export type StudentRequestDraft = {
   title: string;
   subtitle: string;
   equivalentTitle: string;
-  originalLanguage: "pt" | "en" | "es" | "de" | "fr" | "it";
-  equivalentTitles: { language: "pt" | "en" | "es" | "de" | "fr" | "it"; title: string }[];
+  originalLanguage: RequestLanguage;
+  originalLanguageSelected: boolean;
+  equivalentTitles: { language: "" | RequestLanguage; title: string }[];
   otherTitles: string[];
   publicWorkUrl: string;
   people: { author: string; additionalAuthors: string[]; committeeMembers: string[]; birthYearAcknowledged: boolean; advisor: string; advisorNoteLabel: string; coadvisor: string; coadvisorNoteLabel: string };
   keywordsPt: string[];
   keywordsEn: string[];
+  keywordsOriginal: string[];
+  keywordsAdditional: string[];
   specialCases: string[];
   volumeInformation: string;
   depositYear: string;
@@ -24,7 +35,15 @@ export type StudentRequestDraft = {
   defendedAndApproved: boolean;
   finalFileConfirmed: boolean;
   approvalPageConfirmed: boolean;
+  sharedFileUnchangedConfirmed: boolean;
+  cancellationAcknowledged: boolean;
 };
+
+export function additionalEquivalentLanguage(draft: Pick<StudentRequestDraft, "originalLanguage" | "equivalentTitles">): RequestLanguage | "" {
+  const required = requiredEquivalentLanguages(draft.originalLanguage);
+  const item = draft.equivalentTitles.find((title) => title.language !== "" && title.language !== draft.originalLanguage && !required.includes(title.language));
+  return item?.language ?? "";
+}
 
 export const emptyStudentRequestDraft: StudentRequestDraft = {
   academicProgramId: "",
@@ -33,15 +52,18 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   subtitle: "",
   equivalentTitle: "",
   originalLanguage: "pt",
-  equivalentTitles: [{ language: "en", title: "" }],
+  originalLanguageSelected: false,
+  equivalentTitles: [],
   otherTitles: [],
   publicWorkUrl: "",
   people: { author: "", additionalAuthors: [], committeeMembers: [], birthYearAcknowledged: false, advisor: "", advisorNoteLabel: "Orientador", coadvisor: "", coadvisorNoteLabel: "Coorientador" },
   keywordsPt: ["", "", ""],
   keywordsEn: ["", "", ""],
+  keywordsOriginal: ["", "", ""],
+  keywordsAdditional: ["", "", ""],
   specialCases: [],
   volumeInformation: "",
-  depositYear: String(new Date().getFullYear()),
+  depositYear: "",
   defenseYear: "",
   extentUnit: "pages",
   extentCount: "",
@@ -50,21 +72,27 @@ export const emptyStudentRequestDraft: StudentRequestDraft = {
   defendedAndApproved: false,
   finalFileConfirmed: false,
   approvalPageConfirmed: false,
+  sharedFileUnchangedConfirmed: false,
+  cancellationAcknowledged: false,
 };
 
 export function compactDraft(draft: StudentRequestDraft) {
   const compact = (values: string[]) => values.map((value) => value.trim()).filter(Boolean);
+  const additionalLanguage = additionalEquivalentLanguage(draft);
   return {
     ...draft,
     registrationNumber: draft.registrationNumber.trim(),
     title: draft.title.trim(),
     subtitle: draft.subtitle.trim(),
     equivalentTitle: draft.equivalentTitle.trim(),
-    equivalentTitles: draft.equivalentTitles.map((item) => ({ ...item, title: item.title.trim() })).filter((item) => item.title),
+    equivalentTitles: draft.equivalentTitles.map((item) => ({ ...item, title: item.title.trim() })).filter((item) => item.language && item.title),
     publicWorkUrl: draft.publicWorkUrl.trim(),
     otherTitles: compact(draft.otherTitles),
     keywordsPt: compact(draft.keywordsPt),
     keywordsEn: compact(draft.keywordsEn),
+    keywordsOriginal: compact(draft.keywordsOriginal),
+    additionalLanguage,
+    additionalKeywords: additionalLanguage ? compact(draft.keywordsAdditional) : [],
     people: {
       author: draft.people.author.trim(),
       additionalAuthors: compact(draft.people.additionalAuthors),
@@ -95,6 +123,10 @@ export function restoreStudentRequestDraft(value: unknown): StudentRequestDraft 
       Object.assign(restored, { [key]: source[key] });
     }
   }
+  const legacyDraft = source.originalLanguageSelected === undefined;
+  const legacyHasWork = Boolean(String(source.title ?? "").trim()) || Boolean(String(source.registrationNumber ?? "").trim()) || (Array.isArray(source.equivalentTitles) && source.equivalentTitles.some((item) => Boolean(String(record(item).title ?? "").trim())));
+  restored.originalLanguageSelected = source.originalLanguageSelected === true || (legacyDraft && typeof source.originalLanguage === "string" && legacyHasWork);
+  if (legacyDraft && !legacyHasWork && restored.depositYear === String(new Date().getFullYear())) restored.depositYear = "";
   const strings = (item: unknown) => Array.isArray(item) ? item.filter((entry): entry is string => typeof entry === "string") : [];
   for (const key of ["author", "advisor", "coadvisor", "advisorNoteLabel", "coadvisorNoteLabel"] as const) {
     if (typeof people[key] === "string") restored.people[key] = people[key];
@@ -105,28 +137,38 @@ export function restoreStudentRequestDraft(value: unknown): StudentRequestDraft 
   const pairedStrings = (item: unknown) => Array.isArray(item) ? item.map((entry) => typeof entry === "string" ? entry : "") : [];
   restored.keywordsPt = pairedStrings(source.keywordsPt);
   restored.keywordsEn = pairedStrings(source.keywordsEn);
-  const pairCount = Math.max(3, restored.keywordsPt.length, restored.keywordsEn.length);
+  restored.keywordsOriginal = pairedStrings(source.keywordsOriginal);
+  restored.keywordsAdditional = pairedStrings(source.keywordsAdditional);
+  if (source.keywordsOriginal === undefined && !["pt", "en"].includes(restored.originalLanguage)) {
+    restored.keywordsOriginal = restored.keywordsEn;
+    restored.keywordsEn = [];
+  }
+  const pairCount = Math.max(3, restored.keywordsPt.length, restored.keywordsEn.length, restored.keywordsOriginal.length, restored.keywordsAdditional.length);
   restored.keywordsPt = Array.from({ length: pairCount }, (_, index) => restored.keywordsPt[index] ?? "");
   restored.keywordsEn = Array.from({ length: pairCount }, (_, index) => restored.keywordsEn[index] ?? "");
+  restored.keywordsOriginal = Array.from({ length: pairCount }, (_, index) => restored.keywordsOriginal[index] ?? "");
+  restored.keywordsAdditional = Array.from({ length: pairCount }, (_, index) => restored.keywordsAdditional[index] ?? "");
   restored.otherTitles = strings(source.otherTitles);
   restored.specialCases = strings(source.specialCases).filter((item) => ["cotutelle", "double_degree"].includes(item));
-  for (const key of ["defendedAndApproved", "finalFileConfirmed", "approvalPageConfirmed"] as const) restored[key] = source[key] === true;
+  for (const key of ["defendedAndApproved", "finalFileConfirmed", "approvalPageConfirmed", "sharedFileUnchangedConfirmed", "cancellationAcknowledged"] as const) restored[key] = source[key] === true;
   const languages = ["pt", "en", "es", "de", "fr", "it"];
   if (!languages.includes(restored.originalLanguage)) restored.originalLanguage = "pt";
   restored.hasIllustrations = source.hasIllustrations === true || source.hasIllustrations === "yes" ? "yes" : source.hasIllustrations === false || source.hasIllustrations === "no" ? "no" : "";
   restored.extentUnit = source.extentUnit === "volumes" ? "volumes" : "pages";
   const titles = Array.isArray(source.equivalentTitles) ? source.equivalentTitles.map(record) : [];
   const seen = new Set<string>();
-  restored.equivalentTitles = titles.flatMap((item) => {
+  const existingTitles: StudentRequestDraft["equivalentTitles"] = titles.flatMap((item): StudentRequestDraft["equivalentTitles"] => {
+    if (item.language === "") return [{ language: "" as const, title: typeof item.title === "string" ? item.title : "" }];
+    if (legacyDraft && !legacyHasWork && item.language === "en" && !String(item.title ?? "").trim()) return [{ language: "" as const, title: "" }];
     if (typeof item.language !== "string" || !languages.includes(item.language) || item.language === restored.originalLanguage || seen.has(item.language)) return [];
     seen.add(item.language);
     return [{ language: item.language as StudentRequestDraft["originalLanguage"], title: typeof item.title === "string" ? item.title : "" }];
   });
-  if (restored.originalLanguage !== "pt") {
-    const portuguese = restored.equivalentTitles.find((item) => item.language === "pt") ?? { language: "pt" as const, title: "" };
-    restored.equivalentTitles = [portuguese, ...restored.equivalentTitles.filter((item) => item.language !== "pt")];
-  } else if (!restored.equivalentTitles.length) {
-    restored.equivalentTitles = [{ language: "en", title: restored.equivalentTitle }];
-  }
+  const requiredLanguages = requiredEquivalentLanguages(restored.originalLanguage);
+  const additional = existingTitles.find((item) => item.language !== "" && !requiredLanguages.includes(item.language));
+  restored.equivalentTitles = restored.originalLanguageSelected ? [
+    ...requiredLanguages.map((language) => ({ language, title: existingTitles.find((item) => item.language === language)?.title ?? "" })),
+    ...(additional ? [additional] : []),
+  ] : [];
   return restored;
 }

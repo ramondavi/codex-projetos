@@ -33,16 +33,24 @@ export type SignupInput = {
   privacyAccepted: boolean;
 };
 
-export function validateSignup(input: SignupInput) {
-  if (input.fullName.trim().length < 3) return "Informe seu nome completo.";
-  if (!isValidCpf(input.cpf)) return "Informe um CPF válido.";
-  if (!isValidBirthDate(input.birthDate)) return "Informe uma data de nascimento válida.";
-  if (!isUfbaEmail(input.email)) return "Use seu endereço institucional @ufba.br.";
+export type SignupField = "name" | "cpf" | "birthDate" | "email" | "password" | "passwordConfirmation" | "privacyAccepted";
+export type SignupErrors = Partial<Record<SignupField, string>>;
+
+export function validateSignupFields(input: SignupInput): SignupErrors {
+  const errors: SignupErrors = {};
+  if (input.fullName.trim().length < 3) errors.name = "Informe seu nome completo.";
+  if (!isValidCpf(input.cpf)) errors.cpf = "Informe um CPF válido.";
+  if (!isValidBirthDate(input.birthDate)) errors.birthDate = "Informe uma data de nascimento válida.";
+  if (!isUfbaEmail(input.email)) errors.email = "Use seu endereço institucional @ufba.br.";
   const passwordError = validatePassword(input.password);
-  if (passwordError) return passwordError;
-  if (input.password !== input.passwordConfirmation) return "As senhas não coincidem.";
-  if (!input.privacyAccepted) return "É necessário declarar ciência da Política de Privacidade.";
-  return null;
+  if (passwordError) errors.password = passwordError;
+  if (input.password !== input.passwordConfirmation || !input.passwordConfirmation) errors.passwordConfirmation = "As senhas não coincidem.";
+  if (!input.privacyAccepted) errors.privacyAccepted = "É necessário declarar ciência da Política de Privacidade.";
+  return errors;
+}
+
+export function validateSignup(input: SignupInput) {
+  return Object.values(validateSignupFields(input))[0] ?? null;
 }
 
 export function normalizedSignupMetadata(input: SignupInput) {

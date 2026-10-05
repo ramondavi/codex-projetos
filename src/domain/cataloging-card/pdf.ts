@@ -7,6 +7,7 @@ const CARD_RIGHT = 497.75;
 const BODY_LEFT = 163.1;
 const FONT_SIZE = 10;
 const LINE_HEIGHT = 12.6;
+const PARAGRAPH_GAP = LINE_HEIGHT * 1.25;
 
 export function drawCatalogingCard(page: PDFPage, snapshot: CatalogingCardSnapshot, fonts: { regular: PDFFont; bold: PDFFont }) {
   const { regular, bold } = fonts;
@@ -23,12 +24,13 @@ export function drawCatalogingCard(page: PDFPage, snapshot: CatalogingCardSnapsh
   y = drawWrapped(page, content.authorizedAuthor, BODY_LEFT, y, CARD_RIGHT - BODY_LEFT, FONT_SIZE, regular, LINE_HEIGHT);
   y = drawHanging(page, content.titleStatement, y, regular, hangingOffset);
   if (content.physicalDescription) y = drawHanging(page, content.physicalDescription, y, regular, hangingOffset);
-  if (content.academicNote) y = drawHanging(page, content.academicNote, y - LINE_HEIGHT, regular, hangingOffset);
+  if (content.academicNote) y = drawHanging(page, content.academicNote, y - PARAGRAPH_GAP, regular, hangingOffset);
   for (const note of content.notes) y = drawHanging(page, note, y, regular, hangingOffset);
-  y = drawHanging(page, content.tracings, y - LINE_HEIGHT, regular, hangingOffset);
-  const bottomLine = 72;
+  y = drawHanging(page, content.tracings, y - PARAGRAPH_GAP, regular, hangingOffset);
+  const cduY = Math.min(96, y - PARAGRAPH_GAP);
+  const bottomLine = cduY - 24;
   const cduText = `CDU: ${snapshot.classification.cdu}`;
-  page.drawText(cduText, { x: CARD_RIGHT - regular.widthOfTextAtSize(cduText, FONT_SIZE), y: bottomLine + 24, size: FONT_SIZE, font: regular });
+  page.drawText(cduText, { x: CARD_RIGHT - regular.widthOfTextAtSize(cduText, FONT_SIZE), y: cduY, size: FONT_SIZE, font: regular });
   page.drawLine({ start: { x: CARD_LEFT, y: bottomLine }, end: { x: CARD_RIGHT, y: bottomLine }, thickness: 1.4 });
   center(page, content.technicalResponsibility, bottomLine - 28, FONT_SIZE, regular);
 }

@@ -2,6 +2,9 @@ import { redirect } from "next/navigation";
 import { StudentCorrectionForm } from "@/components/student-correction-form";
 import { correctableFields } from "@/domain/issues/fields";
 import { createClient } from "@/lib/supabase/server";
+import { panelPageMetadata } from "@/lib/panel-page-metadata";
+export const metadata = panelPageMetadata("Revise os campos destacados");
+
 
 type RawRequest = { id: string; title: string; subtitle: string | null; equivalent_title: string | null; other_titles: string[]; public_work_url: string; volume_information: string | null; library_note: string | null; enrollment: { registration_number: string; academic_program_id: string } | { registration_number: string; academic_program_id: string }[] | null; people: { role: string; transcribed_name: string }[]; keywords: { language: string; term: string; position: number }[] };
 const first = <T,>(value: T | T[] | null): T | null => Array.isArray(value) ? value[0] ?? null : value;

@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { requestAuthenticatedPasswordChange, requestEmailChange, updateBirthDate } from "@/app/auth-actions";
 import { AuthFeedback } from "@/components/auth-feedback";
 import { StaffAvatarPicker } from "@/components/staff-avatar-picker";
+import { panelPageMetadata } from "@/lib/panel-page-metadata";
+export const metadata = panelPageMetadata("Dados pessoais");
+
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string }> }) {
   const { error, message } = await searchParams;

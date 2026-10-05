@@ -662,7 +662,7 @@ export function AdminOperations(props: {
                     type="checkbox"
                     defaultChecked={p.coordination_magic_link_enabled}
                   />{" "}
-                  Magic Link ativo
+                  Enviar Magic Link automaticamente à coordenação
                 </label>
                 <label>
                   Contato

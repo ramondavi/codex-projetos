@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
 import { LiteraryAvatar } from "@/components/literary-avatar";
 import { RelativeDateTime } from "@/components/relative-date-time";
 import { createClient } from "@/lib/supabase/client";
-import { PriorityBadge } from "./priority-badge";
 
 export type StaffActivityEvent = {
   event_id: string;
@@ -19,7 +18,6 @@ export type StaffActivityEvent = {
   actor_name: string;
   actor_role: string;
   avatar_choice: number | null;
-  is_priority: boolean;
 };
 
 const pageSize = 10;
@@ -45,14 +43,15 @@ export function StaffActivityFeed({ initialEvents, userId, initialLoadError = fa
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(initialLoadError);
   const [supabase] = useState(createClient);
+  const postsRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
 
   const refresh = useCallback(async () => {
     const { data, error: requestError } = await supabase.rpc("list_staff_activity_feed", { page_size: pageSize });
     if (requestError) setError(true);
     else {
       const next = (data ?? []) as StaffActivityEvent[];
-      setEvents((current) => [...new Map([...current, ...next].map((item) => [item.event_id, item])).values()].map((item) => ({ ...item, is_priority: next.find((recent) => recent.request_id === item.request_id)?.is_priority ?? item.is_priority })).sort((a, b) => b.occurred_at.localeCompare(a.occurred_at) || b.event_id.localeCompare(a.event_id)));
-      setHasMore((current) => current || next.length === pageSize);
+      setEvents((current) => [...new Map([...current, ...next].map((item) => [item.event_id, item])).values()].sort((a, b) => b.occurred_at.localeCompare(a.occurred_at) || b.event_id.localeCompare(a.event_id)));
       setError(false);
     }
   }, [supabase]);
@@ -67,31 +66,38 @@ export function StaffActivityFeed({ initialEvents, userId, initialLoadError = fa
     return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); void supabase.removeChannel(channel); };
   }, [refresh, supabase]);
 
-  async function loadMore() {
+  const loadMore = useCallback(async () => {
+    if (busy || !hasMore) return;
     const last = events.at(-1);
     if (!last) return;
     setBusy(true);
-    const { data, error: requestError } = await createClient().rpc("list_staff_activity_feed", {
+    const { data, error: requestError } = await supabase.rpc("list_staff_activity_feed", {
       page_size: pageSize, before_occurred_at: last.occurred_at, before_event_id: last.event_id,
     });
     if (requestError) setError(true);
-    else { const next = (data ?? []) as StaffActivityEvent[]; setEvents((current) => [...current, ...next]); setHasMore(next.length === pageSize); setError(false); }
+    else { const next = (data ?? []) as StaffActivityEvent[]; setEvents((current) => [...new Map([...current, ...next].map((item) => [item.event_id, item])).values()]); setHasMore(next.length === pageSize); setError(false); }
     setBusy(false);
-  }
+  }, [busy, hasMore, events, supabase]);
+
+  useEffect(() => {
+    if (!hasMore || busy || error || !postsRef.current || !endRef.current) return;
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) { observer.disconnect(); void loadMore(); } }, { root: postsRef.current, rootMargin: "0px 0px 80px 0px" });
+    observer.observe(endRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, busy, error, events.length, loadMore]);
 
   return <section className="staff-feed" aria-labelledby="staff-feed-title">
     <header className="staff-feed__heading"><div><p className="eyebrow">Feed da equipe</p><h2 id="staff-feed-title">Novidades dos atendimentos</h2><p>Acompanhe, em tempo real, o que aconteceu nos protocolos.</p></div></header>
     {error && <p className="notice notice--error" role="alert">Não foi possível carregar as atualizações. Nova tentativa automática em instantes.</p>}
-    {events.length ? <div className="staff-feed__posts">{events.map((event) => {
+    {events.length ? <div className="staff-feed__posts" ref={postsRef}>{events.map((event) => {
       const description = descriptions[event.action];
       if (!description) return null;
       const staff = event.actor_role === "cataloger" || event.actor_role === "administrator";
       return <article className={`staff-feed__post staff-feed__post--${description.tone}`} key={event.event_id}>
         <div className="staff-feed__post-head"><div className="staff-feed__avatar">{staff && event.actor_id ? <LiteraryAvatar id={event.actor_id} label={event.actor_name} choice={event.avatar_choice} small /> : <span aria-hidden="true">{event.actor_name.charAt(0).toLocaleUpperCase("pt-BR")}</span>}</div><div className="staff-feed__byline"><p><strong>{event.actor_id === userId && staff ? "Você" : event.actor_name}</strong> {description.verb}</p><RelativeDateTime value={event.occurred_at} /></div></div>
-        <div className="staff-feed__story"><span className="staff-feed__story-icon"><AppIcon name={description.icon} /></span><span className="staff-feed__story-label">{description.label}</span><h3>{event.request_title}</h3><span className="staff-feed__protocol">{event.protocol} {event.is_priority && <PriorityBadge />}</span></div>
+        <div className="staff-feed__story"><span className="staff-feed__story-icon"><AppIcon name={description.icon} /></span><span className="staff-feed__story-label">{description.label}</span><h3>{event.request_title}</h3><span className="staff-feed__protocol">{event.protocol}</span></div>
         <div className="staff-feed__post-foot"><p>{description.detail}</p><Link href={`/painel/atendimento/${event.request_id}`}>Ver atendimento <AppIcon name="arrowRight" /></Link></div>
       </article>;
-    })}</div> : !error && <div className="staff-feed__empty"><AppIcon name="inbox" /><h3>Nenhuma novidade por enquanto</h3><p>As próximas ações da equipe nos atendimentos aparecerão neste feed.</p></div>}
-    {hasMore && <button className="button button--secondary staff-feed__more" type="button" onClick={loadMore} disabled={busy}>{busy ? "Carregando…" : "Ver novidades anteriores"}</button>}
+    })}{hasMore && <div ref={endRef} className="staff-feed__loading" role="status" aria-live="polite">{busy ? "Carregando novidades anteriores…" : ""}</div>}</div> : !error && <div className="staff-feed__empty"><AppIcon name="inbox" /><h3>Nenhuma novidade por enquanto</h3><p>As próximas ações da equipe nos atendimentos aparecerão neste feed.</p></div>}
   </section>;
 }

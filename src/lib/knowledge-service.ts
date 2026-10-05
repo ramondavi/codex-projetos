@@ -1,7 +1,7 @@
 import "server-only";
 import sanitizeHtml from "sanitize-html";
 import { createClient } from "@/lib/supabase/server";
-import { initialKnowledgeEntries, type KnowledgeEntry, type KnowledgeItem } from "@/lib/knowledge-base";
+import { articleHtml, helpArticles, initialKnowledgeEntries, type KnowledgeEntry, type KnowledgeItem } from "@/lib/knowledge-base";
 import { getInterfaceLanguage } from "@/lib/server-language";
 
 const fields = "id,slug,kind,title,summary,body_html,translations,category,audiences,active,position,featured_position,created_at,updated_at,published_at";
@@ -46,7 +46,13 @@ export async function getPublishedKnowledge(publicOnly = true): Promise<Knowledg
   let query = supabase.from("knowledge_base_entries").select(fields).eq("active", true).order("position");
   if (publicOnly) query = query.contains("audiences", ["public"]);
   const { data, error } = await query;
-  if (!error) { const language = await getInterfaceLanguage(); return (data as KnowledgeEntry[]).map((entry) => { const localized = localizedEntry(entry, language); return publicOnly ? protectPublicContacts(localized) : localized; }); }
+  if (!error) {
+    const language = await getInterfaceLanguage();
+    const entries = data as KnowledgeEntry[];
+    const nadaConstaGuide = helpArticles.find((item) => item.slug === "emitir-nada-consta");
+    if (nadaConstaGuide && !entries.some((entry) => entry.slug === nadaConstaGuide.slug)) entries.push({ id: `initial-${nadaConstaGuide.id}`, slug: nadaConstaGuide.slug ?? null, kind: "article", title: nadaConstaGuide.title, summary: nadaConstaGuide.summary, body_html: articleHtml(nadaConstaGuide), category: nadaConstaGuide.category, audiences: ["public", "student", "panel"], active: true, position: 1070, featured_position: null, created_at: null, updated_at: null, published_at: null });
+    return entries.map((entry) => { const localized = localizedEntry(entry, language); return publicOnly ? protectPublicContacts(localized) : localized; });
+  }
   const { data: faqs } = await supabase.from("frequently_asked_questions")
     .select("id,question,answer,active,position,featured_position,created_at,updated_at").eq("active", true).order("position");
   const defaults = faqs?.length ? faqs : [

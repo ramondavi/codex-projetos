@@ -8,6 +8,7 @@ import { AppIcon } from "./app-icon";
 import { RelativeDateTime } from "./relative-date-time";
 import { LiteraryAvatar } from "./literary-avatar";
 import { hasPriority, PriorityBadge } from "./priority-badge";
+import { formatWorkTitle } from "@/lib/work-title";
 
 type StaffMember = { id: string; full_name: string; avatar_choice: number | null };
 type Mention = { id: string; handle: string };
@@ -109,13 +110,13 @@ export function StaffMessages({ userId, onRead, onNavigate }: { userId: string; 
     if (!/^[A-Z0-9-]*$/.test(query)) { setProtocolOptions([]); return; }
     let active = true;
     const timer = window.setTimeout(async () => {
-      let request = supabase.from("cataloging_requests").select("id,protocol,title,priority:request_priorities(request_id),student:student_profiles!cataloging_requests_student_profile_id_fkey(profile:profiles!student_profiles_profile_id_fkey(full_name))").order("created_at", { ascending: false }).limit(8);
+      let request = supabase.from("cataloging_requests").select("id,protocol,title,subtitle,priority:request_priorities(request_id),student:student_profiles!cataloging_requests_student_profile_id_fkey(profile:profiles!student_profiles_profile_id_fkey(full_name))").order("created_at", { ascending: false }).limit(8);
       if (query) request = request.ilike("protocol", `${query}%`);
       const { data, error: lookupError } = await request;
       if (active) setProtocolOptions(lookupError ? [] : (data ?? []).map((item) => {
         const student = Array.isArray(item.student) ? item.student[0] : item.student;
         const profile = Array.isArray(student?.profile) ? student.profile[0] : student?.profile;
-        return { id: item.id, protocol: item.protocol, title: item.title, studentName: profile?.full_name ?? "Nome indisponível", isPriority: hasPriority(item.priority) };
+        return { id: item.id, protocol: item.protocol, title: formatWorkTitle(item.title, item.subtitle), studentName: profile?.full_name ?? "Nome indisponível", isPriority: hasPriority(item.priority) };
       }));
     }, 120);
     return () => { active = false; window.clearTimeout(timer); };

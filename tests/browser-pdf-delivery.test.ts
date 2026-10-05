@@ -42,5 +42,6 @@ test("uses the cataloged author filename and keeps the complete card in the lowe
   const pdf = readFileSync("src/domain/cataloging-card/pdf.ts", "utf8");
   assert.match(component, /catalogedWorkFilename\(snapshot\)/);
   assert.match(pdf, /const headerTop = 397/);
-  assert.match(pdf, /const bottomLine = 72/);
+  assert.match(pdf, /const cduY = Math\.min\(96, y - PARAGRAPH_GAP\)/);
+  assert.match(pdf, /const bottomLine = cduY - 24/);
 });
