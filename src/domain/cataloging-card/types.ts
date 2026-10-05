@@ -4,9 +4,9 @@ export type CardSubject = { labelPt: string; labelEn?: string | null; isPrimary:
 export type CatalogingCardSnapshot = {
   institution: { university: string; librarySystem: string; library: string };
   request: {
-    protocol: string; title: string; subtitle?: string | null; equivalentTitle?: string | null;
+    protocol: string; title: string; subtitle?: string | null; equivalentTitle?: string | null; includeEquivalentTitle?: boolean;
     otherTitles?: string[]; volumeInformation?: string | null; specialCases?: string[];
-    programName: string; academicLevel: string; workNature?: string;
+    programName: string; programCode?: string; academicLevel: string; workNature?: string;
     programTracing?: string | null; depositYear?: number; defenseYear?: number;
     extentUnit?: "pages" | "volumes"; extentCount?: number; hasIllustrations?: boolean;
     publicationPlace?: string;
@@ -66,7 +66,7 @@ export function buildCardContent(snapshot: CatalogingCardSnapshot) {
   const coadvisor = snapshot.people.find((person) => person.role === "coadvisor");
   const title = withoutFinalPunctuation(snapshot.request.title);
   const subtitle = snapshot.request.subtitle ? ` : ${lowerInitial(withoutFinalPunctuation(snapshot.request.subtitle))}` : "";
-  const equivalentTitle = snapshot.request.equivalentTitle ? ` = ${withoutFinalPunctuation(snapshot.request.equivalentTitle)}` : "";
+  const equivalentTitle = snapshot.request.includeEquivalentTitle && snapshot.request.equivalentTitle ? ` = ${withoutFinalPunctuation(snapshot.request.equivalentTitle)}` : "";
   const responsibility = author?.transcribedName ? ` / ${withoutFinalPunctuation(author.transcribedName)}.` : ".";
   const place = snapshot.request.publicationPlace ?? "Salvador";
   const deposit = snapshot.request.depositYear ? ` ${snapshot.catalogingConventions.statementSeparator ?? "—"} ${place}, ${snapshot.request.depositYear}.` : "";
@@ -90,12 +90,16 @@ export function buildCardContent(snapshot: CatalogingCardSnapshot) {
   const entries = snapshot.subjects.map((subject, index) =>
     `${index + 1}. ${sentence(normalizeSubdivisionSeparator(subject.labelPt, subdivisionSeparator))}`,
   );
-  const secondary = [...snapshot.people.filter((person) => person.role === "author").slice(1).map((person) => person.authorizedName), advisor?.authorizedName, coadvisor?.authorizedName].filter((name): name is string => Boolean(name));
-  if (snapshot.request.programTracing) secondary.push(`Universidade Federal da Bahia. Faculdade de Arquitetura. ${sentence(snapshot.request.programTracing)}`);
-  secondary.push("Título");
-  secondary.forEach((name, index) => entries.push(`${roman(index + 1)}. ${sentence(name)}`));
+  if (advisor?.authorizedName) entries.push(`I. ${sentence(advisor.authorizedName)}`);
+  if (coadvisor?.authorizedName) entries.push(`II. ${sentence(coadvisor.authorizedName)}`);
+  const isPpgau = snapshot.request.programCode === "ppgau-academic-master" || snapshot.request.programCode === "ppgau-doctorate" || (!snapshot.request.programCode && ["Dissertação", "Tese"].includes(snapshot.request.workNature ?? "") && snapshot.request.programTracing?.includes("Programa de Pós-Graduação em Arquitetura e Urbanismo"));
+  const programSecondary = isPpgau
+    ? "Universidade Federal da Bahia. Faculdade de Arquitetura. Programa de Pós-Graduação em Arquitetura e Urbanismo."
+    : "Universidade Federal da Bahia. Faculdade de Arquitetura.";
+  entries.push(`III. ${programSecondary}`, "IV. Título.");
+  snapshot.people.filter((person) => person.role === "author").slice(1).forEach((person, index) => entries.push(`${roman(index + 5)}. ${sentence(person.authorizedName)}`));
   return {
-    authorizedAuthor: author?.authorizedName ? sentence(`${author.authorizedName}${author.birthYear && author.birthYearValidated ? `, ${author.birthYear}-` : ""}`) : "",
+    authorizedAuthor: author?.authorizedName ? `${withoutFinalPunctuation(author.authorizedName)}${author.birthYear && author.birthYearValidated ? `, ${author.birthYear}-` : "."}` : "",
     titleStatement,
     physicalDescription,
     academicNote,

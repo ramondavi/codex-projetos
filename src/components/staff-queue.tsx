@@ -8,6 +8,7 @@ import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
 import { AppIcon } from "./app-icon";
 import { RelativeDateTime } from "./relative-date-time";
 import { PriorityBadge } from "./priority-badge";
+import { ProtocolActionsMenu } from "./protocol-actions-menu";
 
 const statusLabels: Record<string, string> = { submitted: "Na fila", in_review: "Em análise", changes_requested: "Correções solicitadas", approved: "Homologada", completed: "Concluída", canceled: "Cancelada" };
 const levelLabels: Record<string, string> = { undergraduate: "Graduação", specialization: "Especialização", master: "Mestrado", doctorate: "Doutorado" };
@@ -54,7 +55,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
       && (!level || item.level === level)
       && (!assignee || (assignee === "unassigned" ? !item.assignedTo : assignee === "me" ? item.assignedTo === currentUserId : item.assignedTo === assignee))
       && (!age || days >= Number(age));
-  }).sort((a, b) => Number(b.isPriority) - Number(a.isPriority) || a.submittedAt.localeCompare(b.submittedAt)), [requests, search, status, program, level, assignee, age, currentUserId, targetRequestId]);
+  }).sort((a, b) => Number(b.isPriority) - Number(a.isPriority) || b.submittedAt.localeCompare(a.submittedAt)), [requests, search, status, program, level, assignee, age, currentUserId, targetRequestId]);
 
   useEffect(() => {
     if (!targetRequestId || !filtered.some((item) => item.id === targetRequestId)) return;
@@ -77,18 +78,6 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
     });
   }
 
-  function reassign(requestId: string, targetStaffId: string) {
-    if (!targetStaffId) return;
-    setError(undefined);
-    startTransition(async () => {
-      const supabase = createClient();
-      const { error: actionError } = await supabase.rpc("reassign_cataloging_request", { target_request_id: requestId, target_staff_id: targetStaffId });
-      if (actionError) { setError("Não foi possível reatribuir o atendimento."); return; }
-      const target = staff.find((item) => item.id === targetStaffId);
-      setRequests((current) => current.map((item) => item.id === requestId ? { ...item, assignedTo: targetStaffId, assigneeName: target?.fullName ?? "Equipe", status: "in_review" } : item));
-      router.refresh();
-    });
-  }
 
   return <>
     {error && <div className="auth-feedback auth-feedback--error" role="alert">{error}</div>}
@@ -107,7 +96,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
     <section className="queue-list" aria-label="Solicitações">
       {filtered.map((item) => <article className={`queue-item${item.id === targetRequestId ? " queue-item--target" : ""}`} id={`queue-request-${item.id}`} key={item.id}>
         <div className="queue-item__main"><div className="queue-item__meta"><span className={`status-badge status-badge--${item.status}`}>{statusLabels[item.status] ?? item.status}</span>{item.isPriority && <PriorityBadge />}<span className={`progress-badge progress-badge--${item.progressTone}`}>Agora: {item.progressLabel}</span><span>{item.protocol}</span><span>{levelLabels[item.level]}</span>{item.hasInternalNote && <span title="Há observação interna">● Observação interna</span>}</div><h2>{item.title}</h2><p>{item.studentName} · {item.programName}</p><small>Orientador: {item.advisorName || "Não informado"} · Enviada <RelativeDateTime value={item.submittedAt} /></small></div>
-        <div className="queue-item__actions"><span>{item.assigneeName ? `Responsável: ${item.assigneeName}` : "Sem responsável"}</span>{!item.assignedTo && <button className="button button--primary button--small button--with-icon" disabled={pending} onClick={() => runAction("assume_cataloging_request", item.id)}><AppIcon name="work" />Assumir atendimento</button>}{item.assignedTo === currentUserId && <><Link className="button button--primary button--small button--with-icon" href={`/painel/atendimento/${item.id}`}><AppIcon name="review" />Abrir análise</Link><button className="text-button" disabled={pending} onClick={() => runAction("release_cataloging_request", item.id)}>Devolver à fila</button></>}{item.assignedTo && item.assignedTo !== currentUserId && <Link className="button button--secondary button--small button--with-icon" href={`/painel/atendimento/${item.id}`}><AppIcon name="search" />Visualizar</Link>}{isAdministrator && <select aria-label={`Reatribuir ${item.protocol}`} defaultValue="" onChange={(e) => reassign(item.id, e.target.value)} disabled={pending}><option value="">Reatribuir…</option>{staff.map((member) => <option key={member.id} value={member.id}>{member.fullName}</option>)}</select>}</div>
+        <div className="queue-item__actions"><ProtocolActionsMenu requestId={item.id} priorityReasonCode={item.priorityReasonCode} priorityReasonDetail={item.priorityReasonDetail} canSetPriority={!['completed', 'canceled'].includes(item.status)} canRevisit={item.assignedTo === currentUserId && item.canRevisitDeclarations} canRelease={item.assignedTo === currentUserId && item.status === "in_review"} canReassign={isAdministrator && !["completed", "canceled"].includes(item.status)} staff={staff} currentUserId={currentUserId} /><span>{item.assigneeName ? `Responsável: ${item.assigneeName}` : "Sem responsável"}</span>{!item.assignedTo && <button className="button button--primary button--small button--with-icon" disabled={pending} onClick={() => runAction("assume_cataloging_request", item.id)}><AppIcon name="work" />Assumir atendimento</button>}{item.assignedTo === currentUserId && <><Link className="button button--primary button--small button--with-icon" href={`/painel/atendimento/${item.id}`}><AppIcon name="review" />Abrir análise</Link></>}{item.assignedTo && item.assignedTo !== currentUserId && <Link className="button button--secondary button--small button--with-icon" href={`/painel/atendimento/${item.id}`}><AppIcon name="search" />Visualizar</Link>}</div>
       </article>)}
       {filtered.length === 0 && <div className="history-empty"><div><p className="eyebrow">Fila</p><h2>{targetRequestId ? "Protocolo indisponível na fila" : "Nenhuma solicitação encontrada"}</h2></div><p>{targetRequestId ? "O protocolo pode ter sido removido ou seu acesso pode ter mudado." : "Altere os filtros ou aguarde a entrada de novos protocolos."}</p></div>}
     </section>

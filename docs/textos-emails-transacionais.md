@@ -3,12 +3,14 @@
 Remetente: **BIB/FAUFBA | Pronto!**
 Canal de atendimento: **bibarq@ufba.br**
 Rodapé comum: “Não responda. Esta é uma mensagem automática do Pronto!, serviço da Biblioteca da Faculdade de Arquitetura da UFBA.”
+Saudação: usar somente o primeiro nome da pessoa destinatária. O nome completo do estudante permanece nos dados de identificação enviados à coordenação.
+Ao final de cada mensagem, incluir o botão **Acessar o painel do Pronto!**. Ações específicas, como corrigir campos ou acompanhar a solicitação, podem aparecer antes dele.
 
 ## Solicitação recebida — estudante
 
 **Assunto:** Pronto! | Recebemos sua solicitação n.º [protocolo]
 
-Olá, [nome da pessoa estudante].
+Olá, [primeiro nome da pessoa estudante].
 
 Tudo certo! Recebemos sua solicitação de ficha catalográfica, identificada pelo protocolo n.º **[protocolo]**.
 
@@ -20,16 +22,22 @@ O prazo de referência para o atendimento é de [SLA] dias úteis. Caso a biblio
 
 **Assunto:** Pronto! | Nova solicitação n.º [protocolo]
 
-Olá, [nome do contato].
+Olá, [primeiro nome do contato].
 
 Uma solicitação de ficha catalográfica foi aberta para o curso ou programa sob sua coordenação.
 
-**Trabalho:** [título]
+**Trabalho:** [título: subtítulo, quando houver]
 **Solicitante:** [nome completo do estudante]
+**Matrícula:** [matrícula vinculada à solicitação]
 **Protocolo:** [protocolo]
 **Prazo de referência:** [SLA] dias úteis
+**Previsão da análise:** [data estimada conforme o calendário operacional]
 
-Para acompanhar o andamento, use o acesso seguro abaixo: [link seguro da coordenação]
+Para acompanhar o andamento, use o botão abaixo.
+
+**[Acompanhar solicitação]**
+
+Se o botão não abrir, copie este endereço no navegador: [link seguro da coordenação]
 
 Esse acesso é somente para acompanhamento da solicitação realizada pelo(a) referido(a) estudante.
 
@@ -37,7 +45,7 @@ Esse acesso é somente para acompanhamento da solicitação realizada pelo(a) re
 
 **Assunto:** Pronto! | Correções necessárias na solicitação n.º [protocolo]
 
-Olá, [nome da pessoa estudante].
+Olá, [primeiro nome da pessoa estudante].
 
 A Biblioteca analisou sua solicitação e identificou informações que precisam ser corrigidas antes do prosseguimento.
 
@@ -53,7 +61,7 @@ Se precisar de orientação sobre o atendimento, entre em contato com a BIB/FAUF
 
 **Assunto:** Pronto! | Sua ficha catalográfica está liberada!
 
-Olá, [nome da pessoa estudante].
+Olá, [primeiro nome da pessoa estudante].
 
 Sua ficha catalográfica foi homologada e o Nada Consta que você forneceu foi validado. A ficha já está disponível no Pronto!.
 
@@ -65,7 +73,7 @@ Atenção! Antes de gerar o arquivo final do seu trabalho contendo a ficha, conf
 
 **Assunto:** Pronto! | Protocolo n.º [protocolo] encerrado
 
-Olá, [nome da pessoa estudante].
+Olá, [primeiro nome da pessoa estudante].
 
 Seu protocolo foi encerrado após a verificação da publicação do trabalho no Repositório Institucional da UFBA.
 
@@ -79,7 +87,7 @@ O arquivo Nada Consta enviado ao Pronto! será mantido somente pelo período ope
 
 **Assunto:** Pronto! | Protocolo n.º [protocolo] concluído
 
-Olá, [nome do contato].
+Olá, [primeiro nome do contato].
 
 O atendimento da solicitação abaixo foi concluído. Isso significa que o trabalho do(a) estudante teve sua ficha catalográfica feita pela Biblioteca e já se encontra disponível no Repositório Institucional da UFBA.
 
@@ -88,7 +96,7 @@ O atendimento da solicitação abaixo foi concluído. Isso significa que o traba
 **Protocolo:** [protocolo]
 **Publicação no RI/UFBA:** [url ou Handle]
 
-A página de acompanhamento desta solicitação foi fechada juntamente com o protocolo de atendimento.
+A página de acompanhamento desta solicitação foi fechada juntamente com o protocolo de atendimento. O Magic Link enviado anteriormente não é mais válido.
 
 ## Conta interna aguardando provisionamento — administração
 

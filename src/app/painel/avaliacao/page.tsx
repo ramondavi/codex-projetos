@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FeedbackQuestionnaire } from "@/components/feedback-questionnaire";
 import { createClient } from "@/lib/supabase/server";
+import { panelPageMetadata } from "@/lib/panel-page-metadata";
+export const metadata = panelPageMetadata("Avaliação do atendimento");
+
 
 export default async function FeedbackPage() {
   const supabase = await createClient();

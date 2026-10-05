@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { FeedbackAdminDashboard } from "@/components/feedback-admin-dashboard";
 import { createClient } from "@/lib/supabase/server";
+import { panelPageMetadata } from "@/lib/panel-page-metadata";
+export const metadata = panelPageMetadata("Avaliações do Pronto!");
+
 
 export default async function FeedbackAdministrationPage() {
   const supabase = await createClient();

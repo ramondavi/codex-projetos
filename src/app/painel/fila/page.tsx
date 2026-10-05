@@ -3,19 +3,23 @@ import { StaffQueue } from "@/components/staff-queue";
 import { createClient } from "@/lib/supabase/server";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
 import { describeRequestProgress } from "@/domain/request-progress";
+import { formatWorkTitle } from "@/lib/work-title";
+import { panelPageMetadata } from "@/lib/panel-page-metadata";
+export const metadata = panelPageMetadata("Fila geral");
+
 
 type RawQueueRequest = {
-  id: string; protocol: string; status: string; title: string; submitted_at: string; assigned_to: string | null;
+  id: string; protocol: string; status: string; title: string; subtitle: string | null; submitted_at: string; assigned_to: string | null;
   assignee: { full_name: string } | { full_name: string }[] | null;
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
   enrollment: { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
-  analysis: { internal_note: string }[] | { internal_note: string } | null;
+  analysis: { internal_note: string; review_completed_at: string | null }[] | { internal_note: string; review_completed_at: string | null } | null;
   nadaConsta: { status: string }[] | null;
   homologation: { id: string }[] | null;
   repositoryProgress: { started_at: string }[] | null;
   publication: { verified_at: string }[] | null;
-  priority: { request_id: string }[] | null;
+  priority: { reason_code: string; reason_detail: string | null }[] | null;
 };
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
@@ -28,7 +32,7 @@ export default async function StaffQueuePage() {
 
   const [{ data }, { data: staffData }] = await Promise.all([
     supabase.from("cataloging_requests").select(`
-      id, protocol, status, title, submitted_at, assigned_to,
+      id, protocol, status, title, subtitle, submitted_at, assigned_to,
       assignee:profiles!cataloging_requests_assigned_to_fkey(full_name),
       student:student_profiles!cataloging_requests_student_profile_id_fkey(
         profile:profiles!student_profiles_profile_id_fkey(full_name)
@@ -37,13 +41,13 @@ export default async function StaffQueuePage() {
         program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
       ),
       people:request_people(role, transcribed_name),
-      analysis:request_analyses(internal_note),
+      analysis:request_analyses(internal_note,review_completed_at),
       nadaConsta:nada_consta_documents(status),
       homologation:cataloging_card_homologations(id),
       repositoryProgress:repository_deposit_progress(started_at),
       publication:repository_publications(verified_at),
-      priority:request_priorities(request_id)
-    `).order("submitted_at", { ascending: true }),
+      priority:request_priorities(reason_code,reason_detail)
+    `).order("submitted_at", { ascending: false }),
     supabase.from("profiles").select("id, full_name").in("role", ["cataloger", "administrator"]).eq("status", "active").order("full_name"),
   ]);
 
@@ -55,7 +59,7 @@ export default async function StaffQueuePage() {
     const analysis = first(item.analysis);
     const progress = describeRequestProgress({ status: item.status, assignedTo: item.assigned_to, nadaConstaStatus: first(item.nadaConsta)?.status, hasHomologation: Boolean(first(item.homologation)), hasRepositoryDeposit: Boolean(first(item.repositoryProgress)), hasPublication: Boolean(first(item.publication)) });
     return {
-      id: item.id, protocol: item.protocol, status: item.status, title: item.title,
+      id: item.id, protocol: item.protocol, status: item.status, title: formatWorkTitle(item.title, item.subtitle),
       submittedAt: item.submitted_at, assignedTo: item.assigned_to,
       assigneeName: assignee?.full_name ?? null,
       studentName: first(student?.profile)?.full_name ?? "Estudante",
@@ -63,6 +67,9 @@ export default async function StaffQueuePage() {
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       hasInternalNote: Boolean(analysis?.internal_note.trim()),
       isPriority: Boolean(first(item.priority)),
+      priorityReasonCode: first(item.priority)?.reason_code ?? null,
+      priorityReasonDetail: first(item.priority)?.reason_detail ?? null,
+      canRevisitDeclarations: item.status === "in_review" && !analysis?.review_completed_at,
       progressLabel: progress.label, progressTone: progress.tone,
     };
   });

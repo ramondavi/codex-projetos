@@ -8,6 +8,8 @@ import { logout } from "@/app/auth-actions";
 import { DashboardBreadcrumbs } from "./breadcrumbs";
 import { AppIcon, type AppIconName } from "./app-icon";
 import { BackendHelpWidget } from "./backend-help-widget";
+import { ModalCloseButton } from "./modal-close-button";
+import { LocalEmailOutboxDelivery } from "./local-email-outbox-delivery";
 import { useInterfaceLanguage } from "./interface-language";
 import { StaffCommunications } from "./staff-communications";
 import { LiteraryAvatar } from "./literary-avatar";
@@ -72,6 +74,7 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
   const firstName = fullName.trim().split(/\s+/)[0] || fullName;
   return (
     <div className="dashboard-shell dashboard-shell--compact">
+      {process.env.NODE_ENV === "development" && role === "administrator" && <LocalEmailOutboxDelivery />}
       <aside className={`dashboard-nav${expanded ? "" : " dashboard-nav--compact"}`} onMouseEnter={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(true); }} onMouseLeave={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(false); }} onFocusCapture={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(true); }} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setExpanded(false); }}>
         <div className="dashboard-nav__top">
           <Link href="/" className="dashboard-nav__logo-link" aria-label={t.public} title={t.public}><span className="dashboard-nav__favicon"><Image src="/icon.png" alt="" width={64} height={64} priority /></span><span className="dashboard-nav__brand-logo"><Image className="brand__image brand__image--light" src="/logo-pronto-light.png" alt="" width={1600} height={643} priority /><Image className="brand__image brand__image--dark" src="/logo-pronto-dark.png" alt="" width={1600} height={643} priority /></span></Link>
@@ -106,8 +109,9 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
         </figure>
         <BackendHelpWidget role={role} />
       </div>
-      <dialog ref={logoutDialogRef} className="dashboard-logout-dialog" aria-labelledby="dashboard-logout-title" aria-describedby="dashboard-logout-description" onCancel={() => setLogoutDialogOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) setLogoutDialogOpen(false); }}>
+      <dialog ref={logoutDialogRef} className="dashboard-logout-dialog pronto-modal" aria-labelledby="dashboard-logout-title" aria-describedby="dashboard-logout-description" onCancel={() => setLogoutDialogOpen(false)} onClick={(event) => { if (event.target === event.currentTarget) setLogoutDialogOpen(false); }}>
         <div className="dashboard-logout-dialog__content">
+          <ModalCloseButton onClick={() => setLogoutDialogOpen(false)} />
           <p className="eyebrow">{t.logout}</p>
           <h2 id="dashboard-logout-title">{logoutDialogCopy[language].title}</h2>
           <p id="dashboard-logout-description">{logoutDialogCopy[language].description}</p>
