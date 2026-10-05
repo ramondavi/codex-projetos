@@ -10,7 +10,7 @@ insert into public.profiles(id,full_name,email,role,status) values('97000000-000
 insert into public.staff_profiles(profile_id,professional_name,crb) values('97000000-0000-4000-8000-000000000003','Catalogador PDF','CRB-5/3333');
 
 set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object('academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),'registrationNumber','PDF2026','title','Trabalho PDF','publicWorkUrl','https://example.org/work.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'people',jsonb_build_object('author','Ana','advisor','Bia','advisorNoteLabel','Orientador'),'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','PDF work')),'hasIllustrations',false,'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
+select lives_ok($$select * from public.open_student_request_v10(jsonb_build_object('academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),'registrationNumber','PDF2026','title','Trabalho PDF','publicWorkUrl','https://example.org/work.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,'people',jsonb_build_object('author','Ana','advisor','Bia','advisorNoteLabel','Orientador'),'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','PDF work')),'hasIllustrations',false,'specialCases',jsonb_build_array(),'originalLanguage','pt','cancellationAcknowledged',true,'sharedFileUnchangedConfirmed',true,'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'solicitação criada');
 reset role;
 with created_terms as (
   insert into public.controlled_terms(preferred_label_pt,normalized_label_pt,preferred_label_en,normalized_label_en,created_by,updated_by)
@@ -19,6 +19,8 @@ with created_terms as (
 update public.cataloging_requests set status='in_review',assigned_to='97000000-0000-4000-8000-000000000003';
 set local role authenticated; set local request.jwt.claim.sub='97000000-0000-4000-8000-000000000003';
 select public.validate_request_citation((select id from public.cataloging_requests limit 1),'ANA. Trabalho PDF. 2026. Trabalho Final de Graduação.');
+select public.confirm_public_work_link((select id from public.cataloging_requests limit 1));
+select public.confirm_request_declarations((select id from public.cataloging_requests limit 1));
 select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
 reset role;
 update public.cataloging_requests set status='approved';

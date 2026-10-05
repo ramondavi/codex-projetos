@@ -15,25 +15,25 @@ insert into public.staff_profiles (profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='90000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v10(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),
  'registrationNumber','CAT2026','title','Catalogação assistida',
  'publicWorkUrl','https://example.org/catalogacao.pdf','depositYear',2026,'defenseYear',2025,'extentUnit','pages','extentCount',204,
  'people',jsonb_build_object('author','Ana  Silva','advisor','Bruno Souza','advisorNoteLabel','Orientador'),
  'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),
  'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','Assisted cataloging')),
- 'hasIllustrations',false,'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre solicitação para catalogação');
+ 'hasIllustrations',false,'specialCases',jsonb_build_array(),'originalLanguage','pt','cancellationAcknowledged',true,'sharedFileUnchangedConfirmed',true,'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre solicitação para catalogação');
 
 set local request.jwt.claim.sub='90000000-0000-4000-8000-000000000002';
 select lives_ok($$select public.assume_cataloging_request((select id from public.cataloging_requests limit 1))$$,'catalogador assume o ticket');
-select lives_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1), jsonb_build_object(
+select lives_ok($$select public.save_assisted_cataloging_v2((select id from public.cataloging_requests limit 1), jsonb_build_object(
  'people',jsonb_build_array(
   jsonb_build_object('role','author','transcribedName','Ana  Silva','authorizedName','Silva, Ana.'),
   jsonb_build_object('role','advisor','transcribedName','Bruno Souza','authorizedName','Souza, Bruno'),
   jsonb_build_object('role','committee_member','transcribedName','Carla Lima','authorizedName','Lima, Carla')),
  'terms',jsonb_build_array(
-  jsonb_build_object('labelPt','Arquitetura.','labelEn','Architecture','isPrimary',true),
-  jsonb_build_object('labelPt','Habitação','labelEn','Housing','isPrimary',false)),
+  jsonb_build_object('labelPt','Arquitetura.','labelEn','Architecture','sourceCode','bn','isPrimary',true),
+  jsonb_build_object('labelPt','Habitação','labelEn','Housing','sourceCode','bn','isPrimary',false)),
  'cduCode','72','cutterCode','S586'))$$,'responsável salva a catalogação assistida');
 select is((select count(*)::integer from public.person_authorities),3,'três autoridades reutilizáveis são criadas');
 select is((select authorized_name from public.person_authorities where normalized_name='silva, ana'),'Silva, Ana','nome autorizado é sanitizado');
@@ -48,9 +48,9 @@ select is((select cutter_code from public.request_cataloging_metadata),'S586','C
 select is(jsonb_array_length((select marc21_preparation -> 'people' from public.request_cataloging_metadata)),3,'preparação MARC mantém pessoas estruturadas');
 select is(jsonb_array_length((select marc21_preparation -> 'subjects' from public.request_cataloging_metadata)),2,'preparação MARC mantém assuntos estruturados');
 
-select lives_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1), jsonb_build_object(
+select lives_ok($$select public.save_assisted_cataloging_v2((select id from public.cataloging_requests limit 1), jsonb_build_object(
  'people',(select jsonb_agg(jsonb_build_object('authorityId',authority_person_id,'role',role,'transcribedName',transcribed_name,'authorizedName',authorized_name_snapshot) order by position) from public.request_cataloging_people),
- 'terms',(select jsonb_agg(jsonb_build_object('termId',controlled_term_id,'labelPt',label_pt_snapshot,'labelEn',label_en_snapshot,'isPrimary',is_primary) order by position) from public.request_controlled_terms),
+ 'terms',(select jsonb_agg(jsonb_build_object('termId',controlled_term_id,'labelPt',label_pt_snapshot,'labelEn',label_en_snapshot,'sourceCode',source_code,'isPrimary',is_primary) order by position) from public.request_controlled_terms),
  'cduCode','72','cutterCode','S586'))$$,'autocomplete reutiliza cadastros existentes');
 select is((select count(*)::integer from public.person_authorities),3,'reutilização não duplica pessoas');
 select is((select count(*)::integer from public.controlled_terms),2,'reutilização não duplica termos');
@@ -76,7 +76,7 @@ select is((select secondary_count from public.suggest_cdu(
 )),1::bigint,'explicação informa ocorrências secundárias');
 
 set local request.jwt.claim.sub='90000000-0000-4000-8000-000000000003';
-select throws_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1),'{}'::jsonb)$$,'P0001','request_locked_by_another_staff','outro catalogador não altera o ticket');
+select throws_ok($$select public.save_assisted_cataloging_v2((select id from public.cataloging_requests limit 1),jsonb_build_object('people',jsonb_build_array(jsonb_build_object('role','author','transcribedName','Ana Silva','authorizedName','Silva, Ana'),jsonb_build_object('role','advisor','transcribedName','Bruno Souza','authorizedName','Souza, Bruno')),'terms',jsonb_build_array(),'cduCode','72','cutterCode','S586'))$$,'P0001','request_locked_by_another_staff','outro catalogador não altera o ticket');
 
 set local request.jwt.claim.sub='90000000-0000-4000-8000-000000000001';
 select is((select count(*)::integer from public.person_authorities),0,'estudante não lê autoridades');

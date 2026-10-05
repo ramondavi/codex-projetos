@@ -27,7 +27,7 @@ values
 set local role authenticated;
 set local request.jwt.claim.sub = '50000000-0000-4000-8000-000000000001';
 select lives_ok(
-  $$select * from public.open_student_request_v7(jsonb_build_object(
+  $$select * from public.open_student_request_v10(jsonb_build_object(
     'academicProgramId', (select id from public.academic_programs where code = 'architecture-urbanism-undergraduate'),
     'registrationNumber', 'FILA2026', 'title', 'Trabalho para a fila',
     'publicWorkUrl', 'https://example.org/fila.pdf',
@@ -35,7 +35,7 @@ select lives_ok(
     'people', jsonb_build_object('author', 'Estudante da Fila', 'advisor', 'Orientador da Fila', 'advisorNoteLabel', 'Orientador'),
     'keywordsPt', jsonb_build_array('Arquitetura','Habitação','Urbanismo'), 'keywordsEn', jsonb_build_array('Architecture','Housing','Urbanism'),
     'equivalentTitles', jsonb_build_array(jsonb_build_object('language','en','title','Queue work')), 'hasIllustrations',false,'specialCases', jsonb_build_array(),
-    'defendedAndApproved', true, 'finalFileConfirmed', true, 'approvalPageConfirmed', true
+    'originalLanguage','pt','cancellationAcknowledged',true,'sharedFileUnchangedConfirmed',true,'defendedAndApproved', true, 'finalFileConfirmed', true, 'approvalPageConfirmed', true
   ))$$,
   'estudante cria solicitação para a fila'
 );
