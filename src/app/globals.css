@@ -2813,7 +2813,8 @@ button.queue-item__note { gap: 4px; padding: 2px 3px; border: 0; border-radius: 
 button.queue-item__note svg { width: 13px; height: 13px; }
 button.queue-item__note:hover, button.queue-item__note:focus-visible { background: transparent; color: var(--institutional); text-decoration: underline; text-underline-offset: 2px; }
 .queue-item:has(.queue-note-overlay) { z-index: 100; transform: none; }
-.queue-note-dialog { position: relative; width: min(560px, 100%); max-height: calc(100dvh - 32px); margin: auto; padding: 0; overflow-y: auto; }
+.queue-note-overlay { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 12px; border-radius: inherit; }
+.queue-note-dialog { position: relative; width: min(560px, 100%); max-height: 100%; margin: auto; padding: 0; overflow-y: auto; }
 .queue-note-dialog .timeline-dialog__header { padding: 22px 68px 18px 24px; border-bottom: 1px solid var(--line); }
 .queue-note-dialog__body { margin: 0; padding: 20px 24px 24px; color: var(--text); font-size: .88rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 900px) { .queue-toolbar { flex-wrap: wrap; } .queue-sort { flex: 1 1 220px; } }
