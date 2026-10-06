@@ -1819,8 +1819,10 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .shared-file-integrity h2, .shared-file-integrity p { margin: 0; }
 .shared-file-integrity h2 { margin: 4px 0; font-size: 1rem; }
 .shared-file-integrity div > p:last-child { color: var(--text-muted); font-size: .82rem; line-height: 1.45; }
+.shared-file-integrity > .shared-file-integrity__actions { display: flex; flex: 0 1 auto; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
+.shared-file-integrity__actions .button { white-space: nowrap; }
 .shared-file-integrity .form-error { flex-basis: 100%; }
-@media (max-width: 760px) { .shared-file-integrity { flex-wrap: wrap; } .shared-file-integrity > button { width: 100%; } }
+@media (max-width: 760px) { .shared-file-integrity { flex-wrap: wrap; } .shared-file-integrity > .shared-file-integrity__actions { flex: 1 1 100%; justify-content: flex-start; } .shared-file-integrity__actions .button { flex: 1 1 auto; justify-content: center; } }
 .request-cancellation-notice { display: flex; align-items: start; gap: 14px; border-left: 4px solid var(--danger); }
 .request-cancellation-notice > svg { flex: 0 0 24px; width: 24px; height: 24px; color: var(--danger); }
 .request-cancellation-notice h2 { margin: 4px 0 8px; }
