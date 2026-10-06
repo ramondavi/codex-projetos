@@ -13,7 +13,7 @@ type RawQueueRequest = {
   id: string; protocol: string; status: string; title: string; subtitle: string | null; submitted_at: string; assigned_to: string | null;
   assignee: { full_name: string } | { full_name: string }[] | null;
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
-  enrollment: { registration_number: string | null; program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { registration_number: string | null; program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
+  enrollment: { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null } | { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
   analysis: { internal_note: string; review_completed_at: string | null }[] | { internal_note: string; review_completed_at: string | null } | null;
   nadaConsta: { status: string }[] | null;
@@ -24,6 +24,19 @@ type RawQueueRequest = {
 };
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
+const programLabels: Record<string, string> = {
+  "architecture-urbanism-undergraduate": "Bacharelado",
+  "athdc-specialization": "RAU+E",
+  "mp-cecre-master": "MP-CECRE",
+  "ppgau-academic-master": "PPG-AU",
+  "ppgau-doctorate": "PPG-AU",
+};
+const monographLabels: Record<string, string> = {
+  undergraduate_thesis: "TFG",
+  specialization_thesis: "TCC de Especialização",
+  dissertation: "Dissertação",
+  thesis: "Tese",
+};
 
 export default async function StaffQueuePage() {
   const supabase = await createClient();
@@ -39,7 +52,7 @@ export default async function StaffQueuePage() {
         profile:profiles!student_profiles_profile_id_fkey(full_name)
       ),
       enrollment:academic_enrollments!cataloging_requests_academic_enrollment_id_fkey(
-        registration_number, program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
+        registration_number, program:academic_programs!academic_enrollments_academic_program_id_fkey(id, code, name, level, work_type)
       ),
       people:request_people(role, transcribed_name),
       analysis:request_analyses(internal_note,review_completed_at),
@@ -66,6 +79,8 @@ export default async function StaffQueuePage() {
       studentName: first(student?.profile)?.full_name ?? "Estudante",
       registrationNumber: enrollment?.registration_number ?? null,
       programId: program?.id ?? "", programName: program?.name ?? "Programa não identificado",
+      programLabel: program ? programLabels[program.code] ?? program.name : "Programa não identificado",
+      monographType: program?.code === "mp-cecre-master" ? "TCC de Especialização" : monographLabels[program?.work_type ?? ""] ?? "Não informado",
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       hasInternalNote: Boolean(analysis?.internal_note.trim()),
       isPriority: Boolean(first(item.priority)),

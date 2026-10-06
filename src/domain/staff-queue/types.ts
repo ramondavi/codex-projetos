@@ -11,6 +11,8 @@ export type QueueRequest = {
   registrationNumber: string | null;
   programId: string;
   programName: string;
+  programLabel: string;
+  monographType: string;
   level: string;
   advisorName: string;
   hasInternalNote: boolean;
