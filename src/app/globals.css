@@ -3009,3 +3009,12 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .dashboard-daily-quote blockquote { overflow: visible; font-size: .72rem; white-space: normal; text-overflow: clip; }
 .dashboard-daily-quote figcaption { overflow: visible; white-space: normal; text-overflow: clip; }
 @media (max-width: 700px) { .dashboard-daily-quote blockquote { font-size: .66rem; } .dashboard-daily-quote figcaption { font-size: .55rem; } }
+
+.staff-calendar__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; }
+.staff-calendar__legend { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: .65rem; font-weight: 700; }
+.staff-calendar__legend i { width: 9px; height: 9px; border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line)); border-radius: 2px; background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); }
+.staff-calendar__grid button.is-closed:not(.is-selected) { border-color: color-mix(in srgb, var(--gold) 55%, var(--line)); background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); color: var(--text); font-weight: 850; }
+.staff-calendar__grid button.is-closed.is-selected { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 35%, var(--surface-raised)); color: var(--text); font-weight: 850; }
+.staff-calendar__grid button.is-closed.has-announcement::after { background: var(--gold); }
+.staff-calendar__closure { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 9px 10px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); color: var(--text); font-size: .8rem; font-weight: 800; }
+.staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--institutional); }
