@@ -2939,3 +2939,25 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__events article span { color: var(--institutional); font-size: .65rem; font-weight: 850; text-transform: uppercase; }
 .staff-calendar__events article h3 { margin: 0; font-size: .84rem; }
 @media (max-width: 940px) { .staff-overview-main { grid-template-columns: 1fr; } .staff-overview-main .staff-feed { min-height: 0; height: auto; padding: 0; } .staff-overview-main .staff-feed__posts { max-height: 620px; } }
+
+.staff-overview-main .staff-feed__posts { gap: 0; }
+.staff-overview-main .staff-feed__post-head { gap: 8px; padding-block: 8px 4px; }
+.staff-overview-main .staff-feed__avatar, .staff-overview-main .staff-feed__avatar .literary-avatar { flex-basis: 28px; width: 28px; height: 28px; }
+.staff-overview-main .staff-feed__byline p { margin-bottom: 1px; font-size: .78rem; }
+.staff-overview-main .staff-feed__byline .relative-datetime { font-size: .69rem; }
+.staff-overview-main .staff-feed__story { grid-template-columns: 22px minmax(0, 1fr); gap: 2px 7px; padding-block: 5px; }
+.staff-overview-main .staff-feed__story-icon { width: 22px; height: 22px; }
+.staff-overview-main .staff-feed__story-icon svg { width: 13px; height: 13px; }
+.staff-overview-main .staff-feed__story-label { font-size: .63rem; }
+.staff-overview-main .staff-feed__story h3 { font-size: .94rem; line-height: 1.25; }
+.staff-overview-main .staff-feed__protocol { font-size: .68rem; }
+.staff-overview-main .staff-feed__post-foot { gap: 6px; padding-block: 5px 10px; }
+.staff-overview-main .staff-feed__post-foot p, .staff-overview-main .staff-feed__post-foot a { font-size: .7rem; }
+.staff-calendar { gap: 8px; padding: 12px; }
+.staff-calendar__heading h2 { margin-top: 2px; font-size: .95rem; }
+.staff-calendar__month button { width: 30px; height: 30px; }
+.staff-calendar__grid { gap: 2px; }
+.staff-calendar__weekday { padding: 3px 0; }
+.staff-calendar__grid button { aspect-ratio: auto; min-height: 30px; }
+.staff-calendar__events { gap: 5px; padding-top: 8px; }
+.staff-calendar__events article { gap: 2px; padding-top: 6px; }
