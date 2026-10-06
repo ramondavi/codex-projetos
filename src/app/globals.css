@@ -3012,8 +3012,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 
 .staff-calendar__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; }
 .staff-calendar__legend { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: .65rem; font-weight: 700; }
-.staff-calendar__legend i { width: 10px; height: 8px; border-bottom: 2px dotted var(--text-muted); }
-.staff-calendar__grid button.is-closed { font-weight: 800; text-decoration: underline dotted; text-decoration-color: var(--text-muted); text-underline-offset: 4px; }
-.staff-calendar__grid button.is-closed.is-selected { text-decoration-color: currentColor; }
+.staff-calendar__legend i { width: 12px; height: 10px; border: 1px solid var(--line); border-radius: 2px; background: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--text-muted) 18%, transparent) 3px 5px); }
+.staff-calendar__grid button.is-closed:not(.is-selected) { background: repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--text-muted) 13%, transparent) 5px 8px); color: var(--text-muted); font-weight: 800; }
+.staff-calendar__grid button.is-closed.is-selected { background: repeating-linear-gradient(135deg, var(--institutional) 0 5px, color-mix(in srgb, var(--institutional) 82%, var(--surface-raised)) 5px 8px); color: #fff; font-weight: 800; }
 .staff-calendar__closure { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 8px 0 0; border-top: 1px solid var(--line); color: var(--text); font-size: .78rem; font-weight: 750; }
 .staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--text-muted); }
