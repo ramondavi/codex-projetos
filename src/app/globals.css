@@ -2838,3 +2838,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .request-form button.subtitle-capitalization-warning:hover, .request-form button.subtitle-capitalization-warning:focus-visible { border-color: #b2670c; }
 .request-form button.subtitle-capitalization-warning span { flex: 1; }
 .queue-sort select { height: 46px; min-height: 46px; }
+.queue-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(185px, 230px) max-content; align-items: end; gap: 16px; width: 100%; min-width: 0; }
+.queue-toolbar .queue-search, .queue-toolbar .queue-sort { width: 100%; min-width: 0; }
+.queue-toolbar .queue-count { justify-self: end; max-width: 100%; padding: 0; }
+@media (max-width: 900px) { .queue-toolbar { grid-template-columns: minmax(0, 1fr) max-content; } .queue-toolbar .queue-search { grid-column: 1 / -1; } .queue-toolbar .queue-sort { grid-column: 1; } .queue-toolbar .queue-count { grid-column: 2; } }
+@media (max-width: 560px) { .queue-toolbar { grid-template-columns: minmax(0, 1fr); } .queue-toolbar .queue-sort, .queue-toolbar .queue-count { grid-column: 1; } .queue-toolbar .queue-count { justify-self: start; } }
