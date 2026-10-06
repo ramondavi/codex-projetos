@@ -1773,8 +1773,6 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .analysis-return-confirmation__note { padding-left: 10px; border-left: 3px solid var(--gold); font-size: .78rem; }
 .analysis-return-confirmation__card > div { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
 .request-analysis-sections { display: grid; gap: 18px; margin-top: 22px; }
-.request-analysis-sections[data-declaration-preview="true"] > .analysis-stepper,
-.request-analysis-sections[data-declaration-preview="true"] > .analysis-next-action,
 .request-analysis-sections[data-declaration-preview="true"] > .request-analysis-section,
 .request-analysis-sections[data-declaration-preview="true"] > .request-analysis-sections__navigation { display: none; }
 .declaration-review { display: grid; gap: 16px; width: 100%; margin: 0; }
@@ -3017,3 +3015,27 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__grid button.is-closed.is-selected { background: repeating-linear-gradient(135deg, var(--institutional) 0 5px, color-mix(in srgb, var(--institutional) 82%, var(--surface-raised)) 5px 8px); color: #fff; font-weight: 800; }
 .staff-calendar__closure { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 8px 0 0; border-top: 1px solid var(--line); color: var(--text); font-size: .78rem; font-weight: 750; }
 .staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--text-muted); }
+
+/* Fluxo guiado da análise: progresso compacto e uma tarefa por vez. */
+.analysis-stepper--guided { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.analysis-stepper--guided > .analysis-stepper__stage,
+.analysis-stepper--guided > button,
+.analysis-stepper--guided > button:last-child { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 62px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); box-shadow: none; color: var(--text-muted); }
+.analysis-stepper--guided > .is-active,
+.analysis-stepper--guided > button.is-active { border-color: var(--institutional); background: var(--institutional-soft); color: var(--text); box-shadow: inset 0 -2px 0 var(--institutional); }
+.analysis-stepper--guided > .is-complete:not(.is-active) { color: var(--text); }
+.analysis-stepper--guided .analysis-stepper__number { flex: 0 0 24px; width: 24px; height: 24px; border-radius: var(--radius-sm); }
+.analysis-stepper--guided .analysis-stepper__number svg { width: 14px; height: 14px; }
+.analysis-stepper--guided > :is(button, .analysis-stepper__stage) > span:last-child { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 2px 6px; min-width: 0; }
+.analysis-stepper--guided > :is(button, .analysis-stepper__stage) > span:last-child > svg,
+.analysis-stepper--guided button > span:last-child svg { width: 16px; height: 16px; padding: 0; border-radius: 0; background: none; color: var(--institutional); }
+.analysis-stepper--guided > :is(button, .analysis-stepper__stage) strong { overflow: hidden; font-size: .75rem; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.analysis-stepper--guided > :is(button, .analysis-stepper__stage) small { grid-column: 2; font-size: .66rem; font-weight: 650; }
+.analysis-stepper--guided button:disabled { opacity: .7; }
+.request-analysis-sections > .analysis-next-action { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border: 1px solid var(--line); border-left: 3px solid var(--institutional); background: var(--surface); }
+.request-analysis-sections > .analysis-next-action > span { flex: 0 0 auto; background: none; }
+.request-analysis-sections > .analysis-next-action strong { display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; }
+.request-analysis-sections > .analysis-next-action strong svg { width: 16px; height: 16px; color: var(--institutional); }
+.request-analysis-sections > .analysis-next-action p { font-size: .75rem; }
+@media (max-width: 900px) { .analysis-stepper--guided { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .analysis-stepper--guided { grid-template-columns: 1fr; } .analysis-stepper--guided > .analysis-stepper__stage, .analysis-stepper--guided > button { min-height: 48px; } .request-analysis-sections > .analysis-next-action { align-items: flex-start; flex-direction: column; gap: 5px; } }
