@@ -10,7 +10,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 }
 
 type RawQueueRequest = {
-  id: string; protocol: string; status: string; title: string; subtitle: string | null; submitted_at: string; assigned_to: string | null;
+  id: string; protocol: string; status: string; title: string; subtitle: string | null; submitted_at: string; updated_at: string; assigned_to: string | null;
   assignee: { full_name: string } | { full_name: string }[] | null;
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
   enrollment: { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null } | { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null }[] | null;
@@ -46,7 +46,7 @@ export default async function StaffQueuePage() {
 
   const [{ data }, { data: staffData }] = await Promise.all([
     supabase.from("cataloging_requests").select(`
-      id, protocol, status, title, subtitle, submitted_at, assigned_to,
+      id, protocol, status, title, subtitle, submitted_at, updated_at, assigned_to,
       assignee:profiles!cataloging_requests_assigned_to_fkey(full_name),
       student:student_profiles!cataloging_requests_student_profile_id_fkey(
         profile:profiles!student_profiles_profile_id_fkey(full_name)
@@ -74,7 +74,7 @@ export default async function StaffQueuePage() {
     const progress = describeRequestProgress({ status: item.status, assignedTo: item.assigned_to, nadaConstaStatus: first(item.nadaConsta)?.status, hasHomologation: Boolean(first(item.homologation)), hasRepositoryDeposit: Boolean(first(item.repositoryProgress)), hasPublication: Boolean(first(item.publication)) });
     return {
       id: item.id, protocol: item.protocol, status: item.status, title: item.title, subtitle: item.subtitle,
-      submittedAt: item.submitted_at, assignedTo: item.assigned_to,
+      submittedAt: item.submitted_at, updatedAt: item.updated_at, assignedTo: item.assigned_to,
       assigneeName: assignee?.full_name ?? null,
       studentName: first(student?.profile)?.full_name ?? "Estudante",
       registrationNumber: enrollment?.registration_number ?? null,

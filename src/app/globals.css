@@ -2749,16 +2749,18 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .queue-item .queue-item__student { column-gap: 15px; }
 .queue-item__student-detail { display: inline-flex; align-items: center; gap: 4px; min-width: 0; }
 .queue-item__student-detail svg { margin: 0; }
-.queue-item__facts { grid-template-columns: minmax(0, .8fr) minmax(0, 1.25fr) minmax(0, 1.35fr) minmax(0, .8fr); }
+.queue-item__facts { grid-template-columns: minmax(0, .7fr) minmax(0, 1.25fr) minmax(0, 1.25fr) minmax(0, .75fr) minmax(0, .85fr); }
 .queue-item__state { display: grid; width: 100%; min-height: 38px; cursor: help; }
 .queue-item__state .progress-badge { grid-area: 1 / 1; justify-self: start; align-self: center; opacity: 1; transition: opacity .2s ease; }
-.queue-item__timeline { position: static; grid-area: 1 / 1; align-self: center; width: min(100%, 620px); max-width: none; margin: 0; padding: 0; border: 0; background: transparent; box-shadow: none; opacity: 0; pointer-events: none; visibility: visible; transform: none; transition: opacity .2s ease; }
-.queue-item__timeline li:first-child { flex: 0 0 70px; justify-items: start; padding-left: 10px; text-align: left; }
-.queue-item__timeline li:first-child:not(:last-child)::after { left: 26px; width: calc(100% - 26px); }
+.queue-item__timeline { position: static; grid-area: 1 / 1; align-self: center; justify-content: space-between; width: min(100%, 620px); max-width: none; margin: 0; padding: 0; border: 0; background: linear-gradient(var(--line), var(--line)) 7px 6px / calc(100% - 14px) 2px no-repeat; box-shadow: none; opacity: 0; pointer-events: none; visibility: visible; transform: none; transition: opacity .2s ease; }
+.queue-item__timeline li { flex: 0 1 auto; }
+.queue-item__timeline li:first-child { justify-items: start; padding-left: 0; text-align: left; }
+.queue-item__timeline li:last-child { justify-items: end; text-align: right; }
+.queue-item__timeline li:not(:last-child)::after { content: none; }
 .queue-item__state:has(.progress-badge:hover) .progress-badge, .queue-item__state:focus-visible .progress-badge { opacity: 0; }
 .queue-item__state:has(.progress-badge:hover) .queue-item__timeline, .queue-item__state:focus-visible .queue-item__timeline { opacity: 1; }
 .queue-item__actions { gap: 8px; }
-.queue-item__assignee { display: inline-flex; align-items: center; gap: 5px; max-width: 210px; color: var(--text-muted); font-size: .71rem; font-weight: 650; white-space: nowrap; }
+.queue-item__assignee { display: inline-flex; align-items: center; gap: 5px; max-width: 260px; color: var(--text-muted); font-size: .71rem; font-weight: 650; white-space: nowrap; }
 .queue-item__assignee svg { flex: 0 0 14px; width: 14px; height: 14px; color: var(--institutional); }
 .queue-item__assignee span { overflow: hidden; text-overflow: ellipsis; }
 .queue-item__assignee strong { color: var(--text); }
@@ -2769,7 +2771,7 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .queue-item__menu-panel > button, .queue-item__menu-panel > a, .queue-item__menu-panel .request-priority-control > button { border: 0; background: transparent; }
 .queue-item__menu-panel > button:hover, .queue-item__menu-panel > a:hover, .queue-item__menu-panel .request-priority-control > button:hover { background: var(--institutional-soft); }
 .queue-item:has(.request-priority-control__overlay) { z-index: 100; transform: none; }
-@media (max-width: 900px) { .queue-search__field > .queue-filters, .queue-item__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .queue-search__field > .queue-filters, .queue-item__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); } .queue-item__facts > div:last-child { grid-column: 1 / -1; } }
 @media (max-width: 700px) { .queue-toolbar { flex-direction: column; align-items: stretch; } .queue-item__actions { flex-wrap: wrap; } .queue-item__assignee { margin-right: auto; } .queue-item__actions .queue-item__menu-button { width: 36px; } }
-@media (max-width: 560px) { .queue-heading__stats { grid-template-columns: 1fr 1fr; } .queue-heading__stats > div { grid-template-columns: 18px minmax(0, 1fr); gap: 5px 7px; } .queue-heading__stats strong { grid-column: 2; } .queue-search__field > .queue-filters, .queue-item__facts { grid-template-columns: 1fr; } .queue-more-filters { font-size: .7rem; } .queue-item__registration { padding-left: 0; border-left: 0; } }
+@media (max-width: 560px) { .queue-heading__stats { grid-template-columns: 1fr 1fr; } .queue-heading__stats > div { grid-template-columns: 18px minmax(0, 1fr); gap: 5px 7px; } .queue-heading__stats strong { grid-column: 2; } .queue-search__field > .queue-filters, .queue-item__facts { grid-template-columns: 1fr; } .queue-item__facts > div:last-child { grid-column: auto; } .queue-more-filters { font-size: .7rem; } .queue-item__registration { padding-left: 0; border-left: 0; } }
 @media (prefers-reduced-motion: reduce) { .queue-item__state .progress-badge, .queue-item__timeline { transition: none; } }

@@ -5,6 +5,7 @@ export type QueueRequest = {
   title: string;
   subtitle: string | null;
   submittedAt: string;
+  updatedAt: string;
   assignedTo: string | null;
   assigneeName: string | null;
   studentName: string;
