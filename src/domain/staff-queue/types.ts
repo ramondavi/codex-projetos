@@ -3,10 +3,12 @@ export type QueueRequest = {
   protocol: string;
   status: string;
   title: string;
+  subtitle: string | null;
   submittedAt: string;
   assignedTo: string | null;
   assigneeName: string | null;
   studentName: string;
+  registrationNumber: string | null;
   programId: string;
   programName: string;
   level: string;

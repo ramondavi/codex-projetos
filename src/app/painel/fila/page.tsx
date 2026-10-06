@@ -10,10 +10,10 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 }
 
 type RawQueueRequest = {
-  id: string; protocol: string; status: string; title: string; submitted_at: string; assigned_to: string | null;
+  id: string; protocol: string; status: string; title: string; subtitle: string | null; submitted_at: string; assigned_to: string | null;
   assignee: { full_name: string } | { full_name: string }[] | null;
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
-  enrollment: { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
+  enrollment: { registration_number: string | null; program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { registration_number: string | null; program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
   analysis: { internal_note: string; review_completed_at: string | null }[] | { internal_note: string; review_completed_at: string | null } | null;
   nadaConsta: { status: string }[] | null;
@@ -33,13 +33,13 @@ export default async function StaffQueuePage() {
 
   const [{ data }, { data: staffData }] = await Promise.all([
     supabase.from("cataloging_requests").select(`
-      id, protocol, status, title, submitted_at, assigned_to,
+      id, protocol, status, title, subtitle, submitted_at, assigned_to,
       assignee:profiles!cataloging_requests_assigned_to_fkey(full_name),
       student:student_profiles!cataloging_requests_student_profile_id_fkey(
         profile:profiles!student_profiles_profile_id_fkey(full_name)
       ),
       enrollment:academic_enrollments!cataloging_requests_academic_enrollment_id_fkey(
-        program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
+        registration_number, program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
       ),
       people:request_people(role, transcribed_name),
       analysis:request_analyses(internal_note,review_completed_at),
@@ -60,10 +60,11 @@ export default async function StaffQueuePage() {
     const analysis = first(item.analysis);
     const progress = describeRequestProgress({ status: item.status, assignedTo: item.assigned_to, nadaConstaStatus: first(item.nadaConsta)?.status, hasHomologation: Boolean(first(item.homologation)), hasRepositoryDeposit: Boolean(first(item.repositoryProgress)), hasPublication: Boolean(first(item.publication)) });
     return {
-      id: item.id, protocol: item.protocol, status: item.status, title: item.title,
+      id: item.id, protocol: item.protocol, status: item.status, title: item.title, subtitle: item.subtitle,
       submittedAt: item.submitted_at, assignedTo: item.assigned_to,
       assigneeName: assignee?.full_name ?? null,
       studentName: first(student?.profile)?.full_name ?? "Estudante",
+      registrationNumber: enrollment?.registration_number ?? null,
       programId: program?.id ?? "", programName: program?.name ?? "Programa não identificado",
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       hasInternalNote: Boolean(analysis?.internal_note.trim()),
