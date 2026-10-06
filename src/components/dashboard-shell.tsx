@@ -105,7 +105,7 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
         </header>
         <DashboardBreadcrumbProvider><DashboardBreadcrumbs />{children}</DashboardBreadcrumbProvider>
         <figure className="dashboard-daily-quote">
-          <blockquote><span>{dailyQuote.text}</span></blockquote>
+          <blockquote title={dailyQuote.text}><span>{dailyQuote.text}</span></blockquote>
           <figcaption><a href={dailyQuote.source} target="_blank" rel="noopener noreferrer">{dailyQuote.author} em <cite>{dailyQuote.work}</cite> ({dailyQuote.year})<span className="sr-only"> (abre em nova aba)</span></a></figcaption>
         </figure>
         <BackendHelpWidget role={role} />

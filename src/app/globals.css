@@ -2999,3 +2999,9 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__previous { transform: rotate(180deg); }
 .staff-calendar__grid button:is(.is-selected, .has-announcement:hover, .has-announcement:focus-visible) { border-radius: var(--radius-sm); }
 @media (max-width: 940px) { .staff-overview-main .staff-feed { height: min(560px, calc(100dvh - 180px)); } }
+
+.dashboard-daily-quote, :root[data-theme="dark"] .dashboard-daily-quote { width: min(560px, calc(100% - 48px)); padding: 30px 0 36px; color: var(--text-muted); text-shadow: none; opacity: .7; }
+.dashboard-daily-quote blockquote { display: block; width: 100%; padding: 0; overflow: hidden; font-size: .76rem; line-height: 1.35; white-space: nowrap; text-overflow: ellipsis; }
+.dashboard-daily-quote blockquote::before, .dashboard-daily-quote blockquote::after { content: none; }
+.dashboard-daily-quote figcaption { margin-top: 3px; overflow: hidden; font-size: .6rem; line-height: 1.3; letter-spacing: .02em; white-space: nowrap; text-overflow: ellipsis; }
+:root[data-contrast="high"] .dashboard-daily-quote { opacity: 1; }
