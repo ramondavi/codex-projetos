@@ -16,7 +16,7 @@ type RawQueueRequest = {
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
   enrollment: { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null } | { registration_number: string | null; program: { id: string; code: string; name: string; level: string; work_type: string } | { id: string; code: string; name: string; level: string; work_type: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
-  analysis: { internal_note: string; review_completed_at: string | null }[] | { internal_note: string; review_completed_at: string | null } | null;
+  analysis: { analysis_notes: string; review_completed_at: string | null }[] | { analysis_notes: string; review_completed_at: string | null } | null;
   nadaConsta: { status: string }[] | null;
   homologation: { id: string }[] | null;
   repositoryProgress: { started_at: string }[] | null;
@@ -45,7 +45,7 @@ export default async function StaffQueuePage() {
         registration_number, program:academic_programs!academic_enrollments_academic_program_id_fkey(id, code, name, level, work_type)
       ),
       people:request_people(role, transcribed_name),
-      analysis:request_analyses(internal_note,review_completed_at),
+      analysis:request_analyses(analysis_notes,review_completed_at),
       nadaConsta:nada_consta_documents(status),
       homologation:cataloging_card_homologations(id),
       repositoryProgress:repository_deposit_progress(started_at),
@@ -74,7 +74,7 @@ export default async function StaffQueuePage() {
       programLabel: programDisplayName(program),
       monographType: monographDisplayName(program),
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
-      internalNote: analysis?.internal_note.trim() || null,
+      analysisNotes: analysis?.analysis_notes.trim() || null,
       isPriority: Boolean(first(item.priority)),
       priorityReasonCode: first(item.priority)?.reason_code ?? null,
       priorityReasonDetail: first(item.priority)?.reason_detail ?? null,
