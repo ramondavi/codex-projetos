@@ -79,7 +79,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
     </aside>
     {declarationRequestId && showDeclarations && <DeclarationCancellationControl requestId={declarationRequestId} publicWorkUrl={publicWorkUrl} initiallyReviewed={declarationsReviewed} initiallyLinkVerified={initialLinkVerified} waitingForStudent={waitingForStudent} replyPending={replyPending} onContinue={() => setShowDeclarations(false)} onBack={declarationsReviewed && initialLinkVerified ? () => setShowDeclarations(false) : undefined} />}
     <section className="preanalysis-message" hidden={!showDeclarations || !hasStudentMessage}><div id="preanalysis-student-message" /></section>
-    <section className="request-analysis-section" data-step="metadata">{metadata}<div id="request-analysis-actions-end" /></section>
+    <section className="request-analysis-section" data-step="metadata">{metadata}</section>
     <section className="request-analysis-section" data-step="cataloging">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}{cataloging}</section>
     <section className="request-analysis-section" data-step="documentation">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}<div id="request-analysis-citation-end" />{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" />{finalAction}</section>
     <div className="form-navigation request-analysis-sections__navigation">
