@@ -27,7 +27,7 @@ export function SharedFileIntegrityControl({ requestId }: { requestId: string })
 
   return <aside className="panel shared-file-integrity">
     <AppIcon name="link" />
-    <div><p className="eyebrow">Verificação contínua</p><h2>Arquivo do link público</h2><p>Se constatar que o arquivo foi alterado, substituído ou removido antes do encerramento, registre o descumprimento da declaração. O protocolo será cancelado após sua confirmação.</p></div>
+    <div><h2>Integridade do arquivo público</h2><p>Se constatar que o arquivo foi alterado, substituído ou removido antes do encerramento, registre o descumprimento da declaração. O protocolo será cancelado após sua confirmação.</p></div>
     <button className="button button--secondary button--small button--with-icon" type="button" onClick={() => setConfirming(true)}><AppIcon name="close" />Registrar descumprimento</button>
     {error && <p className="form-error" role="alert">Não foi possível cancelar o protocolo. Atualize a página e tente novamente.</p>}
     {confirming && <FinalDecisionDialog title="Cancelar por alteração do arquivo?" description="Confirme somente se o arquivo do link público foi alterado, substituído ou removido. O protocolo será cancelado e o estudante receberá um aviso padronizado." confirmLabel="Confirmar cancelamento" confirmDanger busy={busy} onCancel={() => setConfirming(false)} onConfirm={cancelRequest} />}
