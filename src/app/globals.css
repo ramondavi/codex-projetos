@@ -2906,6 +2906,11 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-overview-main__side { align-content: start; }
 .staff-overview-main .staff-feed { min-height: 900px; padding: 0 12px 0 0; border: 0; border-radius: 0; background: transparent; overflow: visible; }
 .staff-overview-main .staff-feed__posts { padding-right: 8px; background: transparent; }
+.staff-overview-main .staff-feed__posts { scrollbar-color: transparent transparent; }
+.staff-overview-main .staff-feed__posts:is(:hover, :focus-within) { scrollbar-color: var(--institutional) transparent; }
+.staff-overview-main .staff-feed__posts::-webkit-scrollbar { width: 8px; }
+.staff-overview-main .staff-feed__posts::-webkit-scrollbar-thumb { border-radius: 8px; background: transparent; }
+.staff-overview-main .staff-feed__posts:is(:hover, :focus-within)::-webkit-scrollbar-thumb { background: var(--institutional); }
 .staff-overview-main .staff-feed__post { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; }
 .staff-overview-main .staff-feed__story { border-block: 0; background: transparent; }
 .staff-overview-main .staff-feed__story::after { content: none; }
