@@ -2826,7 +2826,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .queue-sort > span svg { width: 15px; height: 15px; color: var(--institutional); }
 .queue-sort { position: relative; }
 .queue-sort select { appearance: none; padding-right: 34px; }
-.queue-sort::after { content: ""; position: absolute; right: 16px; bottom: 18px; width: 7px; height: 7px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: rotate(45deg); pointer-events: none; }
+.queue-sort::after { content: ""; position: absolute; right: 16px; bottom: 20px; width: 7px; height: 7px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: rotate(45deg); pointer-events: none; }
 .queue-pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 20px 0 8px; color: var(--text-muted); font-size: .8rem; font-weight: 750; }
 .queue-pagination button { min-height: 38px; padding: 7px 13px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--institutional); font: inherit; cursor: pointer; }
 .queue-pagination button:hover:not(:disabled) { border-color: var(--institutional); background: var(--institutional-soft); }
