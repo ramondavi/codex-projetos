@@ -2911,7 +2911,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-overview-main .staff-feed__posts::-webkit-scrollbar { width: 8px; }
 .staff-overview-main .staff-feed__posts::-webkit-scrollbar-thumb { border-radius: 8px; background: transparent; }
 .staff-overview-main .staff-feed__posts:is(:hover, :focus-within)::-webkit-scrollbar-thumb { background: var(--institutional); }
-.staff-overview-main .staff-feed__post { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; }
+.staff-overview-main .staff-feed__post { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; transition: background-color .18s ease; }
+.staff-overview-main .staff-feed__post:is(:hover, :focus-within) { background: color-mix(in srgb, var(--institutional) 5%, transparent); }
 .staff-overview-main .staff-feed__story { border-block: 0; background: transparent; }
 .staff-overview-main .staff-feed__story::after { content: none; }
 .staff-overview-main .staff-feed__post-head, .staff-overview-main .staff-feed__post-foot { padding-inline: 0; }
