@@ -2821,7 +2821,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .queue-status-legend .queue-status-color svg, .queue-status-filter .queue-status-color svg { width: 14px; height: 14px; color: var(--queue-status-color); }
 .queue-item__state .progress-badge.queue-status-color, .analysis-case-header .request-status.queue-status-color { border: 1px solid color-mix(in srgb, var(--queue-status-color) 42%, var(--line)); background: color-mix(in srgb, var(--queue-status-color) 11%, var(--surface-raised)); color: var(--queue-status-color); }
 .queue-item__state .progress-badge.queue-status-color svg, .analysis-case-header .request-status.queue-status-color svg { color: var(--queue-status-color); }
-.analysis-case-header[class*="queue-status-color--"] { border-left: 5px solid var(--queue-status-color); }
+.analysis-case-header[class*="queue-status-color--"] { border-top-color: var(--queue-status-color); }
 .queue-sort > span { display: inline-flex; align-items: center; gap: 6px; }
 .queue-sort > span svg { width: 15px; height: 15px; color: var(--institutional); }
 .queue-sort { position: relative; }
