@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
 import { describeRequestProgress } from "@/domain/request-progress";
 import { panelMetadata } from "@/lib/panel-metadata";
+import { monographDisplayName, programDisplayName } from "@/domain/staff-queue/program-labels";
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<{ responsavel?: string }> }) {
   return panelMetadata("/painel/fila", { responsible: (await searchParams).responsavel });
@@ -24,20 +25,6 @@ type RawQueueRequest = {
 };
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
-const programLabels: Record<string, string> = {
-  "architecture-urbanism-undergraduate": "Bacharelado",
-  "athdc-specialization": "RAU+E",
-  "mp-cecre-master": "MP-CECRE",
-  "ppgau-academic-master": "PPG-AU",
-  "ppgau-doctorate": "PPG-AU",
-};
-const monographLabels: Record<string, string> = {
-  undergraduate_thesis: "TFG",
-  specialization_thesis: "TCC de Especialização",
-  dissertation: "Dissertação",
-  thesis: "Tese",
-};
-
 export default async function StaffQueuePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -84,8 +71,8 @@ export default async function StaffQueuePage() {
       studentName: first(student?.profile)?.full_name ?? "Estudante",
       registrationNumber: enrollment?.registration_number ?? null,
       programId: program?.id ?? "", programName: program?.name ?? "Programa não identificado",
-      programLabel: program ? programLabels[program.code] ?? program.name : "Programa não identificado",
-      monographType: program?.code === "mp-cecre-master" ? "TCC de Especialização" : monographLabels[program?.work_type ?? ""] ?? "Não informado",
+      programLabel: programDisplayName(program),
+      monographType: monographDisplayName(program),
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       internalNote: analysis?.internal_note.trim() || null,
       isPriority: Boolean(first(item.priority)),
