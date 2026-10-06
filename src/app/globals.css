@@ -2728,7 +2728,7 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 
 /* Busca e leitura dos cartões da fila. */
 .dashboard-main .page-heading h1, .dashboard-main .analysis-case-header h1, .dashboard-main .final-review h1 { align-items: center; }
-.dashboard-main .page-heading h1 > .panel-heading-icon, .dashboard-main .analysis-case-header h1 > .panel-heading-icon, .dashboard-main .final-review h1 > .panel-heading-icon { display: block; align-self: center; transform: translateY(-.065em); }
+.dashboard-main .page-heading h1 > .panel-heading-icon, .dashboard-main .analysis-case-header h1 > .panel-heading-icon, .dashboard-main .final-review h1 > .panel-heading-icon { display: block; align-self: center; transform: translateY(.035em); }
 .queue-heading__stats { grid-template-columns: repeat(2, minmax(145px, 1fr)); }
 .queue-heading__stats > div { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 58px; padding: 10px 13px; }
 .queue-heading__stats svg { grid-row: 1; width: 20px; height: 20px; }
