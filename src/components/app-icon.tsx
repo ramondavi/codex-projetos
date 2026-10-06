@@ -1,6 +1,6 @@
 import type { ReactNode, SVGProps } from "react";
 
-export type AppIconName = "account" | "admin" | "archive" | "arrowRight" | "bell" | "book" | "calendar" | "check" | "close" | "contrast" | "document" | "edit" | "external" | "eye" | "eyeOff" | "github" | "globe" | "help" | "home" | "idCard" | "inbox" | "link" | "lock" | "logout" | "message" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "star" | "tag" | "upload" | "work";
+export type AppIconName = "account" | "admin" | "archive" | "arrowRight" | "bell" | "book" | "building" | "calendar" | "check" | "close" | "contrast" | "document" | "edit" | "external" | "eye" | "eyeOff" | "github" | "globe" | "help" | "home" | "idCard" | "inbox" | "link" | "lock" | "logout" | "message" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "star" | "tag" | "upload" | "work";
 
 const paths: Record<AppIconName, ReactNode> = {
   account: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-3.7 3-5.5 7-5.5s6.3 1.8 7 5.5" /></>,
@@ -10,6 +10,7 @@ const paths: Record<AppIconName, ReactNode> = {
   bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 8-3 9h18c0-1-3-2-3-9M10 21h4" /></>,
   message: <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v10a2.5 2.5 0 0 1-2.5 2.5H9l-5 3v-5.5zM8 8h8M8 12h5" />,
   book: <><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5z" /><path d="M4 5.5v16M8 7h8M8 11h8" /></>,
+  building: <><path d="M3 8h18M4 20h16M12 3 3 8h18zM5 20V8M19 20V8M8 11v6M12 11v6M16 11v6" /></>,
   calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h6" /></>,
   check: <path d="m5 12 4 4L19 6" />,
   close: <path d="m6 6 12 12M18 6 6 18" />,

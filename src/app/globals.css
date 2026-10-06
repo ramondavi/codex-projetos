@@ -2837,3 +2837,4 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .request-form button.subtitle-capitalization-warning { width: 100%; text-align: left; cursor: pointer; }
 .request-form button.subtitle-capitalization-warning:hover, .request-form button.subtitle-capitalization-warning:focus-visible { border-color: #b2670c; }
 .request-form button.subtitle-capitalization-warning span { flex: 1; }
+.queue-sort select { height: 46px; min-height: 46px; }

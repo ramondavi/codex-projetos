@@ -42,9 +42,17 @@ const subtitleCapitalizationCopy: Record<FormLanguage, { guidance: string; warni
   pt: { guidance: "Após os dois-pontos, comece o subtítulo com minúscula, salvo nome próprio, sigla ou outra grafia que exija maiúscula. Ex.: Habitação social: um estudo em Salvador.", warning: "O subtítulo começa com maiúscula. Confira se é nome próprio, sigla ou se essa grafia aparece no trabalho. Se estiver correto, mantenha como está." },
   en: { guidance: "After the colon, start the subtitle with a lowercase letter unless a proper name, acronym, or the work's spelling requires a capital letter.", warning: "The subtitle starts with a capital letter. Check the spelling in the work; keep it if intentional." },
   es: { guidance: "Después de los dos puntos, empiece el subtítulo con minúscula, salvo nombres propios, siglas u otra grafía necesaria.", warning: "El subtítulo empieza con mayúscula. Compruebe la grafía en el trabajo y manténgala si es intencional." },
-  de: { guidance: "Beginnen Sie den Untertitel nach dem Doppelpunkt kleingeschrieben, sofern Eigennamen oder die Schreibweise der Arbeit keine Großschreibung erfordern.", warning: "Der Untertitel beginnt mit einem Großbuchstaben. Prüfen Sie die Schreibweise in der Arbeit und behalten Sie sie bei, wenn sie beabsichtigt ist." },
+  de: { guidance: "Prüfen Sie die Groß- und Kleinschreibung nach dem Doppelpunkt. Eigennamen, Substantive und andere sprachliche Regeln können einen Großbuchstaben erfordern.", warning: "Der Untertitel beginnt mit einem Großbuchstaben. Das kann im Deutschen korrekt sein, etwa bei einem Substantiv. Prüfen Sie die Schreibweise in der Arbeit und behalten Sie sie bei, wenn sie stimmt." },
   fr: { guidance: "Après les deux-points, commencez le sous-titre par une minuscule, sauf si un nom propre ou la graphie du travail exige une majuscule.", warning: "Le sous-titre commence par une majuscule. Vérifiez la graphie dans le travail et conservez-la si elle est voulue." },
   it: { guidance: "Dopo i due punti, inizia il sottotitolo con una minuscola, salvo nomi propri o grafie che richiedono la maiuscola.", warning: "Il sottotitolo inizia con una maiuscola. Controlla la grafia nel lavoro e mantienila se è voluta." },
+};
+const germanSubtitleCopy: Record<FormLanguage, { guidance: string; warning: string }> = {
+  pt: { guidance: "Em alemão, confira a grafia após os dois-pontos: substantivos e nomes próprios podem exigir inicial maiúscula. Reproduza o subtítulo como aparece no trabalho.", warning: "O subtítulo começa com maiúscula, o que pode estar correto em alemão. Confira a grafia no trabalho antes de enviar." },
+  en: { guidance: "In German, nouns and proper names may require a capital letter after the colon. Follow the spelling in the work.", warning: "A capital letter may be correct in a German subtitle. Check the spelling in the work before submitting." },
+  es: { guidance: "En alemán, los sustantivos y nombres propios pueden llevar mayúscula después de los dos puntos. Respete la grafía del trabajo.", warning: "La mayúscula puede ser correcta en alemán. Compruebe la grafía en el trabajo antes del envío." },
+  de: subtitleCapitalizationCopy.de,
+  fr: { guidance: "En allemand, les noms communs et propres peuvent prendre une majuscule après les deux-points. Respectez la graphie du travail.", warning: "La majuscule peut être correcte en allemand. Vérifiez la graphie dans le travail avant l’envoi." },
+  it: { guidance: "In tedesco, i sostantivi e i nomi propri possono richiedere la maiuscola dopo i due punti. Rispetta la grafia del lavoro.", warning: "La maiuscola può essere corretta in tedesco. Controlla la grafia nel lavoro prima dell’invio." },
 };
 const startsWithCapital = (value: string) => /^\p{Lu}/u.test(value.trim());
 const uiCopy = {
@@ -140,8 +148,8 @@ export function StudentRequestForm({ programs, userId, openReview = false }: { p
   const reviewScrollRequested = useRef(openReview);
   const uiLanguage = interfaceLanguage;
   const text = uiCopy[uiLanguage] as Copy;
-  const subtitleCopy = subtitleCapitalizationCopy[uiLanguage];
-  const subtitleNeedsReview = draft.originalLanguageSelected && draft.originalLanguage === "pt" && startsWithCapital(draft.subtitle);
+  const subtitleCopy = (draft.originalLanguage === "de" ? germanSubtitleCopy : subtitleCapitalizationCopy)[uiLanguage];
+  const subtitleNeedsReview = draft.originalLanguageSelected && startsWithCapital(draft.subtitle);
   const steps: { label: string; icon: AppIconName }[] = text.steps.map((label, index) => ({ label, icon: (["account", "document", "tag", "shield", "review"] as AppIconName[])[index] }));
   const selectOriginalLanguage = (language: FormLanguage, confirmed = false) => {
     if (language === draft.originalLanguage && draft.originalLanguageSelected) return;
@@ -313,8 +321,8 @@ export function StudentRequestForm({ programs, userId, openReview = false }: { p
             <OriginalLanguageField draft={draft} text={text} onLanguageChange={selectOriginalLanguage} />
             <p className="field-help title-language-instruction"><AppIcon name="help" /> <span>{text.titleInstruction}</span></p>
             <label data-review-field="title"><FieldTitle icon="document">{text.titleOriginal}{draft.originalLanguageSelected ? ` (${languageName(draft.originalLanguage, text)})` : ""}</FieldTitle><textarea required minLength={3} maxLength={500} rows={2} value={draft.title} onChange={(e) => set("title", e.target.value)} /></label>
-            <label data-review-field="subtitle"><FieldTitle icon="document">{text.subtitle}{draft.originalLanguageSelected ? ` (${languageName(draft.originalLanguage, text)})` : ""}</FieldTitle><input maxLength={500} value={draft.subtitle} onChange={(e) => set("subtitle", e.target.value)} onBlur={() => setSubtitleTouched(true)} placeholder={text.optional} aria-describedby={draft.originalLanguage === "pt" ? "subtitle-capitalization-guidance" : undefined} /></label>
-            {draft.originalLanguageSelected && draft.originalLanguage === "pt" && <p className="field-help" id="subtitle-capitalization-guidance"><AppIcon name="help" /><span>{subtitleCopy.guidance}</span></p>}
+            <label data-review-field="subtitle"><FieldTitle icon="document">{text.subtitle}{draft.originalLanguageSelected ? ` (${languageName(draft.originalLanguage, text)})` : ""}</FieldTitle><input maxLength={500} value={draft.subtitle} onChange={(e) => set("subtitle", e.target.value)} onBlur={() => setSubtitleTouched(true)} placeholder={text.optional} aria-describedby={draft.originalLanguageSelected ? "subtitle-capitalization-guidance" : undefined} /></label>
+            {draft.originalLanguageSelected && <p className="field-help" id="subtitle-capitalization-guidance"><AppIcon name="help" /><span>{subtitleCopy.guidance}</span></p>}
             {subtitleTouched && subtitleNeedsReview && <p className="subtitle-capitalization-warning" role="status"><AppIcon name="help" /><span>{subtitleCopy.warning}</span></p>}
             {draft.originalLanguageSelected ? <EquivalentTitlesFields draft={draft} text={text} onChange={(equivalentTitles) => setDraft((current) => {
               const next = { ...current, equivalentTitles };
@@ -371,7 +379,7 @@ export function StudentRequestForm({ programs, userId, openReview = false }: { p
         <label data-review-field="library-note"><FieldTitle icon="document">{text.libraryNote}</FieldTitle><textarea maxLength={2000} rows={4} value={draft.libraryNote} onChange={(e) => set("libraryNote", e.target.value)} placeholder={text.optional} /></label>
       </fieldset>
 
-      <section className="form-section form-step form-step--5 review-panel" aria-label={text.review}><ReviewSummary items={reviewItems} onNavigate={jumpToField} text={text} subtitleNeedsReview={subtitleNeedsReview} /></section>
+      <section className="form-section form-step form-step--5 review-panel" aria-label={text.review}><ReviewSummary items={reviewItems} onNavigate={jumpToField} text={text} subtitleNeedsReview={subtitleNeedsReview} subtitleIsGerman={draft.originalLanguage === "de"} /></section>
       <div className={`form-navigation${activeStep === 1 ? " form-navigation--first-step" : ""}`}>
         {activeStep > 1 && <button disabled={submitting} className="button button--secondary button--with-icon" type="button" onClick={() => setActiveStep((current) => current - 1)}><AppIcon name="arrowRight" className="button__icon--back" />{text.back}: {steps[activeStep - 2].label}</button>}
         <div className={`draft-status${draftStorageError ? " draft-status--error" : ""}`} role="status"><AppIcon name={draftSaved ? "check" : "help"} /><div><strong>{draftSaved ? text.draftSaved : text.saving}</strong><span>{text.thisDevice}{draftSaved && savedAt ? ` · ${new Date(savedAt).toLocaleTimeString(uiLanguage, { hour: "2-digit", minute: "2-digit" })}` : ""}</span><small>{draftStorageError ? guidanceFor(text).savingError : text.resumeLater}</small></div></div>
@@ -591,14 +599,14 @@ function DraftProgress({ items, language, onReview, reviewHref }: { items: Revie
   return <div className="student-draft-progress">{content}</div>;
 }
 
-function ReviewSummary({ items, onNavigate, text, subtitleNeedsReview = false }: { items: ReviewItem[]; onNavigate: (step: number, field: string) => void; text: Copy; subtitleNeedsReview?: boolean }) {
+function ReviewSummary({ items, onNavigate, text, subtitleNeedsReview = false, subtitleIsGerman = false }: { items: ReviewItem[]; onNavigate: (step: number, field: string) => void; text: Copy; subtitleNeedsReview?: boolean; subtitleIsGerman?: boolean }) {
   const invalidCount = items.filter((item) => !item.valid).length;
   const grouping = [{ title: text.steps[0], step: 1 }, { title: text.steps[1], step: 2 }, { title: text.steps[2], step: 3 }, { title: text.steps[3], step: 4 }];
   const sectionFor = (item: ReviewItem) => item.step === 1 ? text.steps[0] : item.step === 3 ? text.keywords : item.step === 4 ? (item.field.startsWith("declaration") ? text.steps[3] : text.publicLink) : /^(author|birth|advisor|coadvisor|committee)/.test(item.field) ? text.people : /^(title|subtitle|original-language)/.test(item.field) ? text.titleAndLanguage : text.catalogingData;
   return <>
     <h2>{text.review}</h2>{invalidCount > 0 && <p>{text.reviewIntro}</p>}
     <div className={`review-summary review-summary--${invalidCount ? "pending" : "ok"}`} role="status"><AppIcon name={invalidCount ? "help" : "check"} /><span>{invalidCount ? `${invalidCount} ${text.attention}` : text.allValid}</span></div>
-    {subtitleNeedsReview && <button className="subtitle-capitalization-warning subtitle-capitalization-warning--review" type="button" onClick={() => onNavigate(2, "subtitle")}><AppIcon name="help" /><span>{subtitleCapitalizationCopy[copyLanguage(text)].warning}</span><AppIcon name="arrowRight" /></button>}
+    {subtitleNeedsReview && <button className="subtitle-capitalization-warning subtitle-capitalization-warning--review" type="button" onClick={() => onNavigate(2, "subtitle")}><AppIcon name="help" /><span>{(subtitleIsGerman ? germanSubtitleCopy : subtitleCapitalizationCopy)[copyLanguage(text)].warning}</span><AppIcon name="arrowRight" /></button>}
     {invalidCount > 0 && <div className="review-pending-list">{grouping.map((group) => { const groupItems = items.filter((item) => item.step === group.step && !item.valid); return groupItems.length ? <section className="review-group" key={group.step}>
       <h4><span><AppIcon name={stepsIcon(group.step)} />{group.title}</span><small>{groupItems.length}</small></h4>
       {[...new Set(groupItems.map(sectionFor))].map((section) => <div className="review-subsection" key={section}>{section !== group.title && <h5>{section}</h5>}{groupItems.filter((item) => sectionFor(item) === section).map((item, index) => <button type="button" key={`${item.field}-${index}`} data-target-field={item.field} data-target-step={item.step} className="review-item review-item--pending" onClick={() => onNavigate(item.step, item.field)}><span>{item.label}{item.value && <small className="review-item__value">{item.value}</small>}{item.issue && <small className="review-item__issue">{item.issue}</small>}</span><AppIcon name="arrowRight" /></button>)}</div>)}
