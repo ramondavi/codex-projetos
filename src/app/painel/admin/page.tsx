@@ -5,13 +5,12 @@ import { createClient } from "@/lib/supabase/server";
 import { initialKnowledgeEntries, type KnowledgeEntry } from "@/lib/knowledge-base";
 import { safeKnowledgeHtml } from "@/lib/knowledge-service";
 import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ area?: string }> }) { return panelMetadata("/painel/admin", { area: (await searchParams).area }); }
 
-export async function generateMetadata({ searchParams }: { searchParams: Promise<{ area?: string }> }) {
-  return panelMetadata("/painel/admin", { area: (await searchParams).area });
-}
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ area?: string }> }) {
-  const areaParam = (await searchParams).area;
+  const params = await searchParams;
+  const areaParam = params.area;
   const area = areaParam === "conteudo" || areaParam === "controle" ? areaParam : "operacao";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

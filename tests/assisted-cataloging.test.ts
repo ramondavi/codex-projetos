@@ -71,7 +71,7 @@ test("restringe a ordem de pessoas relacionadas e mantém orientação à frente
   assert.match(workspace, /movePerson/);
   assert.match(workspace, /withinAuthors/);
   assert.match(workspace, /withinMovablePeople/);
-  assert.match(workspace, /orientador é o 1º membro/);
+  assert.match(workspace, /1º membro da banca/);
   assert.match(relatedPeopleMigration, /invalid_related_people_order/);
   assert.match(relatedPeopleMigration, /save_assisted_cataloging_v2/);
 });

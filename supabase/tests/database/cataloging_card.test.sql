@@ -15,7 +15,7 @@ insert into public.staff_profiles (profile_id,professional_name,crb) values
 
 set local role authenticated;
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000001';
-select lives_ok($$select * from public.open_student_request_v7(jsonb_build_object(
+select lives_ok($$select * from public.open_student_request_v10(jsonb_build_object(
  'academicProgramId',(select id from public.academic_programs where code='architecture-urbanism-undergraduate'),
  'registrationNumber','FICHA2026','title','Arquitetura social','subtitle','Um estudo aplicado','equivalentTitle','Social architecture',
  'publicWorkUrl','https://example.org/ficha.pdf',
@@ -23,29 +23,31 @@ select lives_ok($$select * from public.open_student_request_v7(jsonb_build_objec
  'people',jsonb_build_object('author','Ana Silva','advisor','Bruno Souza','advisorNoteLabel','Orientador'),
  'keywordsPt',jsonb_build_array('Arquitetura','Habitação','Urbanismo'),'keywordsEn',jsonb_build_array('Architecture','Housing','Urbanism'),
  'equivalentTitles',jsonb_build_array(jsonb_build_object('language','en','title','Social architecture')),
- 'specialCases',jsonb_build_array(),'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre a solicitação');
+ 'specialCases',jsonb_build_array(),'originalLanguage','pt','cancellationAcknowledged',true,'sharedFileUnchangedConfirmed',true,'defendedAndApproved',true,'finalFileConfirmed',true,'approvalPageConfirmed',true))$$,'estudante abre a solicitação');
 
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
 select lives_ok($$select public.assume_cataloging_request((select id from public.cataloging_requests limit 1))$$,'catalogador assume a solicitação');
-select lives_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1),jsonb_build_object(
+select lives_ok($$select public.save_assisted_cataloging_v2((select id from public.cataloging_requests limit 1),jsonb_build_object(
  'people',jsonb_build_array(
   jsonb_build_object('role','author','transcribedName','Ana Silva','authorizedName','Silva, Ana'),
   jsonb_build_object('role','advisor','transcribedName','Bruno Souza','authorizedName','Souza, Bruno')),
  'terms',jsonb_build_array(
-  jsonb_build_object('labelPt','Arquitetura','labelEn','Architecture','isPrimary',true),
-  jsonb_build_object('labelPt','Habitação','labelEn','Housing','isPrimary',false),
-  jsonb_build_object('labelPt','Urbanismo','labelEn','Urbanism','isPrimary',false)),
+  jsonb_build_object('labelPt','Arquitetura','labelEn','Architecture','sourceCode','bn','isPrimary',true),
+  jsonb_build_object('labelPt','Habitação','labelEn','Housing','sourceCode','bn','isPrimary',false),
+  jsonb_build_object('labelPt','Urbanismo','labelEn','Urbanism','sourceCode','bn','isPrimary',false)),
  'cduCode','72','cutterCode',''))$$,'catalogação incompleta é salva como rascunho');
 select throws_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'P0001','classification_required','homologação exige CDU e Cutter');
-select lives_ok($$select public.save_assisted_cataloging((select id from public.cataloging_requests limit 1),jsonb_build_object(
+select lives_ok($$select public.save_assisted_cataloging_v2((select id from public.cataloging_requests limit 1),jsonb_build_object(
  'people',(select jsonb_agg(jsonb_build_object('authorityId',authority_person_id,'role',role,'transcribedName',transcribed_name,'authorizedName',authorized_name_snapshot) order by position) from public.request_cataloging_people),
- 'terms',(select jsonb_agg(jsonb_build_object('termId',controlled_term_id,'labelPt',label_pt_snapshot,'labelEn',label_en_snapshot,'isPrimary',is_primary) order by position) from public.request_controlled_terms),
+ 'terms',(select jsonb_agg(jsonb_build_object('termId',controlled_term_id,'labelPt',label_pt_snapshot,'labelEn',label_en_snapshot,'sourceCode',source_code,'isPrimary',is_primary) order by position) from public.request_controlled_terms),
  'cduCode','72','cutterCode','S586'))$$,'classificação completa é salva');
 
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000003';
 select throws_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'P0001','request_not_ready_for_homologation','outro catalogador não homologa o ticket');
 set local request.jwt.claim.sub='92000000-0000-4000-8000-000000000002';
 select public.validate_request_citation((select id from public.cataloging_requests limit 1),'SILVA, Ana. Arquitetura social. 2026. Trabalho Final de Graduação.');
+select public.confirm_public_work_link((select id from public.cataloging_requests limit 1));
+select public.confirm_request_declarations((select id from public.cataloging_requests limit 1));
 select public.complete_request_analysis((select id from public.cataloging_requests limit 1));
 select lives_ok($$select * from public.homologate_cataloging_card((select id from public.cataloging_requests limit 1))$$,'responsável homologa a ficha');
 select is((select status from public.cataloging_requests limit 1),'approved'::public.request_status,'solicitação fica homologada');

@@ -8,6 +8,7 @@ import { StudentRequestShortcut } from "@/components/student-request-shortcut";
 import { AppIcon } from "@/components/app-icon";
 import { StudentDraftSummary } from "@/components/student-request-form";
 import { StaffActivityFeed, type StaffActivityEvent } from "@/components/staff-activity-feed";
+import { formatWorkTitle } from "@/lib/work-title";
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
@@ -15,7 +16,7 @@ export default async function StudentDashboardPage() {
   const { data: profile } = user ? await supabase.from("profiles").select("full_name, role").eq("id", user.id).single() : { data: null };
   if (!profile || !user) redirect("/entrar");
   if (profile.role === "cataloger" || profile.role === "administrator") return <StaffOverview role={profile.role} userId={user.id} />;
-  const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
+  const { data: activeRequest } = await supabase.from("cataloging_requests").select("protocol, status, title, subtitle").in("status", ["submitted", "in_review", "changes_requested", "approved"]).maybeSingle();
   const { data: programs } = activeRequest ? { data: [] } : await supabase.from("academic_programs").select("id,code,name,level,work_type").eq("active", true);
   const { data: feedbackInvitations } = await supabase.from("feedback_invitations").select("responded");
   const hasPendingFeedback = (feedbackInvitations ?? []).some((invitation) => !invitation.responded);
@@ -34,10 +35,10 @@ export default async function StudentDashboardPage() {
           <div className="next-action__content">
             <p className="eyebrow">Sua próxima ação</p>
             <h2>{activeRequest ? activeRequest.protocol : "Sua solicitação"}</h2>
-            <p>{activeRequest ? `Seu trabalho “${activeRequest.title}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
-            {!activeRequest && <StudentDraftSummary programs={programs ?? []} />}
+            <p>{activeRequest ? `Seu trabalho “${formatWorkTitle(activeRequest.title, activeRequest.subtitle)}” foi registrado e já pode ser acompanhado.` : "Tenha em mãos a matrícula atual, a versão final já aprovada e um link público para o trabalho completo."}</p>
+            {!activeRequest && <StudentDraftSummary key={user.id} userId={user.id} programs={programs ?? []} />}
             {!activeRequest && <p className="next-action__draft-note"><AppIcon name="document" /><span>O rascunho é salvo automaticamente neste dispositivo para você continuar depois.</span></p>}
-            {activeRequest ? <Link className="button button--primary button--with-icon" href="/painel/solicitacao"><AppIcon name="request" />Acompanhar protocolo</Link> : <StudentRequestShortcut className="button button--primary" programs={programs ?? []} />}
+            {activeRequest ? <Link className="button button--primary button--with-icon" href="/painel/solicitacao"><AppIcon name="request" />Acompanhar protocolo</Link> : <StudentRequestShortcut key={user.id} userId={user.id} className="button button--primary" programs={programs ?? []} />}
           </div>
         </article>
         <aside className="dashboard-side">
@@ -71,12 +72,13 @@ export default async function StudentDashboardPage() {
 
 async function StaffOverview({ role, userId }: { role: "cataloger" | "administrator"; userId: string }) {
   const supabase = await createClient();
-  const [{ data: requests }, { data: announcements }, { data: candidates }, { count: activeStaffCount }, activityFeed] = await Promise.all([
+  const [{ data: requests }, { data: announcements }, { data: candidates }, { count: activeStaffCount }, activityFeed, { data: priorityRows }] = await Promise.all([
     supabase.from("cataloging_requests").select("status,assigned_to"),
     supabase.from("library_announcements").select("id,title,message,type,starts_at").eq("active", true).order("starts_at", { ascending: false }).limit(3),
     role === "administrator" ? supabase.rpc("list_confirmed_staff_candidates") : Promise.resolve({ data: [] as { user_id: string; email: string }[] }),
     role === "administrator" ? supabase.from("profiles").select("id", { count: "exact", head: true }).in("role", ["cataloger", "administrator"]).eq("status", "active") : Promise.resolve({ count: null }),
     supabase.rpc("list_staff_activity_feed", { page_size: 10 }),
+    supabase.from("request_priorities").select("request_id,marked_at,request:cataloging_requests!inner(id,protocol,title,subtitle,status)").order("marked_at", { ascending: true }),
   ]);
   const all = requests ?? [];
   const unassigned = all.filter((request) => !request.assigned_to).length;
@@ -84,18 +86,24 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
   const changes = all.filter((request) => request.status === "changes_requested").length;
   const approved = all.filter((request) => request.status === "approved").length;
   const administrator = role === "administrator";
+  const priorities = (priorityRows ?? []).flatMap((row) => {
+    const request = Array.isArray(row.request) ? row.request[0] : row.request;
+    return request && ["submitted", "in_review", "changes_requested", "approved"].includes(request.status)
+      ? [{ id: request.id, protocol: request.protocol, title: formatWorkTitle(request.title, request.subtitle), markedAt: row.marked_at }]
+      : [];
+  });
   const announcementLabels: Record<string, string> = { normal: "Aviso", recess: "Recesso", strike: "Paralisação/greve", other: "Ocorrência", holiday: "Feriado", optional_day: "Ponto facultativo" };
   return <main className="dashboard-main dashboard-main--staff-overview">
     <div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="home" />Visão geral</h1></div></div>
     <div className={`staff-overview-main${administrator ? " staff-overview-main--admin" : " staff-overview-main--cataloger"}`}>
       <StaffActivityFeed initialEvents={(activityFeed.data ?? []) as StaffActivityEvent[]} userId={userId} initialLoadError={Boolean(activityFeed.error)} />
       <div className="staff-overview-main__side"><section className="overview-stats" aria-label="Indicadores rápidos">
-      <article><AppIcon name="queue" /><strong>{unassigned}</strong><span>na fila sem responsável</span><Link href="/painel/fila">Abrir fila</Link></article>
-      <article><AppIcon name="work" /><strong>{mine}</strong><span>{administrator ? "atendimentos em andamento" : "meus atendimentos em andamento"}</span><Link href="/painel/fila?responsavel=me">Ver atendimentos</Link></article>
-      <article><AppIcon name="edit" /><strong>{changes}</strong><span>solicitações aguardando correção</span><Link href="/painel/fila?status=changes_requested">Ver pendências</Link></article>
-      <article><AppIcon name={administrator ? "admin" : "check"} /><strong>{administrator ? candidates.length : approved}</strong><span>{administrator ? "contas aguardando provisionamento" : "solicitações aprovadas"}</span><Link href={administrator ? "/painel/admin" : "/painel/fila?status=approved"}>{administrator ? "Administrar contas" : "Ver aprovações"}</Link></article>
+      <article><AppIcon className="overview-stats__icon" name="queue" /><strong>{unassigned}</strong><span>na fila sem responsável</span><Link href="/painel/fila">Abrir fila</Link></article>
+      <article><AppIcon className="overview-stats__icon" name="work" /><strong>{mine}</strong><span>{administrator ? "atendimentos em andamento" : "meus atendimentos em andamento"}</span><Link href="/painel/fila?responsavel=me">Ver atendimentos</Link></article>
+      <article><AppIcon className="overview-stats__icon" name="edit" /><strong>{changes}</strong><span>solicitações aguardando correção</span><Link href="/painel/fila?status=changes_requested">Ver pendências</Link></article>
+      <article><AppIcon className="overview-stats__icon" name={administrator ? "admin" : "check"} /><strong>{administrator ? candidates.length : approved}</strong><span>{administrator ? "contas aguardando provisionamento" : "solicitações aprovadas"}</span><Link href={administrator ? "/painel/admin" : "/painel/fila?status=approved"}>{administrator ? "Administrar contas" : "Ver aprovações"}</Link></article>
       </section>
-      {administrator && <section className="overview-context"><article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article><article className="panel"><p className="eyebrow">Prioridade da fila</p><h2>{unassigned ? `${unassigned} solicitações aguardam responsável` : "Fila distribuída"}</h2><p>{unassigned ? "Reveja a fila para distribuir ou assumir os atendimentos disponíveis." : "No momento, não há solicitações sem responsável."}</p><Link className="button button--secondary button--small" href="/painel/fila">Gerenciar fila</Link></article></section>}
+      <section className="overview-context">{administrator && (candidates?.length ?? 0) > 0 && <article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article>}<article className="panel overview-priorities"><p className="eyebrow overview-priorities__heading"><AppIcon name="star" /><span>Prioridade da fila</span></p><h2>{priorities.length ? `${priorities.length} ${priorities.length === 1 ? "protocolo prioritário" : "protocolos prioritários"} em aberto` : "Nenhum protocolo prioritário em aberto"}</h2>{priorities.length ? <ol>{priorities.map((item) => <li key={item.id}><div><strong>{item.protocol}</strong><span>{item.title}</span><small>Prioritário desde {new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.markedAt))}</small></div><Link className="button button--secondary button--small" href={`/painel/atendimento/${item.id}`} aria-label={`Abrir protocolo ${item.protocol}`}>Abrir <AppIcon name="arrowRight" /></Link></li>)}</ol> : <p>Os protocolos marcados como prioritários aparecerão aqui até a finalização.</p>}</article></section>
       </div>
     </div>
     {administrator && <AdminProvisioningAlert candidates={candidates ?? []} />}

@@ -3,6 +3,7 @@ import { AuthShell } from "@/components/auth-shell";
 import { AuthFeedback } from "@/components/auth-feedback";
 import { login } from "@/app/auth-actions";
 import { authPageMetadata } from "@/lib/auth-page-metadata";
+import { InstitutionalEmailInput } from "@/components/institutional-email-input";
 
 export const generateMetadata = () => authPageMetadata("login");
 
@@ -13,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <AuthFeedback error={error} message={message} />
       <form className="form-stack" action={login}>
         {next === "/painel/solicitacao/corrigir" && <input type="hidden" name="next" value={next} />}
-        <label>E-mail institucional<input type="email" name="email" autoComplete="email" placeholder="Seu e-mail institucional" required /></label>
+        <label>E-mail institucional<InstitutionalEmailInput /></label>
         <label>Senha<input type="password" name="password" autoComplete="current-password" placeholder="Sua senha" required /></label>
         <div className="form-row form-row--between">
           <label className="check"><input type="checkbox" /> <span>Lembrar de mim</span></label>

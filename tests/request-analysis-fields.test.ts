@@ -4,6 +4,6 @@ import test from "node:test";
 
 test("só mostra a mensagem opcional quando o estudante a preencheu", async () => {
   const page = await readFile("src/app/painel/atendimento/[id]/page.tsx", "utf8");
-  assert.match(page, /request\.library_note\?\.trim\(\) \? \[\{ key: "library_note"/);
-  assert.match(page, /: \[\]\),/);
+  assert.match(page, /hasStudentMessage=\{Boolean\(request\.library_note\?\.trim\(\)\)\}/);
+  assert.doesNotMatch(page, /key: "library_note"/);
 });

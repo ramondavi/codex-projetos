@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { RepositoryDepositGuide, type RepositoryCopyField } from "@/components/repository-deposit-guide";
 import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 import { createClient } from "@/lib/supabase/server";
+import { formatWorkTitle } from "@/lib/work-title";
+
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
 
@@ -31,7 +33,7 @@ export default async function RepositoryDepositPage() {
   const keyword = (language: string) => (request.keywords ?? []).filter((item) => item.language === language).sort((a,b) => a.position-b.position).map((item) => item.term).join("; ");
   const fields: RepositoryCopyField[] = [
     { label: "Coleção", value: program.repository_collection_label }, { label: "Tipo de documento", value: program.repository_document_type_label }, { label: "Grau acadêmico", value: program.repository_academic_degree_label },
-    { label: "Título e subtítulo", value: [snapshot.request.title, snapshot.request.subtitle].filter(Boolean).join(": ") }, { label: "Título equivalente", value: snapshot.request.equivalentTitle },
+    { label: "Título e subtítulo", value: formatWorkTitle(snapshot.request.title, snapshot.request.subtitle) }, { label: "Título equivalente", value: snapshot.request.equivalentTitle },
     { label: "Autor", value: person("author") }, { label: "Primeiro orientador", value: person("advisor") }, { label: "Coorientador", value: person("coadvisor") },
     { label: "Nome da instituição", value: program.repository_institution_label }, { label: "Sigla da instituição", value: program.repository_institution_acronym }, { label: "Faculdade, instituto ou departamento", value: program.repository_unit_label },
     { label: program.level === "undergraduate" ? "Nome do curso" : "Nome do programa de pós-graduação", value: program.repository_program_label || program.name }, { label: "País", value: program.repository_country_label }, { label: "Idioma", value: program.repository_default_language_label },

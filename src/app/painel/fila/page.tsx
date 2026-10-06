@@ -15,7 +15,7 @@ type RawQueueRequest = {
   student: { profile: { full_name: string } | { full_name: string }[] | null } | { profile: { full_name: string } | { full_name: string }[] | null }[] | null;
   enrollment: { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null } | { program: { id: string; name: string; level: string } | { id: string; name: string; level: string }[] | null }[] | null;
   people: { role: string; transcribed_name: string }[] | null;
-  analysis: { internal_note: string }[] | { internal_note: string } | null;
+  analysis: { internal_note: string; review_completed_at: string | null }[] | { internal_note: string; review_completed_at: string | null } | null;
   nadaConsta: { status: string }[] | null;
   homologation: { id: string }[] | null;
   repositoryProgress: { started_at: string }[] | null;
@@ -42,7 +42,7 @@ export default async function StaffQueuePage() {
         program:academic_programs!academic_enrollments_academic_program_id_fkey(id, name, level)
       ),
       people:request_people(role, transcribed_name),
-      analysis:request_analyses(internal_note),
+      analysis:request_analyses(internal_note,review_completed_at),
       nadaConsta:nada_consta_documents(status),
       homologation:cataloging_card_homologations(id),
       repositoryProgress:repository_deposit_progress(started_at),
@@ -70,6 +70,7 @@ export default async function StaffQueuePage() {
       isPriority: Boolean(first(item.priority)),
       priorityReasonCode: first(item.priority)?.reason_code ?? null,
       priorityReasonDetail: first(item.priority)?.reason_detail ?? null,
+      canRevisitDeclarations: item.status === "in_review" && !analysis?.review_completed_at,
       progressLabel: progress.label, progressTone: progress.tone,
       progressStep: item.status === "completed" || Boolean(first(item.publication)) ? 4 : item.status === "approved" ? Boolean(first(item.repositoryProgress)) ? 3 : 2 : item.status === "submitted" ? 0 : 1,
     };

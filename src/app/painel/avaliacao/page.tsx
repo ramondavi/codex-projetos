@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { FeedbackQuestionnaire } from "@/components/feedback-questionnaire";
 import { createClient } from "@/lib/supabase/server";
 
+
 export default async function FeedbackPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

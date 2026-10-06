@@ -2,7 +2,6 @@
 
 import nodemailer from "nodemailer";
 import path from "node:path";
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { transactionalEmailHtml, transactionalEmailText } from "@/lib/email-html";
 
@@ -15,7 +14,7 @@ export async function processLocalEmailOutbox() {
     supabase.rpc("claim_local_email_outbox", { batch_limit: 20 }),
     supabase.rpc("claim_local_account_notification_outbox", { batch_limit: 20 }),
   ]);
-  if (requestError || accountError) redirect("/painel/fila?emails=error");
+  if (requestError || accountError) return "error";
   const transporter = nodemailer.createTransport({ host: "127.0.0.1", port: 54325, secure: false, ignoreTLS: true });
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   let failed = false;
@@ -31,5 +30,5 @@ export async function processLocalEmailOutbox() {
       await supabase.rpc(completion, { target_email_id: email.email_id, succeeded: false, error_message: deliveryError instanceof Error ? deliveryError.message : "delivery_failed" });
     }
   }
-  redirect(`/painel/fila?emails=${failed ? "error" : "sent"}`);
+  return failed ? "error" : "sent";
 }

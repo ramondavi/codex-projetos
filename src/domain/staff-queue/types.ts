@@ -15,6 +15,7 @@ export type QueueRequest = {
   isPriority: boolean;
   priorityReasonCode: string | null;
   priorityReasonDetail: string | null;
+  canRevisitDeclarations?: boolean;
   progressLabel: string;
   progressTone: "waiting" | "active" | "ready" | "done" | "attention";
   progressStep: number;

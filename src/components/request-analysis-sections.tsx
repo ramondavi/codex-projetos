@@ -3,21 +3,30 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
+import { DeclarationCancellationControl } from "@/components/declaration-cancellation-control";
+import { SharedFileIntegrityControl } from "@/components/shared-file-integrity-control";
 
 const steps = [
   { id: "metadata", label: "Metadados", icon: "document", guidance: "Confira os dados e marque apenas o que precisa de ajuste." },
   { id: "cataloging", label: "Catalogação e ficha", icon: "book", guidance: "Complete a catalogação, confira a ficha e homologue." },
-  { id: "documentation", label: "Nada Consta e liberação", icon: "shield", guidance: "Confira o Nada Consta e veja o que falta para liberar." },
+  { id: "documentation", label: "Finalização e liberação", icon: "shield", guidance: "Confira a referência, o Nada Consta e a liberação." },
 ] as const;
 
-export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode }) {
+export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction, declarationRequestId, declarationsReviewed = false, initialLinkVerified = false, publicWorkUrl = "", waitingForStudent = false, hasStudentMessage = false, sharedFileRequestId }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode; declarationRequestId?: string; declarationsReviewed?: boolean; initialLinkVerified?: boolean; publicWorkUrl?: string; waitingForStudent?: boolean; hasStudentMessage?: boolean; sharedFileRequestId?: string }) {
   const requestedStep = useSearchParams().get("etapa");
+  const revisitRequested = useSearchParams().get("rever") === "1";
+  const [showDeclarations, setShowDeclarations] = useState(Boolean(declarationRequestId) && (revisitRequested || !declarationsReviewed || !initialLinkVerified || waitingForStudent));
+  const [replyPending, setReplyPending] = useState(false);
   const [active, setActive] = useState<"metadata" | "cataloging" | "documentation">(
     requestedStep === "cataloging" || requestedStep === "documentation" ? requestedStep : "metadata",
   );
   const activeStep = steps.findIndex((step) => step.id === active);
   const currentStep = steps[activeStep];
   const isMetadata = active === "metadata";
+  useEffect(() => { if (declarationRequestId && (!initialLinkVerified || waitingForStudent)) setShowDeclarations(true); }, [declarationRequestId, initialLinkVerified, waitingForStudent]);
+  useEffect(() => { if (revisitRequested && declarationRequestId) setShowDeclarations(true); }, [revisitRequested, declarationRequestId]);
+  useEffect(() => { const onRevisit = () => { if (declarationRequestId) setShowDeclarations(true); }; window.addEventListener("request-analysis:revisit", onRevisit); return () => window.removeEventListener("request-analysis:revisit", onRevisit); }, [declarationRequestId]);
+  useEffect(() => { const onReply = (event: Event) => setReplyPending(Boolean((event as CustomEvent<{ pending: boolean }>).detail?.pending)); window.addEventListener("request-analysis:reply-pending", onReply); return () => window.removeEventListener("request-analysis:reply-pending", onReply); }, []);
   useEffect(() => {
     if (requestedStep && steps.some((step) => step.id === requestedStep)) {
       setActive(requestedStep as typeof active);
@@ -25,6 +34,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
   }, [requestedStep]);
   useEffect(() => {
     const navigateToField = (event: Event) => {
+      if (showDeclarations) return;
       const detail = (event as CustomEvent<{ tab?: typeof active; fieldId?: string }>).detail;
       if (!detail || !steps.some((step) => step.id === detail.tab)) return;
       setActive(detail.tab!);
@@ -40,8 +50,10 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
     };
     window.addEventListener("request-analysis:navigate", navigateToField);
     return () => window.removeEventListener("request-analysis:navigate", navigateToField);
-  }, []);
-  return <div className="request-analysis-sections" data-active-section={active}>
+  }, [showDeclarations]);
+  return <div className="request-analysis-sections" data-active-section={active} data-declaration-preview={showDeclarations}>
+    {declarationRequestId && showDeclarations && <DeclarationCancellationControl requestId={declarationRequestId} publicWorkUrl={publicWorkUrl} initiallyReviewed={declarationsReviewed} initiallyLinkVerified={initialLinkVerified} waitingForStudent={waitingForStudent} replyPending={replyPending} onContinue={() => setShowDeclarations(false)} onBack={declarationsReviewed && initialLinkVerified ? () => setShowDeclarations(false) : undefined} />}
+    <section className="preanalysis-message" hidden={!showDeclarations || !hasStudentMessage}><div id="preanalysis-student-message" /></section>
     <div className="analysis-stepper" role="tablist" aria-label="Etapas da análise bibliotecária">
       {steps.map((step, index) => <button
         key={step.id}
@@ -59,11 +71,11 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
       <span>Etapa {activeStep + 1} de {steps.length}</span>
       <div><strong><AppIcon name={currentStep.icon as AppIconName} /> Agora: {currentStep.guidance}</strong></div>
     </aside>
-    <section className="request-analysis-section">{metadata}<div id="request-analysis-actions-end" /></section>
-    <section className="request-analysis-section">{cataloging}</section>
-    <section className="request-analysis-section">{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" />{finalAction}</section>
+    <section className="request-analysis-section" data-step="metadata">{metadata}<div id="request-analysis-actions-end" /></section>
+    <section className="request-analysis-section" data-step="cataloging">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}{cataloging}</section>
+    <section className="request-analysis-section" data-step="documentation">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}<div id="request-analysis-citation-end" />{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" />{finalAction}</section>
     <div className="form-navigation request-analysis-sections__navigation">
-      <button className="button button--secondary button--small" type="button" disabled={isMetadata} onClick={() => setActive(steps[activeStep - 1].id)}>{isMetadata ? "← Voltar" : `← Voltar: ${steps[activeStep - 1].label}`}</button>
+      {!isMetadata && <button className="button button--secondary button--small" type="button" onClick={() => setActive(steps[activeStep - 1].id)}>{`← Voltar: ${steps[activeStep - 1].label}`}</button>}
       {activeStep < steps.length - 1 && <button className="button button--secondary button--small" type="button" onClick={() => setActive(steps[activeStep + 1].id)}>Próxima: {steps[activeStep + 1].label} →</button>}
     </div>
   </div>;

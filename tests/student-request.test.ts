@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { compactDraft, emptyStudentRequestDraft, restoreStudentRequestDraft, STUDENT_REQUEST_DRAFT_KEY } from "../src/domain/student-requests/draft.ts";
+import { compactDraft, emptyStudentRequestDraft, restoreStudentRequestDraft, studentRequestDraftKey } from "../src/domain/student-requests/draft.ts";
 
 const migration = readFileSync(new URL("../supabase/migrations/202608230000_student_requests.sql", import.meta.url), "utf8");
 const requiredDetailsMigration = readFileSync(new URL("../supabase/migrations/202608310005_require_student_cataloging_details.sql", import.meta.url), "utf8");
@@ -48,7 +48,7 @@ test("compacts repeatable draft fields without losing structured people", () => 
   assert.equal(compact.people.author, "Ana Silva");
   assert.equal(compact.people.birthYearAcknowledged, true);
   assert.deepEqual(compact.people.committeeMembers, ["Prof.ª Lia"]);
-  assert.match(STUDENT_REQUEST_DRAFT_KEY, /^pronto:student-request-draft:/);
+  assert.match(studentRequestDraftKey("student-1"), /^pronto:student-request-draft:/);
 });
 
 test("exige a escolha explícita sobre ilustrações", () => {

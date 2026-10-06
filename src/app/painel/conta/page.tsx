@@ -8,6 +8,7 @@ import { requestAuthenticatedPasswordChange, requestEmailChange, updateBirthDate
 import { AuthFeedback } from "@/components/auth-feedback";
 import { StaffAvatarPicker } from "@/components/staff-avatar-picker";
 
+
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string }> }) {
   const { error, message } = await searchParams;
   const supabase = await createClient();
