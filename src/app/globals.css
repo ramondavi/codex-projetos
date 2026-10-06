@@ -3041,7 +3041,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 @media (max-width: 560px) { .analysis-stepper--guided { grid-template-columns: 1fr; } .analysis-stepper--guided > .analysis-stepper__stage, .analysis-stepper--guided > button { min-height: 48px; } .request-analysis-sections > .analysis-next-action { align-items: flex-start; flex-direction: column; gap: 5px; } }
 
 /* Área de trabalho do atendimento. */
-.analysis-case-header__actions .progress-badge.queue-status-color { display: inline-flex; align-items: center; gap: 6px; min-height: 0; padding: 8px 10px; border-left-width: 1px; border-radius: var(--radius-sm); font-size: .76rem; font-weight: 700; line-height: normal; }
+.analysis-case-header__actions .progress-badge.queue-status-color { display: inline-flex; align-items: center; gap: 6px; box-sizing: border-box; height: 36px; min-height: 36px; padding: 0 10px; border-left-width: 1px; border-radius: var(--radius-sm); font-size: .76rem; font-weight: 700; line-height: 1.2; }
 .analysis-case-header__actions .progress-badge.queue-status-color svg { flex: 0 0 15px; width: 15px; height: 15px; }
 .request-analysis-section > .analysis-workspace { padding: 0; border: 0; background: transparent; box-shadow: none; }
 .analysis-workspace__heading { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; }

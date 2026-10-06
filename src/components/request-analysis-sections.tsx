@@ -7,11 +7,10 @@ import { DeclarationCancellationControl } from "@/components/declaration-cancell
 import { SharedFileIntegrityControl } from "@/components/shared-file-integrity-control";
 
 const steps = [
-  { id: "metadata", label: "Metadados", icon: "document", guidance: "Confira os dados e marque apenas o que precisa de ajuste." },
-  { id: "cataloging", label: "Catalogação e ficha", icon: "book", guidance: "Complete a catalogação, confira a ficha e homologue." },
-  { id: "documentation", label: "Finalização e liberação", icon: "shield", guidance: "Confira a referência, o Nada Consta e a liberação." },
+  { id: "metadata", label: "Metadados", icon: "document" },
+  { id: "cataloging", label: "Catalogação e ficha", icon: "book" },
+  { id: "documentation", label: "Finalização e liberação", icon: "shield" },
 ] as const;
-const initialStep = { label: "Conferência inicial", icon: "check" as AppIconName, guidance: "Confira as declarações e o acesso ao trabalho antes de iniciar a análise." };
 
 export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction, declarationRequestId, declarationsReviewed = false, initialLinkVerified = false, metadataComplete = false, catalogingComplete = false, documentationComplete = false, publicWorkUrl = "", waitingForStudent = false, hasStudentMessage = false, sharedFileRequestId }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode; declarationRequestId?: string; declarationsReviewed?: boolean; initialLinkVerified?: boolean; metadataComplete?: boolean; catalogingComplete?: boolean; documentationComplete?: boolean; publicWorkUrl?: string; waitingForStudent?: boolean; hasStudentMessage?: boolean; sharedFileRequestId?: string }) {
   const requestedStep = useSearchParams().get("etapa");
@@ -22,11 +21,8 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
     requestedStep === "cataloging" || requestedStep === "documentation" || requestedStep === "metadata" ? requestedStep : !metadataComplete ? "metadata" : !catalogingComplete ? "cataloging" : "documentation",
   );
   const activeStep = steps.findIndex((step) => step.id === active);
-  const currentStep = steps[activeStep];
   const isMetadata = active === "metadata";
   const completed = [declarationsReviewed && initialLinkVerified && !waitingForStudent, metadataComplete, catalogingComplete, documentationComplete];
-  const guidedStep = showDeclarations ? initialStep : currentStep;
-  const guidedIndex = showDeclarations ? 0 : activeStep + 1;
   useEffect(() => { if (declarationRequestId && (!initialLinkVerified || waitingForStudent)) setShowDeclarations(true); }, [declarationRequestId, initialLinkVerified, waitingForStudent]);
   useEffect(() => { if (revisitRequested && declarationRequestId) setShowDeclarations(true); }, [revisitRequested, declarationRequestId]);
   useEffect(() => { const onRevisit = () => { if (declarationRequestId) setShowDeclarations(true); }; window.addEventListener("request-analysis:revisit", onRevisit); return () => window.removeEventListener("request-analysis:revisit", onRevisit); }, [declarationRequestId]);
@@ -73,10 +69,6 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
         <span><AppIcon name={step.icon as AppIconName} /><strong>{step.label}</strong><small>{completed[index + 1] ? "Concluída" : !showDeclarations && active === step.id ? "Em andamento" : "A seguir"}</small></span>
       </button>)}
     </nav>
-    <aside className="analysis-next-action" aria-live="polite">
-      <span>Etapa {guidedIndex + 1} de 4</span>
-      <div><strong><AppIcon name={guidedStep.icon as AppIconName} />{guidedStep.label}</strong><p>{guidedStep.guidance}</p></div>
-    </aside>
     {declarationRequestId && showDeclarations && <DeclarationCancellationControl requestId={declarationRequestId} publicWorkUrl={publicWorkUrl} initiallyReviewed={declarationsReviewed} initiallyLinkVerified={initialLinkVerified} waitingForStudent={waitingForStudent} replyPending={replyPending} onContinue={() => setShowDeclarations(false)} onBack={declarationsReviewed && initialLinkVerified ? () => setShowDeclarations(false) : undefined} />}
     <section className="preanalysis-message" hidden={!showDeclarations || !hasStudentMessage}><div id="preanalysis-student-message" /></section>
     <section className="request-analysis-section" data-step="metadata">{metadata}</section>
