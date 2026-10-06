@@ -30,5 +30,5 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ]);
   const knowledgeEntries: KnowledgeEntry[] = (knowledge.data ? knowledge.data as KnowledgeEntry[] : initialKnowledgeEntries(faqs.data ?? []))
     .map((entry) => ({ ...entry, body_html: safeKnowledgeHtml(entry.body_html) }));
-  return <main className="dashboard-main"><div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="building" />Administração</h1></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} cduEntries={cduDescriptions.data ?? []} /></main>;
+  return <main className="dashboard-main"><div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="hierarchy" />Administração</h1></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} cduEntries={cduDescriptions.data ?? []} /></main>;
 }

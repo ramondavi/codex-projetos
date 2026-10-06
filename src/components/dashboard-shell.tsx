@@ -34,7 +34,7 @@ const logoutDialogCopy = {
   it: { title: "Uscire?", description: "La sessione verrà terminata.", stay: "Resta nel pannello", exit: "Esci dall’account" },
 };
 
-const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "building", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
+const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "hierarchy", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
 function SidebarIcon({ name }: { name: keyof typeof navIcons }) { return <AppIcon className="dashboard-nav__icon" name={navIcons[name]} />; }
 
 export function DashboardShell({ children, fullName, role, userId, avatarChoice, showNotifications = true, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; userId: string; avatarChoice?: number | null; showNotifications?: boolean; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
