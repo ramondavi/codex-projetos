@@ -2876,11 +2876,16 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .analysis-case-header__protocol .protocol-copy-button:hover { text-decoration: underline; text-underline-offset: 3px; }
 .analysis-case-header__student { color: var(--text-muted); font-size: .88rem; }
 .analysis-case-header__student strong { color: var(--text); }
+.analysis-case-header__student .queue-item__student-detail svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--institutional); }
+.analysis-case-header__actions .request-status { min-height: 34px; padding: 7px 9px; border-left-width: 1px; font-size: .76rem; line-height: 1.2; }
+.analysis-case-header__actions .request-status svg { width: 15px; height: 15px; }
+.analysis-case-header .protocol-actions-menu > summary { width: 36px; height: 36px; color: var(--institutional); }
+.analysis-case-header .protocol-actions-menu > summary svg { width: 17px; height: 17px; }
 .analysis-case-header__details { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 0; }
 .analysis-case-header__details div { padding: 0; border: 0; background: transparent; }
 .analysis-case-header__details dt { font-size: .67rem; letter-spacing: .04em; }
 .analysis-case-header__details dd { font-size: .84rem; }
-.analysis-case-header__assignee { display: inline-flex; align-items: center; gap: 5px; justify-self: end; color: var(--text-muted); font-size: .76rem; }
+.analysis-case-header__assignee { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: .76rem; }
 .analysis-case-header__assignee svg { width: 15px; height: 15px; color: var(--institutional); }
 .analysis-case-header__assignee strong { color: var(--text); }
 @media (max-width: 1000px) { .analysis-case-header__details { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
