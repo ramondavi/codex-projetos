@@ -3112,7 +3112,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 @media (max-width: 900px) { .request-analysis-sections > .declaration-review { grid-template-columns: 1fr; } .request-analysis-sections > .declaration-review > .declaration-link-check, .request-analysis-sections > .declaration-review > .declarations { grid-column: 1; } }
 
 /* Navegação e progresso das etapas da análise. */
-.request-analysis-sections__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 18px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+.request-analysis-sections__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 18px; margin-top: 4px; padding: 16px 0 0; border-top: 1px solid var(--line); }
 .request-analysis-sections__toolbar > span { color: var(--text-muted); font-size: .74rem; font-weight: 800; }
 .request-analysis-sections__toolbar > div { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-left: auto; }
 .request-analysis-sections__toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--institutional); font: inherit; font-size: .76rem; font-weight: 800; cursor: pointer; }

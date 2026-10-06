@@ -26,6 +26,10 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
   const preliminaryComplete = declarationsReviewed && initialLinkVerified && !waitingForStudent;
   const completed = [metadataComplete, catalogingComplete, documentationComplete];
   const finalChecksReady = Number(citationReady) + Number(catalogingComplete) + Number(nadaConstaComplete);
+  function navigateFromFooter(step: typeof active) {
+    setActive(step);
+    window.requestAnimationFrame(() => document.getElementById("request-analysis-steps")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
   useEffect(() => setCitationReady(citationComplete), [citationComplete]);
   useEffect(() => { const onCitationStatus = (event: Event) => setCitationReady(Boolean((event as CustomEvent<{ ready: boolean }>).detail?.ready)); window.addEventListener("request-analysis:citation-status", onCitationStatus); return () => window.removeEventListener("request-analysis:citation-status", onCitationStatus); }, []);
   useEffect(() => { if (declarationRequestId && (!initialLinkVerified || waitingForStudent)) setShowDeclarations(true); }, [declarationRequestId, initialLinkVerified, waitingForStudent]);
@@ -62,7 +66,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
       <div><span className="analysis-precheck__eyebrow">Antes da análise</span><strong>Conferência inicial</strong><small>{waitingForStudent ? "Aguardando correção do link pelo estudante." : showDeclarations ? preliminaryComplete ? "Revisão das declarações aberta." : "Conclua esta conferência para iniciar a análise." : declarationRequestId && preliminaryComplete ? "Para rever, use Outras ações → Rever declarações." : preliminaryComplete ? "Concluída." : "Conferência pendente."}</small></div>
       <span className="analysis-precheck__status">{waitingForStudent ? "Aguardando estudante" : showDeclarations ? preliminaryComplete ? "Em revisão" : "Em conferência" : preliminaryComplete ? "Concluída" : "Pendente"}</span>
     </aside>
-    <nav className="analysis-stepper analysis-stepper--guided" aria-label="Etapas da análise do atendimento">
+    <nav id="request-analysis-steps" className="analysis-stepper analysis-stepper--guided" aria-label="Etapas da análise do atendimento">
       <span className="analysis-stepper__heading">Análise do atendimento</span>
       {steps.map((step, index) => <button
         key={step.id}
@@ -76,11 +80,11 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
         <span><AppIcon name={step.icon as AppIconName} /><strong>{step.label}</strong><small>{completed[index] ? "Concluída" : !showDeclarations && active === step.id ? "Em andamento" : "A seguir"}</small></span>
       </button>)}
     </nav>
-    {!showDeclarations && <div className="request-analysis-sections__toolbar" aria-label="Navegação da análise"><span>Etapa {activeStep + 1} de {steps.length}</span><div>{!isMetadata && <button type="button" onClick={() => setActive(steps[activeStep - 1].id)}><AppIcon name="arrowRight" />Anterior: {steps[activeStep - 1].label}</button>}{activeStep < steps.length - 1 && <button type="button" onClick={() => setActive(steps[activeStep + 1].id)}>Continuar: {steps[activeStep + 1].label}<AppIcon name="arrowRight" /></button>}</div></div>}
     {declarationRequestId && showDeclarations && <DeclarationCancellationControl requestId={declarationRequestId} publicWorkUrl={publicWorkUrl} initiallyReviewed={declarationsReviewed} initiallyLinkVerified={initialLinkVerified} waitingForStudent={waitingForStudent} replyPending={replyPending} onContinue={() => setShowDeclarations(false)} onBack={declarationsReviewed && initialLinkVerified ? () => setShowDeclarations(false) : undefined} />}
     <section className="preanalysis-message" hidden={!showDeclarations || !hasStudentMessage}><div id="preanalysis-student-message" /></section>
     <section className="request-analysis-section" data-step="metadata">{metadata}</section>
     <section className="request-analysis-section" data-step="cataloging">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}{cataloging}</section>
     <section className="request-analysis-section" data-step="documentation">{sharedFileRequestId && <SharedFileIntegrityControl requestId={sharedFileRequestId} />}<div className="analysis-stage-progress analysis-stage-progress--final" aria-label="Progresso da finalização"><strong>{finalChecksReady} de 3 verificações concluídas</strong><span>{3 - finalChecksReady} {3 - finalChecksReady === 1 ? "pendência" : "pendências"}</span><small>Referência · Ficha homologada · Nada Consta</small></div><div id="request-analysis-citation-end" />{documentation}<div id="request-analysis-summary-end" /><div id="request-cataloging-preview-end" />{finalAction}</section>
+    {!showDeclarations && <nav className="request-analysis-sections__toolbar" aria-label="Navegação entre etapas da análise"><span>Etapa {activeStep + 1} de {steps.length}</span><div>{!isMetadata && <button type="button" onClick={() => navigateFromFooter(steps[activeStep - 1].id)}><AppIcon name="arrowRight" />Anterior: {steps[activeStep - 1].label}</button>}{activeStep < steps.length - 1 && <button type="button" onClick={() => navigateFromFooter(steps[activeStep + 1].id)}>Continuar: {steps[activeStep + 1].label}<AppIcon name="arrowRight" /></button>}</div></nav>}
   </div>;
 }
