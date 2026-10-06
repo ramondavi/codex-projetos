@@ -17,7 +17,6 @@ import { requestStatusIcons, requestStatusKey } from "@/domain/request-status-ui
 const statusLabels: Record<string, string> = { submitted: "Na fila", in_review: "Em análise", changes_requested: "Correções solicitadas", approved: "Homologada", completed: "Concluída", canceled: "Cancelada" };
 const visibleStatus = (item: QueueRequest) => requestStatusKey(item.status, item.progressTone === "done");
 const isClosed = (item: QueueRequest) => ["completed", "canceled"].includes(visibleStatus(item));
-const levelLabels: Record<string, string> = { undergraduate: "Graduação", specialization: "Especialização", master: "Mestrado", doctorate: "Doutorado" };
 const timelineStages = ["Fila", "Análise", "Liberação", "Autodepósito", "Concluído"] as const;
 type QueueSort = "priority" | "updated" | "oldest" | "newest";
 const pageSize = 20;
@@ -43,7 +42,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
   const [sort, setSort] = useState<QueueSort>("priority");
   const [page, setPage] = useState(1);
   const [program, setProgram] = useState("");
-  const [level, setLevel] = useState("");
+  const [monographType, setMonographType] = useState("");
   const [assignee, setAssignee] = useState(params.get("responsavel") === "me" ? "me" : "");
   const [age, setAge] = useState("");
   const [error, setError] = useState<string>();
@@ -51,7 +50,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
   const [openActionsId, setOpenActionsId] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const isMineView = assignee === "me";
-  const activeFilters = [status, program, level, age, assignee && assignee !== "me" ? assignee : ""].filter(Boolean).length;
+  const activeFilters = [status, program, monographType, age, assignee && assignee !== "me" ? assignee : ""].filter(Boolean).length;
   const waitingCount = requests.filter((item) => !item.assignedTo && !isClosed(item)).length;
   const mineCount = requests.filter((item) => item.assignedTo === currentUserId && !isClosed(item)).length;
   const scopedRequests = requests.filter((item) => !isMineView || item.assignedTo === currentUserId);
@@ -81,7 +80,8 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
     return () => { document.removeEventListener("pointerdown", closeOnOutside); document.removeEventListener("keydown", closeOnEscape); };
   }, [openActionsId]);
 
-  const programs = useMemo(() => Array.from(new Map(requests.map((item) => [item.programId, item.programName])).entries()), [requests]);
+  const programs = useMemo(() => [...new Set(requests.map((item) => item.programLabel).filter((label) => label !== "Programa não identificado"))].sort((a, b) => a.localeCompare(b, "pt-BR")), [requests]);
+  const monographTypes = useMemo(() => [...new Set(requests.filter((item) => !program || item.programLabel === program).map((item) => item.monographType))].sort((a, b) => a.localeCompare(b, "pt-BR")), [requests, program]);
   const filtered = useMemo(() => requests.filter((item) => {
     if (targetRequestId) return item.id === targetRequestId;
     const query = search.trim().toLocaleLowerCase("pt-BR");
@@ -90,16 +90,16 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
     return (Boolean(query) || Boolean(status) || isClosed(item) === closedView)
       && (!query || searchable.includes(query))
       && (!status || visibleStatus(item) === status)
-      && (!program || item.programId === program)
-      && (!level || item.level === level)
+      && (!program || item.programLabel === program)
+      && (!monographType || item.monographType === monographType)
       && (!assignee || (assignee === "unassigned" ? !item.assignedTo : assignee === "me" ? item.assignedTo === currentUserId : item.assignedTo === assignee))
       && (!age || days >= Number(age));
-  }).sort((a, b) => sort === "priority" ? Number(b.isPriority) - Number(a.isPriority) || a.submittedAt.localeCompare(b.submittedAt) : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "oldest" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)), [requests, search, status, closedView, program, level, assignee, age, sort, currentUserId, targetRequestId]);
+  }).sort((a, b) => sort === "priority" ? Number(b.isPriority) - Number(a.isPriority) || a.submittedAt.localeCompare(b.submittedAt) : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "oldest" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)), [requests, search, status, closedView, program, monographType, assignee, age, sort, currentUserId, targetRequestId]);
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const currentPage = Math.min(page, pageCount);
   const visibleRequests = targetRequestId ? filtered : filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  useEffect(() => { setPage(1); }, [search, status, closedView, program, level, assignee, age, sort, targetRequestId]);
+  useEffect(() => { setPage(1); }, [search, status, closedView, program, monographType, assignee, age, sort, targetRequestId]);
 
   useEffect(() => {
     if (!targetRequestId || !filtered.some((item) => item.id === targetRequestId)) return;
@@ -145,11 +145,11 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
     {targetRequestId && <p className="queue-filters__notice"><AppIcon name="help" /><span>Protocolo aberto pelo aviso. <button className="text-button" type="button" onClick={() => router.replace("/painel/fila")}>Ver toda a fila</button></span></p>}
     <div className="queue-toolbar"><div className="queue-search"><label htmlFor="queue-search-input"><AppIcon name="search" />Buscar atendimento</label><div className="queue-search__field"><input id="queue-search-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Estudante, matrícula, protocolo, título ou orientador" /><button className="queue-more-filters" type="button" aria-expanded={filtersOpen} aria-controls="queue-extra-filters" onClick={() => setFiltersOpen((open) => !open)}><AppIcon name="settings" />Mais filtros{activeFilters > 0 && <span className="queue-filter-count">{activeFilters} {activeFilters === 1 ? "ativo" : "ativos"}</span>}<AppIcon className={`queue-more-filters__chevron${filtersOpen ? " is-open" : ""}`} name="arrowRight" /></button>{filtersOpen && <div className="queue-filters" id="queue-extra-filters" aria-label="Filtros da fila">
       <fieldset className="queue-status-filter"><legend>Status</legend><div><button type="button" className={!status ? "is-active" : ""} aria-pressed={!status} onClick={() => setStatus("")}>Todos</button>{Object.entries(statusLabels).map(([value, label]) => <button type="button" className={`queue-status-color queue-status-color--${value}${status === value ? " is-active" : ""}`} aria-pressed={status === value} key={value} onClick={() => setStatus(value)}><AppIcon name={requestStatusIcons[value]} />{label}</button>)}</div></fieldset>
-      <label>Programa <select value={program} onChange={(e) => setProgram(e.target.value)}><option value="">Todos</option>{programs.map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
-      <label>Nível <select value={level} onChange={(e) => setLevel(e.target.value)}><option value="">Todos</option>{Object.entries(levelLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-      <label>Responsável <select value={assignee} onChange={(e) => setAssignee(e.target.value)}><option value="">Todos</option><option value="unassigned">Sem responsável</option><option value="me">Meus atendimentos</option>{staff.map((item) => <option key={item.id} value={item.id}>{item.fullName}</option>)}</select></label>
+      <label>Programa <select value={program} onChange={(e) => { setProgram(e.target.value); setMonographType(""); }}><option value="">Todos</option>{programs.map((label) => <option key={label} value={label}>{label}</option>)}</select></label>
+      <label>Tipo de monografia <select value={monographTypes.length === 1 ? monographTypes[0] : monographType} onChange={(e) => setMonographType(e.target.value)} disabled={monographTypes.length === 1}><option value="">Todos</option>{monographTypes.map((type) => <option key={type} value={type}>{type}</option>)}</select></label>
+      <label>Responsável técnico <select value={assignee} onChange={(e) => setAssignee(e.target.value)}><option value="">Todos</option><option value="unassigned">Sem responsável</option><option value="me">Meus atendimentos</option>{staff.map((item) => <option key={item.id} value={item.id}>{item.fullName}</option>)}</select></label>
       <label>Tempo na fila <select value={age} onChange={(e) => setAge(e.target.value)}><option value="">Qualquer</option><option value="1">1 dia ou mais</option><option value="3">3 dias ou mais</option><option value="7">7 dias ou mais</option></select></label>
-      <div className="queue-filter-footer"><p className="queue-filters__notice"><AppIcon name="help" /><span>Concluídos e cancelados ficam em <strong>Encerrados</strong>. A busca e o filtro de status localizam protocolos em ambas as visões.</span></p>{(activeFilters > 0 || search) && <button className="text-button queue-clear-filters" type="button" onClick={() => { setSearch(""); setStatus(""); setProgram(""); setLevel(""); setAge(""); setAssignee(isMineView ? "me" : ""); }}>Limpar filtros</button>}</div>
+      <div className="queue-filter-footer"><p className="queue-filters__notice"><AppIcon name="help" /><span>Concluídos e cancelados ficam em <strong>Encerrados</strong>. A busca e o filtro de status localizam protocolos em ambas as visões.</span></p>{(activeFilters > 0 || search) && <button className="text-button queue-clear-filters" type="button" onClick={() => { setSearch(""); setStatus(""); setProgram(""); setMonographType(""); setAge(""); setAssignee(isMineView ? "me" : ""); }}>Limpar filtros</button>}</div>
     </div>}</div></div><label className="queue-sort"><span><AppIcon name="settings" />Ordenar por</span><select value={sort} onChange={(event) => setSort(event.target.value as QueueSort)}><option value="priority">Padrão</option><option value="updated">Atualizados recentemente</option><option value="oldest">Solicitações mais antigas</option><option value="newest">Solicitações mais recentes</option></select></label><span className="queue-count"><strong>{filtered.length}</strong><span>{filtered.length <= 1 ? "resultado" : "resultados"}</span></span></div>
     <section className="queue-list" aria-label="Solicitações">
       {visibleRequests.map((item) => <article className={`queue-item queue-item--status-${visibleStatus(item)}${item.id === targetRequestId ? " queue-item--target" : ""}`} id={`queue-request-${item.id}`} key={item.id}>

@@ -261,7 +261,7 @@ Graduação, Especialização, Mestrado e Doutorado.
 
 ### 10.1. Fila e ticket locking
 
-- Filtros: status, curso/programa, nível, tempo na fila, responsável, dúvida interna e busca textual.
+- Filtros: status, programa pela sigla ou nome curto exibido nos cartões, tipo de monografia, tempo na fila, responsável técnico, dúvida interna e busca textual. O tipo de monografia oferece somente opções possíveis para o programa selecionado; quando há um único tipo, ele aparece identificado sem exigir outra escolha.
 - Busca: estudante, protocolo, título, orientador e outros metadados.
 - Na Fila geral e em Meus atendimentos, a visão Ativos é o padrão. A visão Encerrados reúne protocolos concluídos e cancelados, inclusive os que já têm publicação registrada. A busca textual e o filtro de status localizam protocolos nas duas visões; avisos junto aos filtros explicam a regra.
 - A fila busca os protocolos em lotes para ultrapassar o limite de uma consulta e mostra até 20 cartões por página, com controles Anterior e Próxima. Busca, filtros e ordenação consideram todos os protocolos carregados, e a contagem mostra o total de resultados filtrados.

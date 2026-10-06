@@ -2849,3 +2849,5 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .queue-filter-footer .queue-clear-filters { flex: 0 0 auto; }
 @media (max-width: 1100px) { .queue-search__field > .queue-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .queue-search__field > .queue-filters { grid-template-columns: minmax(0, 1fr); } }
+.queue-status-filter > div { display: flex; flex-wrap: wrap; gap: 7px; width: 100%; }
+.queue-status-filter button { display: inline-flex; align-items: center; justify-content: center; flex: 1 1 145px; min-width: min(100%, 145px); gap: 6px; text-align: center; }
