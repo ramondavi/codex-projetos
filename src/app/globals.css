@@ -2823,8 +2823,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .queue-lifecycle { align-items: center; }
 .queue-status-legend { min-height: 44px; padding: 0; }
 .queue-status-legend .queue-status-color svg, .queue-status-filter .queue-status-color svg { width: 14px; height: 14px; color: var(--queue-status-color); }
-.queue-item__state .progress-badge.queue-status-color, .analysis-case-header .request-status.queue-status-color { border: 1px solid color-mix(in srgb, var(--queue-status-color) 42%, var(--line)); background: color-mix(in srgb, var(--queue-status-color) 11%, var(--surface-raised)); color: var(--queue-status-color); }
-.queue-item__state .progress-badge.queue-status-color svg, .analysis-case-header .request-status.queue-status-color svg { color: var(--queue-status-color); }
+.queue-item__state .progress-badge.queue-status-color, .analysis-case-header .progress-badge.queue-status-color { border: 1px solid color-mix(in srgb, var(--queue-status-color) 42%, var(--line)); background: color-mix(in srgb, var(--queue-status-color) 11%, var(--surface-raised)); color: var(--queue-status-color); }
+.queue-item__state .progress-badge.queue-status-color svg, .analysis-case-header .progress-badge.queue-status-color svg { color: var(--queue-status-color); }
 .analysis-case-header[class*="queue-status-color--"] { border-top-color: var(--queue-status-color); }
 .queue-sort > span { display: inline-flex; align-items: center; gap: 6px; }
 .queue-sort > span svg { width: 15px; height: 15px; color: var(--institutional); }
@@ -2877,8 +2877,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .analysis-case-header__student { color: var(--text-muted); font-size: .88rem; }
 .analysis-case-header__student strong { color: var(--text); }
 .analysis-case-header__student .queue-item__student-detail svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--institutional); }
-.analysis-case-header__actions .request-status { min-height: 34px; padding: 7px 9px; border-left-width: 1px; font-size: .76rem; line-height: 1.2; }
-.analysis-case-header__actions .request-status svg { width: 15px; height: 15px; }
+.analysis-case-header__actions .progress-badge { min-height: 34px; padding: 8px 10px; font-size: .76rem; line-height: 1.2; }
+.analysis-case-header__actions .progress-badge svg { width: 15px; height: 15px; }
 .analysis-case-header .protocol-actions-menu > summary { width: 36px; height: 36px; color: var(--institutional); }
 .analysis-case-header .protocol-actions-menu > summary svg { width: 17px; height: 17px; }
 .analysis-case-header__details { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-top: 0; }
@@ -2891,3 +2891,46 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 @media (max-width: 1000px) { .analysis-case-header__details { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 650px) { .analysis-case-header__top { align-items: flex-start; flex-wrap: wrap; } .analysis-case-header__actions { margin-left: 0; } .analysis-case-header__details { grid-template-columns: repeat(2, minmax(0, 1fr)); } .analysis-case-header__student .queue-item__registration { padding-left: 0; border-left: 0; } }
 @media (max-width: 430px) { .analysis-case-header__details { grid-template-columns: 1fr; } }
+
+.dashboard-main--analysis .analysis-case-header { margin-top: 2px; }
+.breadcrumb--public { box-sizing: border-box; width: min(1180px, calc(100% - 48px)); margin: 18px auto 0; }
+.breadcrumb--public ol { align-items: center; row-gap: 6px; }
+.breadcrumb--public li:last-child { color: var(--text); font-weight: 800; }
+.breadcrumb--public li:not(:last-child)::after { content: none; }
+.breadcrumb--public li a { display: inline-flex; align-items: center; gap: 6px; }
+.breadcrumb--public li a svg { width: 14px; height: 14px; }
+.breadcrumb--public .breadcrumb__separator { width: 12px; height: 12px; color: var(--text-muted); }
+@media (max-width: 700px) { .breadcrumb--public { width: calc(100% - 32px); } }
+
+.staff-overview-main { grid-template-columns: minmax(0, 1.55fr) minmax(290px, .85fr); align-items: stretch; gap: 28px; }
+.staff-overview-main__side { align-content: start; }
+.staff-overview-main .staff-feed { min-height: 900px; padding: 0 12px 0 0; border: 0; border-radius: 0; background: transparent; overflow: visible; }
+.staff-overview-main .staff-feed__posts { padding-right: 8px; background: transparent; }
+.staff-overview-main .staff-feed__post { border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; box-shadow: none; }
+.staff-overview-main .staff-feed__story { border-block: 0; background: transparent; }
+.staff-overview-main .staff-feed__story::after { content: none; }
+.staff-overview-main .staff-feed__post-head, .staff-overview-main .staff-feed__post-foot { padding-inline: 0; }
+.staff-overview-main .staff-feed__story { padding-inline: 0; }
+.staff-calendar { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-raised); }
+.staff-calendar__heading h2 { margin: 4px 0 0; font-size: 1.03rem; }
+.staff-calendar__heading .eyebrow { display: inline-flex; align-items: center; gap: 5px; margin: 0; }
+.staff-calendar__heading svg { width: 15px; height: 15px; }
+.staff-calendar__month { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.staff-calendar__month strong { font-size: .8rem; text-transform: capitalize; }
+.staff-calendar__month button { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 1.3rem; cursor: pointer; }
+.staff-calendar__month button:hover, .staff-calendar__month button:focus-visible { border-color: var(--institutional); color: var(--institutional); }
+.staff-calendar__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; text-align: center; }
+.staff-calendar__weekday { padding: 5px 0; color: var(--text-muted); font-size: .68rem; font-weight: 800; }
+.staff-calendar__grid button { position: relative; aspect-ratio: 1; min-height: 30px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; color: var(--text); font-size: .75rem; cursor: pointer; }
+.staff-calendar__grid button:hover, .staff-calendar__grid button:focus-visible { border-color: var(--institutional); }
+.staff-calendar__grid button.is-today { border-color: var(--line); font-weight: 850; }
+.staff-calendar__grid button.is-selected { background: var(--institutional); color: #fff; }
+.staff-calendar__grid button.has-announcement::after { position: absolute; bottom: 3px; left: calc(50% - 2px); width: 4px; height: 4px; border-radius: 50%; background: var(--institutional); content: ""; }
+.staff-calendar__grid button.is-selected.has-announcement::after { background: #fff; }
+.staff-calendar__events { display: grid; gap: 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+.staff-calendar__events > strong { font-size: .76rem; }
+.staff-calendar__events > p, .staff-calendar__events article p { margin: 0; color: var(--text-muted); font-size: .77rem; line-height: 1.45; }
+.staff-calendar__events article { display: grid; gap: 3px; padding-top: 8px; border-top: 1px solid var(--line); }
+.staff-calendar__events article span { color: var(--institutional); font-size: .65rem; font-weight: 850; text-transform: uppercase; }
+.staff-calendar__events article h3 { margin: 0; font-size: .84rem; }
+@media (max-width: 940px) { .staff-overview-main { grid-template-columns: 1fr; } .staff-overview-main .staff-feed { min-height: 0; height: auto; padding: 0; } .staff-overview-main .staff-feed__posts { max-height: 620px; } }

@@ -25,7 +25,7 @@ export function DashboardBreadcrumbProtocol({ protocol }: { protocol: string }) 
 function Trail({ items, variant }: { items: Crumb[]; variant: "public" | "dashboard" }) {
   const { language } = useInterfaceLanguage();
   if (items.length < 2) return null;
-  return <nav className={`breadcrumb breadcrumb--${variant}`} aria-label={breadcrumbCopy[language][0]}><ol>{items.map((item, index) => <li key={`${item.label}-${index}`}>{item.href && index < items.length - 1 ? <Link href={item.href}>{variant === "dashboard" && index === 0 && <AppIcon name="home" />}{item.label}</Link> : <span aria-current={index === items.length - 1 ? "page" : undefined}>{item.label}</span>}{variant === "dashboard" && index < items.length - 1 && <AppIcon className="breadcrumb__separator" name="arrowRight" />}</li>)}</ol></nav>;
+  return <nav className={`breadcrumb breadcrumb--${variant}`} aria-label={breadcrumbCopy[language][0]}><ol>{items.map((item, index) => <li key={`${item.label}-${index}`}>{item.href && index < items.length - 1 ? <Link href={item.href}>{index === 0 && <AppIcon name="home" />}{item.label}</Link> : <span aria-current={index === items.length - 1 ? "page" : undefined}>{item.label}</span>}{index < items.length - 1 && <AppIcon className="breadcrumb__separator" name="arrowRight" />}</li>)}</ol></nav>;
 }
 
 export function PublicBreadcrumbs({ articleTitle }: { articleTitle?: string }) {
