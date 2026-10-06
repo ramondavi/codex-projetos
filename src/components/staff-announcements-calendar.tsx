@@ -14,7 +14,7 @@ const dayKey = (value: string | Date) => { const parts = Object.fromEntries(dayP
 export function StaffAnnouncementsCalendar({ announcements }: { announcements: Announcement[] }) {
   const today = dayKey(new Date());
   const [month, setMonth] = useState(() => new Date(`${today.slice(0, 7)}-01T12:00:00Z`));
-  const [selected, setSelected] = useState(today);
+  const [selected, setSelected] = useState<string | null>(today);
   const [eventsOpen, setEventsOpen] = useState(false);
   const selectedDayRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -24,8 +24,8 @@ export function StaffAnnouncementsCalendar({ announcements }: { announcements: A
   const firstWeekday = new Date(Date.UTC(year, monthIndex, 1)).getUTCDay();
   const days = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
   const hasAnnouncement = (date: string) => announcements.some((item) => dayKey(item.starts_at) <= date && date <= dayKey(item.ends_at ?? item.starts_at));
-  const selectedItems = announcements.filter((item) => dayKey(item.starts_at) <= selected && selected <= dayKey(item.ends_at ?? item.starts_at));
-  const changeMonth = (offset: number) => { const next = new Date(Date.UTC(year, monthIndex + offset, 1, 12)); setMonth(next); setSelected(dayKey(next)); setEventsOpen(false); };
+  const selectedItems = selected ? announcements.filter((item) => dayKey(item.starts_at) <= selected && selected <= dayKey(item.ends_at ?? item.starts_at)) : [];
+  const changeMonth = (offset: number) => { const next = new Date(Date.UTC(year, monthIndex + offset, 1, 12)); setMonth(next); setSelected(dayKey(next).slice(0, 7) === today.slice(0, 7) ? today : null); setEventsOpen(false); };
   const closeEvents = () => { setEventsOpen(false); requestAnimationFrame(() => selectedDayRef.current?.focus()); };
   useEffect(() => { if (eventsOpen) closeRef.current?.focus(); }, [eventsOpen]);
 
