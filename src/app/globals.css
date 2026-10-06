@@ -2893,14 +2893,13 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 @media (max-width: 430px) { .analysis-case-header__details { grid-template-columns: 1fr; } }
 
 .dashboard-main--analysis .analysis-case-header { margin-top: 2px; }
-.breadcrumb--public { box-sizing: border-box; width: min(1180px, calc(100% - 48px)); margin: 18px auto 0; }
+.breadcrumb--public { box-sizing: border-box; width: min(1120px, calc(100% - 48px)); margin: 18px auto 0; }
 .breadcrumb--public ol { align-items: center; row-gap: 6px; }
 .breadcrumb--public li:last-child { color: var(--text); font-weight: 800; }
 .breadcrumb--public li:not(:last-child)::after { content: none; }
 .breadcrumb--public li a { display: inline-flex; align-items: center; gap: 6px; }
 .breadcrumb--public li a svg { width: 14px; height: 14px; }
 .breadcrumb--public .breadcrumb__separator { width: 12px; height: 12px; color: var(--text-muted); }
-@media (max-width: 700px) { .breadcrumb--public { width: calc(100% - 32px); } }
 
 .staff-overview-main { grid-template-columns: minmax(0, 1.55fr) minmax(290px, .85fr); align-items: stretch; gap: 28px; }
 .staff-overview-main__side { align-content: start; }
@@ -2979,7 +2978,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__heading h2 svg { width: 15px; height: 15px; color: var(--institutional); }
 .staff-calendar__month button { width: 28px; height: 28px; }
 .staff-calendar__grid button { min-height: 27px; }
-.staff-calendar__grid button.has-announcement { border-radius: 0; }
+.staff-calendar__grid button.has-announcement { border-radius: var(--radius-sm); }
 .staff-calendar__events article { border-top: 0; }
 @media (max-width: 940px) { .staff-overview-main .staff-feed { height: min(560px, calc(100dvh - 180px)); min-height: 360px; padding: 8px 4px 8px 8px; } .staff-overview-main .staff-feed__posts { max-height: none; } }
 
@@ -2992,3 +2991,11 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__event-modal-heading button { flex: 0 0 28px; width: 28px; height: 28px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font-size: 1.1rem; cursor: pointer; }
 .staff-calendar__event-modal-heading button:hover, .staff-calendar__event-modal-heading button:focus-visible { border-color: var(--institutional); color: var(--institutional); }
 .staff-calendar__event-modal .staff-calendar__events { margin-top: 8px; }
+
+.staff-overview-main .staff-feed { height: 100%; }
+.staff-overview-main .staff-feed__posts { mask-image: linear-gradient(to bottom, transparent, #000 18px, #000 calc(100% - 18px), transparent); }
+.staff-calendar__month button { display: grid; place-items: center; padding: 0; line-height: 1; }
+.staff-calendar__month button svg { display: block; width: 14px; height: 14px; }
+.staff-calendar__previous { transform: rotate(180deg); }
+.staff-calendar__grid button:is(.is-selected, .has-announcement:hover, .has-announcement:focus-visible) { border-radius: var(--radius-sm); }
+@media (max-width: 940px) { .staff-overview-main .staff-feed { height: min(560px, calc(100dvh - 180px)); } }
