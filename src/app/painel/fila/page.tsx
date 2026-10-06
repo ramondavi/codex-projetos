@@ -82,7 +82,7 @@ export default async function StaffQueuePage() {
       programLabel: program ? programLabels[program.code] ?? program.name : "Programa não identificado",
       monographType: program?.code === "mp-cecre-master" ? "TCC de Especialização" : monographLabels[program?.work_type ?? ""] ?? "Não informado",
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
-      hasInternalNote: Boolean(analysis?.internal_note.trim()),
+      internalNote: analysis?.internal_note.trim() || null,
       isPriority: Boolean(first(item.priority)),
       priorityReasonCode: first(item.priority)?.reason_code ?? null,
       priorityReasonDetail: first(item.priority)?.reason_detail ?? null,

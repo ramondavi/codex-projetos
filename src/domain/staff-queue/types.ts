@@ -16,7 +16,7 @@ export type QueueRequest = {
   monographType: string;
   level: string;
   advisorName: string;
-  hasInternalNote: boolean;
+  internalNote: string | null;
   isPriority: boolean;
   priorityReasonCode: string | null;
   priorityReasonDetail: string | null;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
@@ -11,18 +11,24 @@ import { PriorityBadge } from "./priority-badge";
 import { RequestTimelineDialog } from "./request-timeline";
 import { RequestPriorityControl } from "./request-priority-control";
 import { formatWorkTitle } from "@/lib/work-title";
+import { ModalCloseButton } from "./modal-close-button";
 
 const statusLabels: Record<string, string> = { submitted: "Na fila", in_review: "Em análise", changes_requested: "Correções solicitadas", approved: "Homologada", completed: "Concluída", canceled: "Cancelada" };
 const visibleStatus = (item: QueueRequest) => item.progressTone === "done" ? "completed" : item.status in statusLabels ? item.status : "submitted";
 const isClosed = (item: QueueRequest) => ["completed", "canceled"].includes(visibleStatus(item));
 const levelLabels: Record<string, string> = { undergraduate: "Graduação", specialization: "Especialização", master: "Mestrado", doctorate: "Doutorado" };
 const timelineStages = ["Fila", "Análise", "Liberação", "Autodepósito", "Concluído"] as const;
-const dateTime = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Bahia" });
+type QueueSort = "priority" | "updated" | "oldest" | "newest";
 const staffDisplayName = (fullName: string | null) => {
   if (!fullName?.trim()) return "não atribuído";
   const names = fullName.trim().split(/\s+/);
   return names.length === 1 ? names[0] : `${names[0]} ${names[names.length - 1]}`;
 };
+
+function InternalNoteDialog({ protocol, note }: { protocol: string; note: string }) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  return <><button className="queue-item__note" type="button" onClick={() => dialogRef.current?.showModal()} aria-haspopup="dialog"><AppIcon name="message" />Observação interna</button><dialog className="queue-note-dialog pronto-modal" ref={dialogRef} aria-label={`Observação interna de ${protocol}`}><div className="timeline-dialog__header"><span className="timeline-dialog__icon" aria-hidden="true"><AppIcon name="message" /></span><div><p className="eyebrow">{protocol}</p><h2>Observação interna</h2></div><ModalCloseButton onClick={() => dialogRef.current?.close()} /></div><p className="queue-note-dialog__body">{note}</p></dialog></>;
+}
 
 export function StaffQueue({ initialRequests, staff, currentUserId, isAdministrator }: { initialRequests: QueueRequest[]; staff: StaffOption[]; currentUserId: string; isAdministrator: boolean }) {
   const router = useRouter();
@@ -32,6 +38,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [closedView, setClosedView] = useState(false);
+  const [sort, setSort] = useState<QueueSort>("priority");
   const [program, setProgram] = useState("");
   const [level, setLevel] = useState("");
   const [assignee, setAssignee] = useState(params.get("responsavel") === "me" ? "me" : "");
@@ -84,7 +91,7 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
       && (!level || item.level === level)
       && (!assignee || (assignee === "unassigned" ? !item.assignedTo : assignee === "me" ? item.assignedTo === currentUserId : item.assignedTo === assignee))
       && (!age || days >= Number(age));
-  }).sort((a, b) => Number(b.isPriority) - Number(a.isPriority) || a.submittedAt.localeCompare(b.submittedAt)), [requests, search, status, closedView, program, level, assignee, age, currentUserId, targetRequestId]);
+  }).sort((a, b) => sort === "priority" ? Number(b.isPriority) - Number(a.isPriority) || a.submittedAt.localeCompare(b.submittedAt) : sort === "updated" ? b.updatedAt.localeCompare(a.updatedAt) : sort === "oldest" ? a.submittedAt.localeCompare(b.submittedAt) : b.submittedAt.localeCompare(a.submittedAt)), [requests, search, status, closedView, program, level, assignee, age, sort, currentUserId, targetRequestId]);
 
   useEffect(() => {
     if (!targetRequestId || !filtered.some((item) => item.id === targetRequestId)) return;
@@ -136,11 +143,11 @@ export function StaffQueue({ initialRequests, staff, currentUserId, isAdministra
       <label>Tempo na fila <select value={age} onChange={(e) => setAge(e.target.value)}><option value="">Qualquer</option><option value="1">1 dia ou mais</option><option value="3">3 dias ou mais</option><option value="7">7 dias ou mais</option></select></label>
       <p className="queue-filters__notice"><AppIcon name="help" /><span>Concluídos e cancelados ficam em <strong>Encerrados</strong>. A busca e o filtro de status localizam protocolos em ambas as visões.</span></p>
       {(activeFilters > 0 || search) && <button className="text-button queue-clear-filters" type="button" onClick={() => { setSearch(""); setStatus(""); setProgram(""); setLevel(""); setAge(""); setAssignee(isMineView ? "me" : ""); }}>Limpar filtros</button>}
-    </div>}</div></div><span className="queue-count"><strong>{filtered.length}</strong><span>{filtered.length <= 1 ? "resultado" : "resultados"}</span></span></div>
+    </div>}</div></div><label className="queue-sort">Ordenar por<select value={sort} onChange={(event) => setSort(event.target.value as QueueSort)}><option value="priority">Prioritários primeiro</option><option value="updated">Atualizados recentemente</option><option value="oldest">Solicitações mais antigas</option><option value="newest">Solicitações mais recentes</option></select></label><span className="queue-count"><strong>{filtered.length}</strong><span>{filtered.length <= 1 ? "resultado" : "resultados"}</span></span></div>
     <section className="queue-list" aria-label="Solicitações">
       {filtered.map((item) => <article className={`queue-item queue-item--status-${visibleStatus(item)}${item.id === targetRequestId ? " queue-item--target" : ""}`} id={`queue-request-${item.id}`} key={item.id}>
-        <div className="queue-item__top"><div className="queue-item__identity"><span className="queue-item__protocol"><AppIcon name="document" />{item.protocol}</span>{item.isPriority && <PriorityBadge />}{item.hasInternalNote && <span className="queue-item__note"><AppIcon name="message" />Observação interna</span>}</div></div>
-        <div className="queue-item__main"><h2>{formatWorkTitle(item.title, item.subtitle)}</h2><p className="queue-item__student"><span className="queue-item__student-detail"><AppIcon name="person" /><strong>Solicitante:</strong> {item.studentName}</span>{item.registrationNumber && <span className="queue-item__student-detail queue-item__registration"><AppIcon name="idCard" /><strong>Matrícula:</strong> {item.registrationNumber}</span>}</p><dl className="queue-item__facts"><div><dt><AppIcon name="book" />Programa</dt><dd title={item.programName}>{item.programLabel}</dd></div><div><dt><AppIcon name="document" />Tipo de monografia</dt><dd>{item.monographType}</dd></div><div><dt><AppIcon name="person" />Orientador</dt><dd>{item.advisorName || "Não informado"}</dd></div><div><dt><AppIcon name="calendar" />Solicitado</dt><dd><RelativeDateTime value={item.submittedAt} /></dd></div><div><dt><AppIcon name="review" />Atualizado</dt><dd><time dateTime={item.updatedAt}>{dateTime.format(new Date(item.updatedAt))}</time></dd></div></dl></div>
+        <div className="queue-item__top"><div className="queue-item__identity"><span className="queue-item__protocol"><AppIcon name="document" />{item.protocol}</span>{item.isPriority && <PriorityBadge />}{item.internalNote && <InternalNoteDialog protocol={item.protocol} note={item.internalNote} />}</div></div>
+        <div className="queue-item__main"><h2>{formatWorkTitle(item.title, item.subtitle)}</h2><p className="queue-item__student"><span className="queue-item__student-detail"><AppIcon name="person" /><strong>Solicitante:</strong> {item.studentName}</span>{item.registrationNumber && <span className="queue-item__student-detail queue-item__registration"><AppIcon name="idCard" /><strong>Matrícula:</strong> {item.registrationNumber}</span>}</p><dl className="queue-item__facts"><div><dt><AppIcon name="book" />Programa</dt><dd title={item.programName}>{item.programLabel}</dd></div><div><dt><AppIcon name="document" />Tipo de monografia</dt><dd>{item.monographType}</dd></div><div><dt><AppIcon name="person" />Orientador</dt><dd>{item.advisorName || "Não informado"}</dd></div><div><dt><AppIcon name="calendar" />Solicitado</dt><dd><RelativeDateTime value={item.submittedAt} /></dd></div><div><dt><AppIcon name="review" />Atualizado</dt><dd><RelativeDateTime value={item.updatedAt} /></dd></div></dl></div>
         <div className="queue-item__footer"><div className="queue-item__progress"><div className="queue-item__state" tabIndex={0} aria-label={`${item.progressLabel}. Passe o mouse ou use o teclado para ver as etapas.`}><span className={`progress-badge progress-badge--${item.progressTone}`}><AppIcon name={item.progressTone === "attention" ? "help" : item.progressTone === "done" ? "check" : "review"} />{item.progressLabel}</span><ol className="queue-item__timeline" aria-label={`Etapa atual: ${item.status === "canceled" ? "Cancelado" : timelineStages[item.progressStep]}`}>
           {(item.status === "canceled" ? ["Fila", "Cancelado"] : timelineStages).map((stage, index) => <li key={stage} className={index === item.progressStep ? "is-current" : index < item.progressStep ? "is-complete" : ""} aria-current={index === item.progressStep ? "step" : undefined}><span className="queue-item__timeline-dot" aria-hidden="true" />{stage}</li>)}
         </ol></div></div><div className="queue-item__actions">{item.assignedTo && <span className="queue-item__assignee" title={item.assigneeName ?? "Responsável técnico"}><AppIcon name="work" /><span>Responsável técnico: <strong>{staffDisplayName(item.assigneeName)}</strong></span></span>}<div className={`queue-item__menu${openActionsId === item.id ? " is-open" : ""}`} data-queue-actions onKeyDown={(event) => { if (event.key === "Escape") { setOpenActionsId(null); event.currentTarget.querySelector<HTMLButtonElement>(".queue-item__menu-button")?.focus(); } }}><button className="queue-item__menu-button" type="button" aria-label={`Ações de ${item.protocol}`} title="Ações" aria-expanded={openActionsId === item.id} aria-controls={openActionsId === item.id ? `queue-actions-${item.id}` : undefined} onClick={() => setOpenActionsId((current) => current === item.id ? null : item.id)}><AppIcon name="settings" /></button>{openActionsId === item.id && <div className="queue-item__menu-panel" id={`queue-actions-${item.id}`}><strong>Outras ações</strong><RequestTimelineDialog requestId={item.id} menuItem />{item.assignedTo === currentUserId && item.canRevisitDeclarations && <Link href={`/painel/atendimento/${item.id}?rever=1${isMineView ? "&origem=meus" : ""}`}><AppIcon name="review" />Rever declarações</Link>}{!isClosed(item) && <RequestPriorityControl requestId={item.id} initialReasonCode={item.priorityReasonCode} initialReasonDetail={item.priorityReasonDetail} menuItem />}{item.assignedTo === currentUserId && <button type="button" disabled={pending} onClick={() => runAction("release_cataloging_request", item.id)}><AppIcon name="inbox" />Devolver à fila</button>}{isAdministrator && <label>Reatribuir atendimento<select aria-label={`Reatribuir ${item.protocol}`} defaultValue="" onChange={(event) => reassign(item.id, event.target.value)} disabled={pending}><option value="">Escolha um profissional</option>{staff.map((member) => <option key={member.id} value={member.id}>{member.fullName}</option>)}</select></label>}</div>}</div>{!item.assignedTo && !isClosed(item) && <button className="button button--primary button--small button--with-icon" disabled={pending} onClick={() => runAction("assume_cataloging_request", item.id)}><AppIcon name="work" />Assumir atendimento</button>}{!item.assignedTo && isClosed(item) && <Link className="button button--secondary button--small button--with-icon" href={`/painel/atendimento/${item.id}${isMineView ? "?origem=meus" : ""}`}><AppIcon name="search" />Visualizar</Link>}{item.assignedTo === currentUserId && <Link className="button button--primary button--small button--with-icon" href={`/painel/atendimento/${item.id}${isMineView ? "?origem=meus" : ""}`}><AppIcon name="review" />Abrir análise</Link>}{item.assignedTo && item.assignedTo !== currentUserId && <Link className="button button--secondary button--small button--with-icon" href={`/painel/atendimento/${item.id}${isMineView ? "?origem=meus" : ""}`}><AppIcon name="search" />Visualizar</Link>}</div></div>

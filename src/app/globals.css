@@ -2804,3 +2804,14 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .queue-status-filter button:hover, .queue-status-filter button.is-active { border-color: var(--queue-status-color, var(--institutional)); background: color-mix(in srgb, var(--queue-status-color, var(--institutional)) 9%, var(--surface)); }
 @media (max-width: 900px) { .queue-search__field > .queue-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .queue-search__field > .queue-filters { grid-template-columns: 1fr; } .queue-lifecycle__tabs { width: 100%; } .queue-lifecycle__tabs button { flex: 1; justify-content: center; } }
+
+.queue-toolbar .queue-search { flex: 1 1 420px; }
+.queue-sort { display: grid; flex: 0 1 230px; gap: 7px; min-width: 185px; color: var(--text-muted); font-size: .76rem; font-weight: 800; white-space: nowrap; }
+.queue-sort select { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--text); font: 700 .78rem/1.2 Inter, ui-sans-serif, system-ui, sans-serif; }
+.queue-toolbar .queue-count { align-self: end; }
+button.queue-item__note { padding: 4px 6px; border: 1px solid transparent; border-radius: var(--radius-sm); background: transparent; font: inherit; cursor: pointer; }
+button.queue-item__note:hover, button.queue-item__note:focus-visible { border-color: var(--institutional); background: var(--institutional-soft); color: var(--institutional); }
+.queue-note-dialog { width: min(560px, calc(100% - 32px)); max-height: calc(100dvh - 40px); padding: 0; overflow-y: auto; }
+.queue-note-dialog__body { margin: 18px 24px 24px; color: var(--text); font-size: .88rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+@media (max-width: 900px) { .queue-toolbar { flex-wrap: wrap; } .queue-sort { flex: 1 1 220px; } }
+@media (max-width: 700px) { .queue-sort { width: 100%; } .queue-toolbar .queue-count { align-self: flex-start; } }
