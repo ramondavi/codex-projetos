@@ -3039,6 +3039,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .analysis-stepper--guided > :is(button, .analysis-stepper__stage) > span:last-child { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 2px 6px; min-width: 0; }
 .analysis-stepper--guided > :is(button, .analysis-stepper__stage) > span:last-child > svg,
 .analysis-stepper--guided button > span:last-child svg { width: 16px; height: 16px; padding: 0; border-radius: 0; background: none; color: var(--institutional); }
+.analysis-stepper--guided > button.is-active > span:last-child > svg { background: transparent; color: var(--institutional); }
 .analysis-stepper--guided > :is(button, .analysis-stepper__stage) strong { overflow: hidden; font-size: .75rem; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .analysis-stepper--guided > :is(button, .analysis-stepper__stage) small { grid-column: 2; font-size: .66rem; font-weight: 650; }
 .analysis-stepper--guided button:disabled { opacity: .7; }
