@@ -41,12 +41,12 @@ export function RequestAuditLogDialog({ requestId }: { requestId: string }) {
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<"unavailable" | "failed" | null>(null);
 
   async function load(older: boolean) {
     if (busy) return;
     setBusy(true);
-    setError(false);
+    setError(null);
     const last = older ? events.at(-1) : undefined;
     const { data, error: loadError } = await createClient().rpc("list_request_staff_audit_log", {
       target_request_id: requestId,
@@ -54,7 +54,7 @@ export function RequestAuditLogDialog({ requestId }: { requestId: string }) {
       before_occurred_at: last?.occurred_at ?? null,
       before_event_id: last?.event_id ?? null,
     });
-    if (loadError) setError(true);
+    if (loadError) setError(loadError.code === "PGRST202" || loadError.code === "42883" ? "unavailable" : "failed");
     else {
       const page = (data ?? []) as AuditEvent[];
       setEvents((current) => older ? [...current, ...page] : page);
@@ -70,5 +70,5 @@ export function RequestAuditLogDialog({ requestId }: { requestId: string }) {
     void load(false);
   }
 
-  return <><button className="protocol-actions-menu__item" type="button" onClick={open}><AppIcon name="archive" />Ver registro de ações</button><dialog className="request-audit-dialog pronto-modal" ref={dialogRef} aria-label="Registro de ações do atendimento"><div className="timeline-dialog__header"><span className="timeline-dialog__icon" aria-hidden="true"><AppIcon name="archive" /></span><div><p className="eyebrow">Uso interno da equipe</p><h2>Registro de ações</h2></div><ModalCloseButton onClick={() => dialogRef.current?.close()} /></div><p className="request-audit-dialog__intro">Quem fez cada ação e quando. Os detalhes sensíveis não são exibidos aqui.</p>{error && <p className="auth-feedback auth-feedback--error" role="alert">Não foi possível carregar o registro. <button type="button" className="text-button" onClick={() => void load(events.length > 0)}>Tentar novamente</button></p>}{busy && events.length === 0 && <p className="request-audit-dialog__empty" role="status">Carregando ações…</p>}{!busy && !error && events.length === 0 && <p className="request-audit-dialog__empty">Nenhuma ação registrada para este atendimento.</p>}{events.length > 0 && <ol className="request-audit-dialog__list">{events.map((event) => { const description = actions[event.action]; return <li key={event.event_id}><span className="request-audit-dialog__event-icon" aria-hidden="true"><AppIcon name={description?.icon ?? "review"} /></span><div><strong>{description?.label ?? "Ação registrada"}</strong><span>{event.actor_name}</span></div><time dateTime={event.occurred_at}>{fullDate.format(new Date(event.occurred_at))}</time></li>; })}</ol>}{hasMore && <button className="button button--secondary button--small request-audit-dialog__more" type="button" disabled={busy} onClick={() => void load(true)}>{busy ? "Carregando…" : "Carregar ações anteriores"}</button>}</dialog></>;
+  return <><button className="protocol-actions-menu__item" type="button" onClick={open}><AppIcon name="archive" />Ver registro de ações</button><dialog className="request-audit-dialog pronto-modal" ref={dialogRef} aria-label="Registro de ações do atendimento"><div className="timeline-dialog__header"><span className="timeline-dialog__icon" aria-hidden="true"><AppIcon name="archive" /></span><div><p className="eyebrow">Uso interno da equipe</p><h2>Registro de ações</h2></div><ModalCloseButton onClick={() => dialogRef.current?.close()} /></div><p className="request-audit-dialog__intro">Quem fez cada ação e quando. Os detalhes sensíveis não são exibidos aqui.</p>{error && <p className="auth-feedback auth-feedback--error" role="alert">{error === "unavailable" ? "O registro ainda não está disponível neste ambiente. A atualização do banco precisa ser aplicada." : <>Não foi possível carregar o registro. <button type="button" className="text-button" onClick={() => void load(events.length > 0)}>Tentar novamente</button></>}</p>}{busy && events.length === 0 && <p className="request-audit-dialog__empty" role="status">Carregando ações…</p>}{!busy && !error && events.length === 0 && <p className="request-audit-dialog__empty">Nenhuma ação registrada para este atendimento.</p>}{events.length > 0 && <ol className="request-audit-dialog__list">{events.map((event) => { const description = actions[event.action]; return <li key={event.event_id}><span className="request-audit-dialog__event-icon" aria-hidden="true"><AppIcon name={description?.icon ?? "review"} /></span><div><strong>{description?.label ?? "Ação registrada"}</strong><span>{event.actor_name}</span></div><time dateTime={event.occurred_at}>{fullDate.format(new Date(event.occurred_at))}</time></li>; })}</ol>}{hasMore && <button className="button button--secondary button--small request-audit-dialog__more" type="button" disabled={busy} onClick={() => void load(true)}>{busy ? "Carregando…" : "Carregar ações anteriores"}</button>}</dialog></>;
 }
