@@ -2962,3 +2962,23 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__grid button { aspect-ratio: auto; min-height: 30px; }
 .staff-calendar__events { gap: 5px; padding-top: 8px; }
 .staff-calendar__events article { gap: 2px; padding-top: 6px; }
+
+.staff-overview-main .staff-feed { height: min(700px, max(500px, calc(100dvh - 220px))); min-height: 0; padding: 10px 6px 10px 10px; border: 1px solid var(--line); border-radius: var(--radius); }
+.staff-overview-main .staff-feed__posts { padding: 0 2px 0 0; }
+.staff-overview-main .staff-feed__post { display: grid; grid-template-columns: 28px minmax(0, 1fr); column-gap: 9px; margin: 2px 6px 4px 2px; padding: 9px 11px; border: 1px solid transparent; border-bottom-color: var(--line); border-radius: var(--radius-sm); }
+.staff-overview-main .staff-feed__post:is(:hover, :focus-within) { border-color: color-mix(in srgb, var(--institutional) 12%, var(--line)); background: color-mix(in srgb, var(--institutional) 5%, var(--surface-raised)); }
+.staff-overview-main .staff-feed__post-head { display: contents; }
+.staff-overview-main .staff-feed__avatar { grid-column: 1; grid-row: 1; }
+.staff-overview-main .staff-feed__byline { grid-column: 2; grid-row: 1; align-self: center; }
+.staff-overview-main .staff-feed__story { grid-column: 2; grid-row: 2; gap: 2px 6px; padding: 5px 0 0; }
+.staff-overview-main .staff-feed__story h3 { font-size: .91rem; }
+.staff-overview-main .staff-feed__post-foot { grid-column: 2; grid-row: 3; padding: 4px 0 0; }
+.staff-overview-main .staff-feed__post-foot p { max-width: 48ch; }
+.staff-calendar { align-self: start; gap: 7px; padding: 10px 12px; }
+.staff-calendar__heading h2 { display: flex; align-items: center; gap: 6px; margin: 0; font-size: .88rem; }
+.staff-calendar__heading h2 svg { width: 15px; height: 15px; color: var(--institutional); }
+.staff-calendar__month button { width: 28px; height: 28px; }
+.staff-calendar__grid button { min-height: 27px; }
+.staff-calendar__grid button.has-announcement { border-radius: 0; }
+.staff-calendar__events article { border-top: 0; }
+@media (max-width: 940px) { .staff-overview-main .staff-feed { height: min(560px, calc(100dvh - 180px)); min-height: 360px; padding: 8px 4px 8px 8px; } .staff-overview-main .staff-feed__posts { max-height: none; } }
