@@ -2815,3 +2815,19 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .queue-note-dialog__body { margin: 18px 24px 24px; color: var(--text); font-size: .88rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (max-width: 900px) { .queue-toolbar { flex-wrap: wrap; } .queue-sort { flex: 1 1 220px; } }
 @media (max-width: 700px) { .queue-sort { width: 100%; } .queue-toolbar .queue-count { align-self: flex-start; } }
+
+.queue-lifecycle { align-items: center; }
+.queue-status-legend { min-height: 44px; padding: 0; }
+.queue-status-legend .queue-status-color svg, .queue-status-filter .queue-status-color svg { width: 14px; height: 14px; color: var(--queue-status-color); }
+.queue-item__state .progress-badge.queue-status-color, .analysis-case-header .request-status.queue-status-color { border: 1px solid color-mix(in srgb, var(--queue-status-color) 42%, var(--line)); background: color-mix(in srgb, var(--queue-status-color) 11%, var(--surface-raised)); color: var(--queue-status-color); }
+.queue-item__state .progress-badge.queue-status-color svg, .analysis-case-header .request-status.queue-status-color svg { color: var(--queue-status-color); }
+.analysis-case-header[class*="queue-status-color--"] { border-left: 5px solid var(--queue-status-color); }
+.queue-sort > span { display: inline-flex; align-items: center; gap: 6px; }
+.queue-sort > span svg { width: 15px; height: 15px; color: var(--institutional); }
+.queue-sort { position: relative; }
+.queue-sort select { appearance: none; padding-right: 34px; }
+.queue-sort::after { content: ""; position: absolute; right: 16px; bottom: 18px; width: 7px; height: 7px; border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted); transform: rotate(45deg); pointer-events: none; }
+.queue-pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 20px 0 8px; color: var(--text-muted); font-size: .8rem; font-weight: 750; }
+.queue-pagination button { min-height: 38px; padding: 7px 13px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--institutional); font: inherit; cursor: pointer; }
+.queue-pagination button:hover:not(:disabled) { border-color: var(--institutional); background: var(--institutional-soft); }
+.queue-pagination button:disabled { opacity: .45; cursor: default; }

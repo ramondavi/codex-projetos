@@ -44,8 +44,11 @@ export default async function StaffQueuePage() {
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
   if (!user || !profile || !["cataloger", "administrator"].includes(profile.role)) redirect("/painel");
 
-  const [{ data }, { data: staffData }] = await Promise.all([
-    supabase.from("cataloging_requests").select(`
+  const { data: staffData } = await supabase.from("profiles").select("id, full_name").in("role", ["cataloger", "administrator"]).eq("status", "active").order("full_name");
+  const data: RawQueueRequest[] = [];
+  const batchSize = 500;
+  for (let offset = 0; ; offset += batchSize) {
+    const { data: batch, error } = await supabase.from("cataloging_requests").select(`
       id, protocol, status, title, subtitle, submitted_at, updated_at, assigned_to,
       assignee:profiles!cataloging_requests_assigned_to_fkey(full_name),
       student:student_profiles!cataloging_requests_student_profile_id_fkey(
@@ -61,11 +64,13 @@ export default async function StaffQueuePage() {
       repositoryProgress:repository_deposit_progress(started_at),
       publication:repository_publications(verified_at),
       priority:request_priorities(request_id,reason_code,reason_detail)
-    `).order("submitted_at", { ascending: true }),
-    supabase.from("profiles").select("id, full_name").in("role", ["cataloger", "administrator"]).eq("status", "active").order("full_name"),
-  ]);
+    `).order("submitted_at", { ascending: true }).range(offset, offset + batchSize - 1);
+    if (error) throw error;
+    data.push(...((batch ?? []) as unknown as RawQueueRequest[]));
+    if (!batch || batch.length < batchSize) break;
+  }
 
-  const requests: QueueRequest[] = ((data ?? []) as unknown as RawQueueRequest[]).map((item) => {
+  const requests: QueueRequest[] = data.map((item) => {
     const student = first(item.student);
     const enrollment = first(item.enrollment);
     const program = first(enrollment?.program);
