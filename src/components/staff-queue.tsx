@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
@@ -27,8 +27,14 @@ const staffDisplayName = (fullName: string | null) => {
 };
 
 function InternalNoteDialog({ protocol, note }: { protocol: string; note: string }) {
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  return <><button className="queue-item__note" type="button" onClick={() => dialogRef.current?.showModal()} aria-haspopup="dialog"><AppIcon name="message" />Observação interna</button><dialog className="queue-note-dialog pronto-modal" ref={dialogRef} aria-label={`Observação interna de ${protocol}`}><div className="timeline-dialog__header"><span className="timeline-dialog__icon" aria-hidden="true"><AppIcon name="message" /></span><div><p className="eyebrow">{protocol}</p><h2>Observação interna</h2></div><ModalCloseButton onClick={() => dialogRef.current?.close()} /></div><p className="queue-note-dialog__body">{note}</p></dialog></>;
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+  return <><button className="queue-item__note" type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open}><AppIcon name="message" />Observação interna</button>{open && <div className="queue-note-overlay request-priority-control__overlay pronto-modal-overlay" onClick={(event) => { if (event.target === event.currentTarget) setOpen(false); }}><section className="queue-note-dialog pronto-modal-surface" role="dialog" aria-modal="true" aria-label={`Observação interna de ${protocol}`}><div className="timeline-dialog__header"><span className="timeline-dialog__icon" aria-hidden="true"><AppIcon name="message" /></span><div><p className="eyebrow">{protocol}</p><h2>Observação interna</h2></div><ModalCloseButton onClick={() => setOpen(false)} /></div><p className="queue-note-dialog__body">{note}</p></section></div>}</>;
 }
 
 export function StaffQueue({ initialRequests, staff, currentUserId, isAdministrator }: { initialRequests: QueueRequest[]; staff: StaffOption[]; currentUserId: string; isAdministrator: boolean }) {
