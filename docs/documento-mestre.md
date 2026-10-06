@@ -300,6 +300,7 @@ O controle para rever declarações fica no menu de ações gerais do protocolo.
 Na etapa inicial de metadados não se exibe a verificação contínua do arquivo nem um botão para voltar. Depois da validação dos metadados, a verificação contínua aparece nas etapas posteriores. A referência ABNT é editada diretamente na visualização formatada; o bibliotecário pode selecionar o trecho e aplicar negrito pelo controle visual.
 
 No painel interno, o menu de ações gerais, acionado por um ícone de engrenagem, aparece no canto superior direito do cabeçalho do atendimento e em cada protocolo da fila geral e de Meus atendimentos. Reúne histórico, prioridade, revisão das declarações somente fora da tela de conferência, liberação para a fila e reatribuição por administrador. O cabeçalho exibe a prioridade marcada com estrela e identifica pelo primeiro nome outro bibliotecário responsável pela análise. O ícone ao lado do título abre o trabalho completo em nova aba somente depois de confirmada a acessibilidade do link pelo bibliotecário.
+No cabeçalho interno do atendimento, Outras ações também abre um registro de ações por protocolo. Bibliotecários e administradores ativos veem quem realizou cada ação operacional e quando, em páginas de até 20 registros. A leitura usa a auditoria já existente por função restrita, sem expor metadados brutos, valores anteriores/corrigidos, conteúdo de mensagens, documentos ou dados de autenticação. Esse registro complementa o histórico de marcos do protocolo; não altera os eventos existentes.
 
 ### 10.4. E-mails durante o desenvolvimento
 
