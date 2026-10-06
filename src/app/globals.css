@@ -2831,3 +2831,9 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { border-co
 .queue-pagination button { min-height: 38px; padding: 7px 13px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); color: var(--institutional); font: inherit; cursor: pointer; }
 .queue-pagination button:hover:not(:disabled) { border-color: var(--institutional); background: var(--institutional-soft); }
 .queue-pagination button:disabled { opacity: .45; cursor: default; }
+
+.request-form .subtitle-capitalization-warning { display: flex; align-items: flex-start; gap: 9px; margin: 0; padding: 11px 13px; border: 1px solid color-mix(in srgb, #b2670c 40%, var(--line)); border-radius: var(--radius-sm); background: color-mix(in srgb, #b2670c 8%, var(--surface-raised)); color: var(--text); font-size: .8rem; line-height: 1.5; }
+.request-form .subtitle-capitalization-warning svg { flex: 0 0 18px; width: 18px; height: 18px; color: #9a5700; }
+.request-form button.subtitle-capitalization-warning { width: 100%; text-align: left; cursor: pointer; }
+.request-form button.subtitle-capitalization-warning:hover, .request-form button.subtitle-capitalization-warning:focus-visible { border-color: #b2670c; }
+.request-form button.subtitle-capitalization-warning span { flex: 1; }
