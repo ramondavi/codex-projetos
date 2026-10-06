@@ -2576,8 +2576,8 @@ dialog.pronto-modal::backdrop { background: rgb(5 12 16 / 58%); backdrop-filter:
 .queue-toolbar .queue-count { padding-bottom: 0; white-space: nowrap; }
 .queue-more-filters { margin-bottom: 24px; }
 .queue-more-filters > summary:hover, .queue-item__menu-button:hover { background: var(--institutional-soft); }
-.queue-item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; border-left: 4px solid var(--institutional); transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease; }
-.queue-item:hover { box-shadow: 0 10px 26px color-mix(in srgb, var(--institutional) 10%, transparent); transform: translateY(-1px); }
+.queue-item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; padding: 0; border-left: 4px solid var(--institutional); transition: border-color .16s ease, box-shadow .16s ease; }
+.queue-item:hover { box-shadow: 0 10px 26px color-mix(in srgb, var(--institutional) 10%, transparent); }
 .queue-item--attention { border-left-color: var(--danger); }
 .queue-item--ready, .queue-item--done { border-left-color: #247447; }
 .queue-item--waiting { border-left-color: var(--line); }
