@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 export async function panelMetadata(pathname: string, options: { responsible?: string | null; area?: string | null; origin?: string | null; protocol?: string | null } = {}): Promise<Metadata> {
   const language = await getInterfaceLanguage();
   const trail = dashboardTrail(language, pathname, options);
-  return { title: { absolute: `${trail.map((item) => item.label).join(" › ")} | Pronto!` }, robots: { index: false, follow: false } };
+  return { title: { absolute: `${trail.map((item) => item.label).reverse().join(" › ")} | Pronto!` }, robots: { index: false, follow: false } };
 }
 
 export async function panelRequestMetadata(id: string, ficha: boolean, origin?: string | null): Promise<Metadata> {
