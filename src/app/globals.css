@@ -3103,7 +3103,6 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .request-analysis-sections > .declaration-review > .declaration-link-check, .request-analysis-sections > .declaration-review > .declarations { min-width: 0; height: 100%; }
 .request-analysis-sections > .declaration-review > .declarations { display: grid; align-content: start; gap: 9px; }
 .request-analysis-sections > .declaration-review > h2 { margin: 0 0 2px; font-size: clamp(1.3rem, 2vw, 1.7rem); line-height: 1.25; }
-.request-analysis-sections > .declaration-review > .declarations h3 { margin: 0 0 3px; font-size: .96rem; line-height: 1.3; }
 .request-analysis-sections > .declaration-review .declaration-review__item { align-items: flex-start; flex-direction: column; gap: 10px; }
 .request-analysis-sections > .declaration-review .declaration-review__choices { margin-left: 0; }
 .request-analysis-sections > .declaration-review .declaration-review__actions { padding-top: 14px; border-top: 1px solid var(--line); }
