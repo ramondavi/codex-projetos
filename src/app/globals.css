@@ -3106,3 +3106,30 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .request-analysis-sections > .declaration-review .declaration-review__actions { padding-top: 14px; border-top: 1px solid var(--line); }
 .request-analysis-sections > .declaration-review .declaration-review__progress { margin-right: auto; }
 @media (max-width: 900px) { .request-analysis-sections > .declaration-review { grid-template-columns: 1fr; } .request-analysis-sections > .declaration-review > .declaration-link-check, .request-analysis-sections > .declaration-review > .declarations { grid-column: 1; } }
+
+/* Navegação e progresso das etapas da análise. */
+.request-analysis-sections__toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 18px; padding: 0 0 12px; border-bottom: 1px solid var(--line); }
+.request-analysis-sections__toolbar > span { color: var(--text-muted); font-size: .74rem; font-weight: 800; }
+.request-analysis-sections__toolbar > div { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-left: auto; }
+.request-analysis-sections__toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 36px; padding: 7px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); color: var(--institutional); font: inherit; font-size: .76rem; font-weight: 800; cursor: pointer; }
+.request-analysis-sections__toolbar button:hover, .request-analysis-sections__toolbar button:focus-visible { border-color: var(--institutional); background: var(--institutional-soft); }
+.request-analysis-sections__toolbar button svg { width: 14px; height: 14px; }
+.request-analysis-sections__toolbar button:first-child svg:first-child { transform: rotate(180deg); }
+.analysis-stage-progress { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 12px; min-width: 0; padding: 10px 0 13px; border-bottom: 1px solid var(--line); }
+.analysis-stage-progress strong { color: var(--text); font-size: .84rem; }
+.analysis-stage-progress > span { color: var(--text-muted); font-size: .76rem; }
+.analysis-stage-progress > small { flex-basis: 100%; color: var(--text-muted); font-size: .72rem; }
+.analysis-stage-progress__bar { flex: 1 1 140px; height: 5px; margin-left: auto; overflow: hidden; border-radius: var(--radius-sm); background: var(--line); }
+.analysis-stage-progress__bar > span { display: block; height: 100%; border-radius: inherit; background: var(--institutional); transition: width .2s ease; }
+.request-analysis-section[data-step="cataloging"] > .assisted-cataloging { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.assisted-cataloging > .assisted-cataloging__heading { align-items: center; padding-bottom: 8px; }
+.assisted-cataloging > fieldset { grid-column: 1 / -1; gap: 12px; min-width: 0; padding: 18px 0 20px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; }
+.assisted-cataloging > fieldset legend { padding: 0; border: 0; background: transparent; color: var(--text); font-size: .96rem; }
+.assisted-cataloging > .analysis-stage-progress { grid-column: 1 / -1; }
+.assisted-cataloging .cataloging-vocabulary-notice { display: block; padding: 0; border: 0; background: transparent; }
+.assisted-cataloging .cataloging-vocabulary-notice > summary { display: inline-flex; align-items: center; gap: 6px; color: var(--institutional); font-size: .76rem; font-weight: 800; cursor: pointer; }
+.assisted-cataloging .cataloging-vocabulary-notice > summary svg { width: 15px; height: 15px; }
+.assisted-cataloging .cataloging-vocabulary-notice > div { margin-top: 9px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); }
+.assisted-cataloging .cataloging-vocabulary-notice p { margin: 0 0 8px; }
+.request-analysis-section[data-step="documentation"] > .analysis-stage-progress { grid-column: 1 / -1; }
+@media (max-width: 650px) { .request-analysis-sections__toolbar { align-items: stretch; } .request-analysis-sections__toolbar > div { width: 100%; justify-content: stretch; margin-left: 0; } .request-analysis-sections__toolbar button { flex: 1 1 150px; } .analysis-stage-progress__bar { flex-basis: 100%; margin-left: 0; } }

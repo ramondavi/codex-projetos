@@ -82,6 +82,7 @@ export function RequestAnalysisWorkspace({ requestId, initialAnalysisNotes, init
   useEffect(() => setSummaryTarget(document.getElementById("request-analysis-summary-end")), []);
   useEffect(() => setCitationTarget(document.getElementById("request-analysis-citation-end")), []);
   useEffect(() => setStudentMessageTarget(document.getElementById("preanalysis-student-message")), []);
+  useEffect(() => { window.dispatchEvent(new CustomEvent("request-analysis:citation-status", { detail: { ready: citationApproved } })); }, [citationApproved]);
   useEffect(() => { const timer = window.setInterval(() => setNow(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
   useEffect(() => {
     if (!ready || !editable) return;
