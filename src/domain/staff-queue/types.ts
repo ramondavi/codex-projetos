@@ -13,8 +13,11 @@ export type QueueRequest = {
   advisorName: string;
   hasInternalNote: boolean;
   isPriority: boolean;
+  priorityReasonCode: string | null;
+  priorityReasonDetail: string | null;
   progressLabel: string;
   progressTone: "waiting" | "active" | "ready" | "done" | "attention";
+  progressStep: number;
 };
 
 export type StaffOption = { id: string; fullName: string };

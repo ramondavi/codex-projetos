@@ -5,9 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { AppIcon, type AppIconName } from "@/components/app-icon";
 
 const steps = [
-  { id: "metadata", label: "Metadados", icon: "document", guidance: "Confira os dados enviados. Com pendências, devolva ao estudante; sem pendências, valide e siga para a catalogação." },
-  { id: "cataloging", label: "Catalogação e ficha", icon: "book", guidance: "Complete autoridades, assuntos, CDU e Cutter; confira a prévia e homologue a ficha." },
-  { id: "documentation", label: "Nada Consta e liberação", icon: "shield", guidance: "O documento pode ser validado em paralelo. A ficha só é liberada quando ela estiver homologada e o Nada Consta, aprovado." },
+  { id: "metadata", label: "Metadados", icon: "document", guidance: "Confira os dados e marque apenas o que precisa de ajuste." },
+  { id: "cataloging", label: "Catalogação e ficha", icon: "book", guidance: "Complete a catalogação, confira a ficha e homologue." },
+  { id: "documentation", label: "Nada Consta e liberação", icon: "shield", guidance: "Confira o Nada Consta e veja o que falta para liberar." },
 ] as const;
 
 export function RequestAnalysisSections({ metadata, cataloging, documentation, finalAction }: { metadata: ReactNode; cataloging: ReactNode; documentation: ReactNode; finalAction?: ReactNode }) {
@@ -57,7 +57,7 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
     </div>
     <aside className="analysis-next-action" aria-live="polite">
       <span>Etapa {activeStep + 1} de {steps.length}</span>
-      <div><strong>{currentStep.label}</strong><p>{currentStep.guidance}</p></div>
+      <div><strong><AppIcon name={currentStep.icon as AppIconName} /> Agora: {currentStep.guidance}</strong></div>
     </aside>
     <section className="request-analysis-section">{metadata}<div id="request-analysis-actions-end" /></section>
     <section className="request-analysis-section">{cataloging}</section>

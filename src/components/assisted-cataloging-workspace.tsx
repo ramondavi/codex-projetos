@@ -28,10 +28,10 @@ const similarity = (source: string, candidate: string) => {
   return candidate.toLocaleLowerCase("pt-BR").replace(/[^\p{L}\p{N}]+/gu, " ").split(/\s+/).filter((word) => words.has(word)).length;
 };
 
-export function AssistedCatalogingWorkspace({ requestId, editable, isRaue, authorities, controlledTerms, initialPeople, initialTerms, initialCdu, initialCutter, initialCardDetails, previewBase }: {
+export function AssistedCatalogingWorkspace({ requestId, editable, isRaue, authorities, controlledTerms, initialPeople, initialTerms, submittedKeywords, initialCdu, initialCutter, initialCardDetails, previewBase }: {
   requestId: string; editable: boolean; authorities: Authority[]; controlledTerms: ControlledTerm[];
   isRaue: boolean;
-  initialPeople: PersonEntry[]; initialTerms: TermEntry[]; initialCdu: string; initialCutter: string; initialCardDetails: CardDetailsEntry;
+  initialPeople: PersonEntry[]; initialTerms: TermEntry[]; submittedKeywords: { language: string; term: string; position: number }[]; initialCdu: string; initialCutter: string; initialCardDetails: CardDetailsEntry;
   previewBase: CatalogingCardSnapshot;
 }) {
   const [people, setPeople] = useState(() => initialPeople.map((person) => {

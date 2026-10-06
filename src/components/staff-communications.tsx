@@ -1,26 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { StaffNotifications } from "./staff-notifications";
 import { StaffMessageCenter } from "./staff-message-center";
 
 export function StaffCommunications({ userId }: { userId: string }) {
   const [noticeCount, setNoticeCount] = useState(0);
   const [messageCount, setMessageCount] = useState(0);
-  const originalTitle = useRef<string | null>(null);
   const updateNotices = useCallback((count: number) => setNoticeCount(count), []);
   const updateMessages = useCallback((count: number) => setMessageCount(count), []);
-
-  useEffect(() => {
-    if (!noticeCount && !messageCount) return;
-    originalTitle.current ??= document.title;
-    const parts = [messageCount && `${messageCount} ${messageCount === 1 ? "mensagem nova" : "mensagens novas"}`, noticeCount && `${noticeCount} ${noticeCount === 1 ? "aviso novo" : "avisos novos"}`].filter(Boolean);
-    const alertTitle = `(${messageCount + noticeCount}) ${parts.join(" · ")} · Pronto!`;
-    let showingAlert = true;
-    document.title = alertTitle;
-    const timer = window.setInterval(() => { showingAlert = !showingAlert; document.title = showingAlert ? alertTitle : (originalTitle.current ?? "Pronto!"); }, 1000);
-    return () => { window.clearInterval(timer); document.title = originalTitle.current ?? "Pronto!"; };
-  }, [noticeCount, messageCount]);
 
   useEffect(() => {
     if (!noticeCount && !messageCount) return;
@@ -47,7 +35,7 @@ export function StaffCommunications({ userId }: { userId: string }) {
       icon.href = canvas.toDataURL("image/png");
       document.head.appendChild(icon);
     };
-    image.src = "/icon.png";
+    image.src = "/icon.svg";
     return () => { active = false; icon.remove(); };
   }, [noticeCount, messageCount]);
 

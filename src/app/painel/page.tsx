@@ -1,3 +1,5 @@
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata() { return panelMetadata("/painel"); }
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -22,7 +24,7 @@ export default async function StudentDashboardPage() {
   return (
     <main className="dashboard-main">
       <div className="page-heading">
-        <div><p className="eyebrow">Visão geral</p><h1>Seu acompanhamento</h1></div>
+        <div><h1><AppIcon className="panel-heading-icon" name="home" />Visão geral</h1></div>
       </div>
 
       {hasPendingFeedback && <section className="feedback-invite panel"><span aria-hidden="true">✦</span><div><p className="eyebrow">Sua opinião faz diferença</p><h2>Como foi sua experiência com o Pronto!?</h2><p>Sua avaliação leva cerca de 3 minutos e ajuda a melhorar o sistema e o atendimento da BIB/FA.</p></div><Link className="button button--primary" href="/painel/avaliacao">Responder avaliação</Link></section>}
@@ -84,7 +86,7 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
   const administrator = role === "administrator";
   const announcementLabels: Record<string, string> = { normal: "Aviso", recess: "Recesso", strike: "Paralisação/greve", other: "Ocorrência", holiday: "Feriado", optional_day: "Ponto facultativo" };
   return <main className="dashboard-main dashboard-main--staff-overview">
-    <div className="page-heading"><div><p className="eyebrow">Visão geral</p><h1>{administrator ? "Operação administrativa" : "Atendimento bibliotecário"}</h1><p>{administrator ? "Acompanhe acessos, fila e informações operacionais em um só lugar." : "Acompanhe sua carga de atendimento e o que precisa de ação agora."}</p></div></div>
+    <div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="home" />Visão geral</h1></div></div>
     <div className={`staff-overview-main${administrator ? " staff-overview-main--admin" : " staff-overview-main--cataloger"}`}>
       <StaffActivityFeed initialEvents={(activityFeed.data ?? []) as StaffActivityEvent[]} userId={userId} initialLoadError={Boolean(activityFeed.error)} />
       <div className="staff-overview-main__side"><section className="overview-stats" aria-label="Indicadores rápidos">

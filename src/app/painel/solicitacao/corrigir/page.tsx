@@ -1,3 +1,6 @@
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata() { return panelMetadata("/painel/solicitacao/corrigir"); }
+import { AppIcon } from "@/components/app-icon";
 import { redirect } from "next/navigation";
 import { StudentCorrectionForm } from "@/components/student-correction-form";
 import { correctableFields } from "@/domain/issues/fields";
@@ -17,5 +20,5 @@ export default async function CorrectStudentRequestPage() {
   const enrollment = first(request.enrollment);
   const currentValues: Record<string, string | string[]> = { registration_number: enrollment?.registration_number ?? "", academic_program_id: enrollment?.academic_program_id ?? "", author: request.people.find((item) => item.role === "author")?.transcribed_name ?? "", title: request.title, subtitle: request.subtitle ?? "", equivalent_title: request.equivalent_title ?? "", other_titles: request.other_titles ?? [], advisor: request.people.find((item) => item.role === "advisor")?.transcribed_name ?? "", coadvisor: request.people.find((item) => item.role === "coadvisor")?.transcribed_name ?? "", keywords_pt: request.keywords.filter((item) => item.language === "pt").sort((a, b) => a.position - b.position).map((item) => item.term), keywords_en: request.keywords.filter((item) => item.language === "en").sort((a, b) => a.position - b.position).map((item) => item.term), public_work_url: request.public_work_url, volume_information: request.volume_information ?? "", library_note: request.library_note ?? "" };
   const fields = (issues ?? []).map((issue) => ({ fieldKey: issue.field_key, fieldLabel: issue.field_label, justification: issue.justification, kind: correctableFields.find((field) => field.key === issue.field_key)?.kind ?? "text", value: currentValues[issue.field_key] ?? "" }));
-  return <main className="dashboard-main dashboard-main--form"><div className="page-heading request-heading"><div><p className="eyebrow">Correções solicitadas</p><h1>Revise os campos destacados</h1><p>Os demais dados estão bloqueados e serão preservados como aprovados.</p></div></div><StudentCorrectionForm requestId={request.id} fields={fields} programs={programs ?? []} /></main>;
+  return <main className="dashboard-main dashboard-main--form"><div className="page-heading request-heading"><div><h1><AppIcon className="panel-heading-icon" name="edit" />Corrigir solicitação</h1></div></div><StudentCorrectionForm requestId={request.id} fields={fields} programs={programs ?? []} /></main>;
 }

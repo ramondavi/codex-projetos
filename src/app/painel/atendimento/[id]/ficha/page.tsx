@@ -4,6 +4,8 @@ import { CatalogingCardReview } from "@/components/cataloging-card-review";
 import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 import { createClient } from "@/lib/supabase/server";
 import { hasPriority, PriorityBadge } from "@/components/priority-badge";
+import { DashboardBreadcrumbProtocol } from "@/components/breadcrumbs";
+import { panelRequestMetadata } from "@/lib/panel-metadata";
 
 type RequestRow = {
   id: string; protocol: string; status: string; assigned_to: string | null; title: string; subtitle: string | null;
@@ -13,8 +15,13 @@ type RequestRow = {
 };
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
 
-export default async function CatalogingCardPage({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) {
+  return panelRequestMetadata((await params).id, true, (await searchParams).origem);
+}
+
+export default async function CatalogingCardPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) {
   const { id } = await params;
+  const origin = (await searchParams).origem === "meus" ? "meus" : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
@@ -48,5 +55,5 @@ export default async function CatalogingCardPage({ params }: { params: Promise<{
   const snapshot = homologation?.snapshot ? homologation.snapshot as unknown as CatalogingCardSnapshot : draft;
   const ready = Boolean(metadata?.cdu_code && metadata?.cutter_code && details?.deposit_year && details?.defense_year && details?.extent_count && staff?.professional_name && staff?.crb && people?.some((person) => person.role === "author") && people?.some((person) => person.role === "advisor") && (subjects?.length ?? 0) >= 3 && subjects?.some((subject) => subject.is_primary));
   const citationReady = Boolean(analysis?.review_completed_at && analysis?.citation_validated_at && analysis.citation_source_signature === citationSourceSignature);
-  return <main className="dashboard-main dashboard-main--card"><Link className="back-link" href={`/painel/atendimento/${id}`}>← Voltar para a análise</Link>{hasPriority(request.priority) && <PriorityBadge />}{!ready && !homologation && <div className="notice notice--error">Complete autor, orientador, pelo menos três assuntos (com um principal), CDU e Cutter antes da homologação.</div>}{!citationReady && !homologation && <div className="notice notice--error">Valide a referência do trabalho na etapa de metadados antes de homologar a ficha.</div>}<CatalogingCardReview requestId={id} snapshot={snapshot} homologatedAt={homologation?.homologated_at ?? null} canHomologate={ready && citationReady && request.assigned_to === user.id && request.status === "in_review"} /></main>;
+  return <main className="dashboard-main dashboard-main--card"><DashboardBreadcrumbProtocol protocol={request.protocol} /><Link className="back-link" href={`/painel/atendimento/${id}${origin ? "?origem=meus" : ""}`}>← Voltar para a análise</Link>{hasPriority(request.priority) && <PriorityBadge />}{!ready && !homologation && <div className="notice notice--error">Complete autor, orientador, pelo menos três assuntos (com um principal), CDU e Cutter antes da homologação.</div>}{!citationReady && !homologation && <div className="notice notice--error">Valide a referência do trabalho na etapa de metadados antes de homologar a ficha.</div>}<CatalogingCardReview requestId={id} snapshot={snapshot} homologatedAt={homologation?.homologated_at ?? null} canHomologate={ready && citationReady && request.assigned_to === user.id && request.status === "in_review"} /></main>;
 }

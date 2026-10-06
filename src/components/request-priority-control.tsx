@@ -12,8 +12,8 @@ export const priorityReasons: Record<string, string> = {
   other_documented: "Outro motivo documentado",
 };
 
-export function RequestPriorityControl({ requestId, initialReasonCode, initialReasonDetail }: {
-  requestId: string; initialReasonCode: string | null; initialReasonDetail: string | null;
+export function RequestPriorityControl({ requestId, initialReasonCode, initialReasonDetail, compact = false }: {
+  requestId: string; initialReasonCode: string | null; initialReasonDetail: string | null; compact?: boolean;
 }) {
   const router = useRouter();
   const [savedCode, setSavedCode] = useState(initialReasonCode);
@@ -45,7 +45,7 @@ export function RequestPriorityControl({ requestId, initialReasonCode, initialRe
     });
   }
 
-  return <section className="request-priority-control" aria-label="Prioridade do atendimento">
+  return <section className={`request-priority-control${compact ? " request-priority-control--compact" : ""}`} aria-label="Prioridade do atendimento">
     <div className="request-priority-control__summary">
       <div><strong>Prioridade do protocolo</strong>{savedCode ? <p><PriorityBadge reason={priorityReasons[savedCode]} /> Motivo: {priorityReasons[savedCode]}{savedDetail ? ` — ${savedDetail}` : ""}</p> : <p>Atendimento sem sinalização de prioridade.</p>}</div>
       <button className="button button--secondary button--small" type="button" onClick={() => { setEditing((value) => !value); setError(""); }} aria-expanded={editing}>{savedCode ? "Alterar prioridade" : "Marcar como prioritário"}</button>

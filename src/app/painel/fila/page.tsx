@@ -3,6 +3,11 @@ import { StaffQueue } from "@/components/staff-queue";
 import { createClient } from "@/lib/supabase/server";
 import type { QueueRequest, StaffOption } from "@/domain/staff-queue/types";
 import { describeRequestProgress } from "@/domain/request-progress";
+import { panelMetadata } from "@/lib/panel-metadata";
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ responsavel?: string }> }) {
+  return panelMetadata("/painel/fila", { responsible: (await searchParams).responsavel });
+}
 
 type RawQueueRequest = {
   id: string; protocol: string; status: string; title: string; submitted_at: string; assigned_to: string | null;
@@ -15,7 +20,7 @@ type RawQueueRequest = {
   homologation: { id: string }[] | null;
   repositoryProgress: { started_at: string }[] | null;
   publication: { verified_at: string }[] | null;
-  priority: { request_id: string }[] | null;
+  priority: { request_id: string; reason_code: string; reason_detail: string | null }[] | null;
 };
 
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
@@ -42,7 +47,7 @@ export default async function StaffQueuePage() {
       homologation:cataloging_card_homologations(id),
       repositoryProgress:repository_deposit_progress(started_at),
       publication:repository_publications(verified_at),
-      priority:request_priorities(request_id)
+      priority:request_priorities(request_id,reason_code,reason_detail)
     `).order("submitted_at", { ascending: true }),
     supabase.from("profiles").select("id, full_name").in("role", ["cataloger", "administrator"]).eq("status", "active").order("full_name"),
   ]);
@@ -63,9 +68,12 @@ export default async function StaffQueuePage() {
       level: program?.level ?? "", advisorName: item.people?.find((person) => person.role === "advisor")?.transcribed_name ?? "",
       hasInternalNote: Boolean(analysis?.internal_note.trim()),
       isPriority: Boolean(first(item.priority)),
+      priorityReasonCode: first(item.priority)?.reason_code ?? null,
+      priorityReasonDetail: first(item.priority)?.reason_detail ?? null,
       progressLabel: progress.label, progressTone: progress.tone,
+      progressStep: item.status === "completed" || Boolean(first(item.publication)) ? 4 : item.status === "approved" ? Boolean(first(item.repositoryProgress)) ? 3 : 2 : item.status === "submitted" ? 0 : 1,
     };
   });
   const staff: StaffOption[] = (staffData ?? []).map((item) => ({ id: item.id, fullName: item.full_name }));
-  return <main className="dashboard-main dashboard-main--queue"><div className="page-heading queue-heading"><div><p className="eyebrow">Atendimento bibliotecário</p><h1>Fila geral</h1><p>Localize, assuma e acompanhe solicitações sem disputa entre atendentes.</p></div><span className="queue-total"><strong>{requests.filter((item) => !item.assignedTo && item.status !== "completed").length}</strong> aguardando responsável</span></div><StaffQueue initialRequests={requests} staff={staff} currentUserId={user.id} isAdministrator={profile.role === "administrator"} /></main>;
+  return <main className="dashboard-main dashboard-main--queue"><StaffQueue initialRequests={requests} staff={staff} currentUserId={user.id} isAdministrator={profile.role === "administrator"} /></main>;
 }
