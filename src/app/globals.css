@@ -3012,9 +3012,8 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 
 .staff-calendar__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; }
 .staff-calendar__legend { display: inline-flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: .65rem; font-weight: 700; }
-.staff-calendar__legend i { width: 9px; height: 9px; border: 1px solid color-mix(in srgb, var(--gold) 55%, var(--line)); border-radius: 2px; background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); }
-.staff-calendar__grid button.is-closed:not(.is-selected) { border-color: color-mix(in srgb, var(--gold) 55%, var(--line)); background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); color: var(--text); font-weight: 850; }
-.staff-calendar__grid button.is-closed.is-selected { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 35%, var(--surface-raised)); color: var(--text); font-weight: 850; }
-.staff-calendar__grid button.is-closed.has-announcement::after { background: var(--gold); }
-.staff-calendar__closure { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 9px 10px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--gold) 16%, var(--surface-raised)); color: var(--text); font-size: .8rem; font-weight: 800; }
-.staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--institutional); }
+.staff-calendar__legend i { width: 10px; height: 8px; border-bottom: 2px dotted var(--text-muted); }
+.staff-calendar__grid button.is-closed { font-weight: 800; text-decoration: underline dotted; text-decoration-color: var(--text-muted); text-underline-offset: 4px; }
+.staff-calendar__grid button.is-closed.is-selected { text-decoration-color: currentColor; }
+.staff-calendar__closure { display: flex; align-items: center; gap: 7px; margin: 10px 0 0; padding: 8px 0 0; border-top: 1px solid var(--line); color: var(--text); font-size: .78rem; font-weight: 750; }
+.staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--text-muted); }
