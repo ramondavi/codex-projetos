@@ -3017,7 +3017,17 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .staff-calendar__closure svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--text-muted); }
 
 /* Fluxo guiado da análise: progresso compacto e uma tarefa por vez. */
-.analysis-stepper--guided { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.analysis-stepper--guided { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.analysis-precheck { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 12px 16px; border: 1px dashed var(--line); border-radius: var(--radius); background: var(--surface); }
+.analysis-precheck.is-active { border-style: solid; border-color: var(--institutional); background: var(--institutional-soft); }
+.analysis-precheck__icon { display: grid; flex: 0 0 32px; place-items: center; width: 32px; height: 32px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--institutional); }
+.analysis-precheck__icon svg { width: 17px; height: 17px; }
+.analysis-precheck > div { display: grid; gap: 2px; min-width: 0; }
+.analysis-precheck__eyebrow { color: var(--text-muted); font-size: .65rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+.analysis-precheck strong { font-size: .85rem; }
+.analysis-precheck small { color: var(--text-muted); font-size: .73rem; line-height: 1.35; }
+.analysis-precheck__status { margin-left: auto; padding: 5px 8px; border: 1px solid var(--line); border-radius: var(--radius-sm); color: var(--text-muted); font-size: .7rem; font-weight: 800; white-space: nowrap; }
+.analysis-stepper--guided .analysis-stepper__heading { grid-column: 1 / -1; color: var(--text-muted); font-size: .72rem; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
 .analysis-stepper--guided > .analysis-stepper__stage,
 .analysis-stepper--guided > button,
 .analysis-stepper--guided > button:last-child { display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 62px; padding: 9px 11px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface-raised); box-shadow: none; color: var(--text-muted); }
@@ -3038,7 +3048,7 @@ button.queue-item__note:hover, button.queue-item__note:focus-visible { backgroun
 .request-analysis-sections > .analysis-next-action strong svg { width: 16px; height: 16px; color: var(--institutional); }
 .request-analysis-sections > .analysis-next-action p { font-size: .75rem; }
 @media (max-width: 900px) { .analysis-stepper--guided { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .analysis-stepper--guided { grid-template-columns: 1fr; } .analysis-stepper--guided > .analysis-stepper__stage, .analysis-stepper--guided > button { min-height: 48px; } .request-analysis-sections > .analysis-next-action { align-items: flex-start; flex-direction: column; gap: 5px; } }
+@media (max-width: 560px) { .analysis-stepper--guided { grid-template-columns: 1fr; } .analysis-stepper--guided > button { min-height: 48px; } .analysis-precheck { align-items: flex-start; flex-wrap: wrap; } .analysis-precheck__status { margin-left: 44px; } }
 
 /* Área de trabalho do atendimento. */
 .analysis-case-header__actions .progress-badge.queue-status-color { display: inline-flex; align-items: center; gap: 6px; box-sizing: border-box; height: 36px; min-height: 36px; padding: 0 10px; border-left-width: 1px; border-radius: var(--radius-sm); font-size: .76rem; font-weight: 700; line-height: 1.2; }

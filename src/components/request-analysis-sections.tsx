@@ -22,7 +22,8 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
   );
   const activeStep = steps.findIndex((step) => step.id === active);
   const isMetadata = active === "metadata";
-  const completed = [declarationsReviewed && initialLinkVerified && !waitingForStudent, metadataComplete, catalogingComplete, documentationComplete];
+  const preliminaryComplete = declarationsReviewed && initialLinkVerified && !waitingForStudent;
+  const completed = [metadataComplete, catalogingComplete, documentationComplete];
   useEffect(() => { if (declarationRequestId && (!initialLinkVerified || waitingForStudent)) setShowDeclarations(true); }, [declarationRequestId, initialLinkVerified, waitingForStudent]);
   useEffect(() => { if (revisitRequested && declarationRequestId) setShowDeclarations(true); }, [revisitRequested, declarationRequestId]);
   useEffect(() => { const onRevisit = () => { if (declarationRequestId) setShowDeclarations(true); }; window.addEventListener("request-analysis:revisit", onRevisit); return () => window.removeEventListener("request-analysis:revisit", onRevisit); }, [declarationRequestId]);
@@ -52,21 +53,23 @@ export function RequestAnalysisSections({ metadata, cataloging, documentation, f
     return () => window.removeEventListener("request-analysis:navigate", navigateToField);
   }, [showDeclarations]);
   return <div className="request-analysis-sections" data-active-section={active} data-declaration-preview={showDeclarations}>
-    <nav className="analysis-stepper analysis-stepper--guided" aria-label="Etapas do atendimento">
-      <div className={`analysis-stepper__stage ${showDeclarations ? "is-active" : ""} ${completed[0] ? "is-complete" : ""}`} aria-current={showDeclarations ? "step" : undefined}>
-        <span className="analysis-stepper__number">{completed[0] ? <AppIcon name="check" /> : "01"}</span>
-        <span><AppIcon name="check" /><strong>Conferência inicial</strong><small>{waitingForStudent ? "Aguardando estudante" : completed[0] ? "Concluída" : showDeclarations ? "Em andamento" : "Pendente"}</small></span>
-      </div>
+    <aside className={`analysis-precheck${showDeclarations ? " is-active" : ""}`} aria-label="Etapa preliminar">
+      <span className="analysis-precheck__icon"><AppIcon name={preliminaryComplete ? "check" : "review"} /></span>
+      <div><span className="analysis-precheck__eyebrow">Antes da análise</span><strong>Conferência inicial</strong><small>{waitingForStudent ? "Aguardando correção do link pelo estudante." : showDeclarations ? preliminaryComplete ? "Revisão das declarações aberta." : "Conclua esta conferência para iniciar a análise." : declarationRequestId && preliminaryComplete ? "Para rever, use Outras ações → Rever declarações." : preliminaryComplete ? "Concluída." : "Conferência pendente."}</small></div>
+      <span className="analysis-precheck__status">{waitingForStudent ? "Aguardando estudante" : showDeclarations ? preliminaryComplete ? "Em revisão" : "Em conferência" : preliminaryComplete ? "Concluída" : "Pendente"}</span>
+    </aside>
+    <nav className="analysis-stepper analysis-stepper--guided" aria-label="Etapas da análise do atendimento">
+      <span className="analysis-stepper__heading">Análise do atendimento</span>
       {steps.map((step, index) => <button
         key={step.id}
         type="button"
         aria-current={!showDeclarations && active === step.id ? "step" : undefined}
-        className={`${!showDeclarations && active === step.id ? "is-active" : ""} ${completed[index + 1] ? "is-complete" : ""}`}
+        className={`${!showDeclarations && active === step.id ? "is-active" : ""} ${completed[index] ? "is-complete" : ""}`}
         disabled={showDeclarations}
         onClick={() => setActive(step.id)}
       >
-        <span className="analysis-stepper__number">{completed[index + 1] ? <AppIcon name="check" /> : String(index + 2).padStart(2, "0")}</span>
-        <span><AppIcon name={step.icon as AppIconName} /><strong>{step.label}</strong><small>{completed[index + 1] ? "Concluída" : !showDeclarations && active === step.id ? "Em andamento" : "A seguir"}</small></span>
+        <span className="analysis-stepper__number">{completed[index] ? <AppIcon name="check" /> : String(index + 1).padStart(2, "0")}</span>
+        <span><AppIcon name={step.icon as AppIconName} /><strong>{step.label}</strong><small>{completed[index] ? "Concluída" : !showDeclarations && active === step.id ? "Em andamento" : "A seguir"}</small></span>
       </button>)}
     </nav>
     {declarationRequestId && showDeclarations && <DeclarationCancellationControl requestId={declarationRequestId} publicWorkUrl={publicWorkUrl} initiallyReviewed={declarationsReviewed} initiallyLinkVerified={initialLinkVerified} waitingForStudent={waitingForStudent} replyPending={replyPending} onContinue={() => setShowDeclarations(false)} onBack={declarationsReviewed && initialLinkVerified ? () => setShowDeclarations(false) : undefined} />}
