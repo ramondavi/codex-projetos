@@ -9,7 +9,6 @@ import { RequestTimelineDialog, type TimelineEvent } from "@/components/request-
 import { RelativeDateTime } from "@/components/relative-date-time";
 import { createClient } from "@/lib/supabase/server";
 import { LocalOpeningEmailDelivery } from "@/components/local-opening-email-delivery";
-import { ProtocolCopyButton } from "@/components/protocol-copy-button";
 import { RequestSlaEstimate } from "@/components/request-sla-estimate";
 import { AppIcon } from "@/components/app-icon";
 import { formatWorkTitle } from "@/lib/work-title";

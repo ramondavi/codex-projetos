@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () => {
-  const [layout, breadcrumbs, breadcrumbCopy, panelMetadata, icon, og, robots, sitemap, dashboardLayout, notFound, home, header, css, help, search, studentForm, article] = await Promise.all([
+  const [layout, breadcrumbs, breadcrumbCopy, panelMetadata, icon, og, robots, sitemap, dashboardLayout, notFound, home, header, greeting, css, help, search, studentForm, article] = await Promise.all([
     readFile("src/app/layout.tsx", "utf8"), readFile("src/components/breadcrumbs.tsx", "utf8"), readFile("src/lib/breadcrumb-copy.ts", "utf8"), readFile("src/lib/panel-metadata.ts", "utf8"),
     stat("src/app/icon.svg"), readFile("src/app/opengraph-image.tsx", "utf8"),
-    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"), readFile("src/app/globals.css", "utf8"), readFile("src/app/ajuda/page.tsx", "utf8"), readFile("src/components/help-search.tsx", "utf8"), readFile("src/components/student-request-form.tsx", "utf8"), readFile("src/app/ajuda/artigos/[slug]/page.tsx", "utf8"),
+    readFile("src/app/robots.ts", "utf8"), readFile("src/app/sitemap.ts", "utf8"), readFile("src/app/painel/layout.tsx", "utf8"), readFile("src/app/not-found.tsx", "utf8"), readFile("src/app/page.tsx", "utf8"), readFile("src/components/site-header.tsx", "utf8"), readFile("src/components/site-header-greeting.tsx", "utf8"), readFile("src/app/globals.css", "utf8"), readFile("src/app/ajuda/page.tsx", "utf8"), readFile("src/components/help-search.tsx", "utf8"), readFile("src/components/student-request-form.tsx", "utf8"), readFile("src/app/ajuda/artigos/[slug]/page.tsx", "utf8"),
   ]);
   assert.match(layout, /openGraph/);
   assert.match(layout, /metadataBase/);
@@ -29,9 +29,10 @@ test("oferece breadcrumbs, favicon e metadados de compartilhamento", async () =>
   assert.match(home, /homeFaqs/);
   assert.match(header, /AppIcon name="logout"/);
   assert.match(header, /Sair da conta/);
-  assert.match(header, /site-header__access-greeting/);
+  assert.match(header, /<SiteHeaderGreeting key=\{user\.id\}/);
+  assert.match(greeting, /site-header__access-greeting/);
   assert.match(header, /pt: \["Meu painel", "Olá"/);
-  assert.match(header, /\$\{t\[1\]\}, \$\{firstName\}/);
+  assert.match(greeting, /\$\{greeting\}, \$\{name\}/);
   assert.match(css, /\.site-header__access \{[^}]*grid-template-columns: 22px max-content/);
   assert.match(help, /<ProtectedEmail recipient="library" \/>/);
   assert.match(help, /<ProtectedPhone \/>/);
