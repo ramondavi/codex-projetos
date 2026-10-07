@@ -1,11 +1,12 @@
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata() { return panelMetadata("/painel/conta"); }
+import { AppIcon } from "@/components/app-icon";
 import { maskCpf } from "@/domain/students/cpf";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { requestAuthenticatedPasswordChange, requestEmailChange, updateBirthDate } from "@/app/auth-actions";
 import { AuthFeedback } from "@/components/auth-feedback";
 import { StaffAvatarPicker } from "@/components/staff-avatar-picker";
-import { panelPageMetadata } from "@/lib/panel-page-metadata";
-export const metadata = panelPageMetadata("Dados pessoais");
 
 
 export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; message?: string }> }) {
@@ -20,7 +21,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   if (!profile) redirect("/entrar");
   return (
     <main className="dashboard-main dashboard-main--narrow">
-      <div className="page-heading"><div><p className="eyebrow">Minha conta</p><h1>Dados pessoais</h1></div></div>
+      <div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="account" />Minha conta</h1></div></div>
       <section className="panel account-panel">
         <div><span>Nome</span><strong>{profile.full_name}</strong></div>
         {studentProfile && <div><span>CPF</span><strong>{maskCpf(studentProfile.cpf)}</strong></div>}

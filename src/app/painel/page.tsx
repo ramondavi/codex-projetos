@@ -1,3 +1,5 @@
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata() { return panelMetadata("/painel"); }
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -6,11 +8,8 @@ import { StudentRequestShortcut } from "@/components/student-request-shortcut";
 import { AppIcon } from "@/components/app-icon";
 import { StudentDraftSummary } from "@/components/student-request-form";
 import { StaffActivityFeed, type StaffActivityEvent } from "@/components/staff-activity-feed";
+import { StaffAnnouncementsCalendar } from "@/components/staff-announcements-calendar";
 import { formatWorkTitle } from "@/lib/work-title";
-
-export async function generateMetadata() {
-  return { title: { absolute: "Painel | Pronto!" } };
-}
 
 export default async function StudentDashboardPage() {
   const supabase = await createClient();
@@ -27,7 +26,7 @@ export default async function StudentDashboardPage() {
   return (
     <main className="dashboard-main">
       <div className="page-heading">
-        <div><p className="eyebrow">Visão geral</p><h1>Seu acompanhamento</h1></div>
+        <div><h1><AppIcon className="panel-heading-icon" name="home" />Visão geral</h1></div>
       </div>
 
       {hasPendingFeedback && <section className="feedback-invite panel"><span aria-hidden="true">✦</span><div><p className="eyebrow">Sua opinião faz diferença</p><h2>Como foi sua experiência com o Pronto!?</h2><p>Sua avaliação leva cerca de 3 minutos e ajuda a melhorar o sistema e o atendimento da BIB/FA.</p></div><Link className="button button--primary" href="/painel/avaliacao">Responder avaliação</Link></section>}
@@ -76,7 +75,7 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
   const supabase = await createClient();
   const [{ data: requests }, { data: announcements }, { data: candidates }, { count: activeStaffCount }, activityFeed, { data: priorityRows }] = await Promise.all([
     supabase.from("cataloging_requests").select("status,assigned_to"),
-    supabase.from("library_announcements").select("id,title,message,type,starts_at").eq("active", true).order("starts_at", { ascending: false }).limit(3),
+    supabase.from("library_announcements").select("id,title,message,type,starts_at,ends_at").eq("active", true).order("starts_at", { ascending: false }).limit(100),
     role === "administrator" ? supabase.rpc("list_confirmed_staff_candidates") : Promise.resolve({ data: [] as { user_id: string; email: string }[] }),
     role === "administrator" ? supabase.from("profiles").select("id", { count: "exact", head: true }).in("role", ["cataloger", "administrator"]).eq("status", "active") : Promise.resolve({ count: null }),
     supabase.rpc("list_staff_activity_feed", { page_size: 10 }),
@@ -94,9 +93,8 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
       ? [{ id: request.id, protocol: request.protocol, title: formatWorkTitle(request.title, request.subtitle), markedAt: row.marked_at }]
       : [];
   });
-  const announcementLabels: Record<string, string> = { normal: "Aviso", recess: "Recesso", strike: "Paralisação/greve", other: "Ocorrência", holiday: "Feriado", optional_day: "Ponto facultativo" };
   return <main className="dashboard-main dashboard-main--staff-overview">
-    <div className="page-heading"><div><p className="eyebrow">Visão geral</p><h1>{administrator ? "Operação administrativa" : "Atendimento bibliotecário"}</h1><p>{administrator ? "Acompanhe acessos, fila e informações operacionais em um só lugar." : "Acompanhe sua carga de atendimento e o que precisa de ação agora."}</p></div></div>
+    <div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="home" />Visão geral</h1></div></div>
     <div className={`staff-overview-main${administrator ? " staff-overview-main--admin" : " staff-overview-main--cataloger"}`}>
       <StaffActivityFeed initialEvents={(activityFeed.data ?? []) as StaffActivityEvent[]} userId={userId} initialLoadError={Boolean(activityFeed.error)} />
       <div className="staff-overview-main__side"><section className="overview-stats" aria-label="Indicadores rápidos">
@@ -106,9 +104,9 @@ async function StaffOverview({ role, userId }: { role: "cataloger" | "administra
       <article><AppIcon className="overview-stats__icon" name={administrator ? "admin" : "check"} /><strong>{administrator ? candidates.length : approved}</strong><span>{administrator ? "contas aguardando provisionamento" : "solicitações aprovadas"}</span><Link href={administrator ? "/painel/admin" : "/painel/fila?status=approved"}>{administrator ? "Administrar contas" : "Ver aprovações"}</Link></article>
       </section>
       <section className="overview-context">{administrator && (candidates?.length ?? 0) > 0 && <article className="panel"><p className="eyebrow">Equipe ativa</p><h2>{activeStaffCount ?? 0} pessoas com acesso operacional</h2><p>Use a administração para ajustar perfis, situações e permissões.</p><Link className="button button--secondary button--small" href="/painel/admin">Abrir administração</Link></article>}<article className="panel overview-priorities"><p className="eyebrow overview-priorities__heading"><AppIcon name="star" /><span>Prioridade da fila</span></p><h2>{priorities.length ? `${priorities.length} ${priorities.length === 1 ? "protocolo prioritário" : "protocolos prioritários"} em aberto` : "Nenhum protocolo prioritário em aberto"}</h2>{priorities.length ? <ol>{priorities.map((item) => <li key={item.id}><div><strong>{item.protocol}</strong><span>{item.title}</span><small>Prioritário desde {new Intl.DateTimeFormat("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).format(new Date(item.markedAt))}</small></div><Link className="button button--secondary button--small" href={`/painel/atendimento/${item.id}`} aria-label={`Abrir protocolo ${item.protocol}`}>Abrir <AppIcon name="arrowRight" /></Link></li>)}</ol> : <p>Os protocolos marcados como prioritários aparecerão aqui até a finalização.</p>}</article></section>
+      <StaffAnnouncementsCalendar announcements={announcements ?? []} />
       </div>
     </div>
     {administrator && <AdminProvisioningAlert candidates={candidates ?? []} />}
-    <section className="overview-announcements"><div><p className="eyebrow"><AppIcon name="inbox" /> Informes</p><h2>Avisos da biblioteca</h2></div>{announcements?.length ? <div className="overview-announcements__list">{announcements.map((item) => <article className="panel" key={item.id}><span>{announcementLabels[item.type] ?? "Aviso"}</span><div className="overview-announcements__item-heading"><AppIcon name="inbox" /><strong>{item.title}</strong></div><time>{new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(item.starts_at))}</time><p>{item.message}</p></article>)}</div> : <p className="history-empty">Não há informes ativos no momento.</p>}</section>
   </main>;
 }

@@ -14,8 +14,8 @@ export const priorityReasons: Record<string, string> = {
   other_documented: "Outro motivo documentado",
 };
 
-export function RequestPriorityControl({ requestId, initialReasonCode, initialReasonDetail, menuItem = false }: {
-  requestId: string; initialReasonCode: string | null; initialReasonDetail: string | null; menuItem?: boolean;
+export function RequestPriorityControl({ requestId, initialReasonCode, initialReasonDetail, menuItem = false, compact = false }: {
+  requestId: string; initialReasonCode: string | null; initialReasonDetail: string | null; menuItem?: boolean; compact?: boolean;
 }) {
   const router = useRouter();
   const [savedCode, setSavedCode] = useState(initialReasonCode);
@@ -49,7 +49,7 @@ export function RequestPriorityControl({ requestId, initialReasonCode, initialRe
   }
 
   return <div className="request-priority-control" aria-label="Prioridade do atendimento">
-    <button className={menuItem ? "protocol-actions-menu__item" : `button button--small button--with-icon ${savedCode ? "request-priority-control__button--active" : "button--secondary"}`} type="button" onClick={() => { setEditing(true); setError(""); }} aria-haspopup="dialog" aria-label={savedCode ? "Atendimento prioritário. Alterar prioridade" : "Marcar como prioritário"} title={savedCode ? `Prioritário: ${priorityReasons[savedCode] ?? "motivo registrado"}. Clique para alterar.` : undefined}><AppIcon name="star" />{savedCode ? "Alterar prioridade" : "Marcar como prioritário"}</button>
+    <button className={menuItem || compact ? "protocol-actions-menu__item" : `button button--small button--with-icon ${savedCode ? "request-priority-control__button--active" : "button--secondary"}`} type="button" onClick={() => { setEditing(true); setError(""); }} aria-haspopup="dialog" aria-label={savedCode ? "Atendimento prioritário. Alterar prioridade" : "Marcar como prioritário"} title={savedCode ? `Prioritário: ${priorityReasons[savedCode] ?? "motivo registrado"}. Clique para alterar.` : undefined}><AppIcon name="star" />{savedCode ? "Alterar prioridade" : "Marcar como prioritário"}</button>
     {editing && <div className="request-priority-control__overlay pronto-modal-overlay"><section className="request-priority-control__dialog pronto-modal-surface" role="dialog" aria-modal="true" aria-label="Prioridade do protocolo">
       <ModalCloseButton onClick={() => setEditing(false)} disabled={pending} />
       <p className="eyebrow">Organização da fila</p><h2>Prioridade do protocolo</h2>

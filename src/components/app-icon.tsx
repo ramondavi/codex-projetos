@@ -1,6 +1,6 @@
 import type { ReactNode, SVGProps } from "react";
 
-export type AppIconName = "account" | "admin" | "archive" | "arrowRight" | "bell" | "book" | "calendar" | "check" | "close" | "contrast" | "document" | "edit" | "external" | "eye" | "eyeOff" | "github" | "globe" | "help" | "home" | "inbox" | "link" | "lock" | "logout" | "message" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "star" | "tag" | "upload" | "work";
+export type AppIconName = "account" | "admin" | "archive" | "arrowRight" | "bell" | "book" | "calendar" | "check" | "close" | "contrast" | "document" | "edit" | "external" | "eye" | "eyeOff" | "github" | "globe" | "help" | "hierarchy" | "home" | "idCard" | "inbox" | "link" | "lock" | "logout" | "message" | "panelCollapse" | "panelExpand" | "person" | "queue" | "request" | "review" | "search" | "settings" | "shield" | "star" | "tag" | "upload" | "work";
 
 const paths: Record<AppIconName, ReactNode> = {
   account: <><circle cx="12" cy="8" r="3.5" /><path d="M5 20c.7-3.7 3-5.5 7-5.5s6.3 1.8 7 5.5" /></>,
@@ -22,7 +22,9 @@ const paths: Record<AppIconName, ReactNode> = {
   github: <path fill="currentColor" stroke="none" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.18-3.37-1.18-.46-1.15-1.11-1.46-1.11-1.46-.91-.61.07-.6.07-.6 1 .07 1.54 1.03 1.54 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.1-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.46c.85 0 1.7.11 2.5.34 1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.35 4.68-4.58 4.93.36.31.68.9.68 1.82v2.7c0 .26.18.57.69.48A10 10 0 0 0 12 2Z" />,
   globe: <><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c-3 2.4-4.5 5.4-4.5 9s1.5 6.6 4.5 9M12 3c3 2.4 4.5 5.4 4.5 9s-1.5 6.6-4.5 9" /></>,
   help: <><circle cx="12" cy="12" r="9" /><path d="M9.7 9a2.5 2.5 0 1 1 4.5 1.5c-.9 1.1-2.2 1.4-2.2 3M12 17h.01" /></>,
+  hierarchy: <><rect x="9" y="2.5" width="6" height="5" rx="1" /><rect x="2" y="16.5" width="6" height="5" rx="1" /><rect x="9" y="16.5" width="6" height="5" rx="1" /><rect x="16" y="16.5" width="6" height="5" rx="1" /><path d="M12 7.5v5M5 12.5h14M5 12.5v4M12 12.5v4M19 12.5v4" /></>,
   home: <><path d="m3 11 9-8 9 8v9H4v-9" /><path d="M9 20v-5h6v5" /></>,
+  idCard: <><rect x="2.5" y="5" width="19" height="14" rx="2" /><circle cx="8" cy="10" r="2" /><path d="M4.5 16c.4-1.7 1.5-2.5 3.5-2.5s3.1.8 3.5 2.5M14 10h5M14 14h5" /></>,
   inbox: <><path d="M4 4h16v14H4zM4 14h5l1.5 2h3L15 14h5" /></>,
   link: <><path d="M10 14a4 4 0 0 0 5.7.1l2-2a4 4 0 0 0-5.7-5.7l-1.1 1.1" /><path d="M14 10a4 4 0 0 0-5.7-.1l-2 2a4 4 0 0 0 5.7 5.7l1.1-1.1" /></>,
   lock: <><rect x="5" y="10" width="14" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" /></>,

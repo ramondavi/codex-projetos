@@ -5,26 +5,28 @@ import type { CatalogingCardSnapshot } from "@/domain/cataloging-card/types";
 import { createClient } from "@/lib/supabase/server";
 import { hasPriority, PriorityBadge } from "@/components/priority-badge";
 import { SharedFileIntegrityControl } from "@/components/shared-file-integrity-control";
-import { panelPageMetadata } from "@/lib/panel-page-metadata";
-export const metadata = panelPageMetadata("Ficha catalográfica");
-
+import { DashboardBreadcrumbProtocol } from "@/components/breadcrumbs";
+import { panelRequestMetadata } from "@/lib/panel-metadata";
 
 type RequestRow = {
-  id: string; protocol: string; status: string; assigned_to: string | null; title: string; subtitle: string | null;
+  id: string; protocol: string; status: string; assigned_to: string | null; title: string; subtitle: string | null; public_work_url: string;
   equivalent_title: string | null; other_titles: string[]; volume_information: string | null; special_cases: string[];
   priority: { request_id: string } | { request_id: string }[] | null;
   enrollment: { program: { code: string; name: string; level: string; work_type: string; cataloging_program_tracing: string | null } | { code: string; name: string; level: string; work_type: string; cataloging_program_tracing: string | null }[] | null } | { program: { code: string; name: string; level: string; work_type: string; cataloging_program_tracing: string | null } | { code: string; name: string; level: string; work_type: string; cataloging_program_tracing: string | null }[] | null }[] | null;
 };
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
 
-export default async function CatalogingCardPage({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) { return panelRequestMetadata((await params).id, true, (await searchParams).origem); }
+
+export default async function CatalogingCardPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) {
   const { id } = await params;
+  const origin = (await searchParams).origem === "meus" ? "meus" : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
   if (!user || !profile || !["cataloger", "administrator"].includes(profile.role)) redirect("/painel");
   const [{ data }, { data: people }, { data: authorBirth }, { data: subjects }, { data: metadata }, { data: details }, { data: staff }, { data: homologation }, { data: analysis }, { data: citationSourceSignature }] = await Promise.all([
-    supabase.from("cataloging_requests").select(`id, protocol, status, assigned_to, title, subtitle, equivalent_title, other_titles, volume_information, special_cases, priority:request_priorities(request_id), enrollment:academic_enrollments!cataloging_requests_academic_enrollment_id_fkey(program:academic_programs!academic_enrollments_academic_program_id_fkey(code, name, level, work_type, cataloging_program_tracing))`).eq("id", id).maybeSingle(),
+    supabase.from("cataloging_requests").select(`id, protocol, status, assigned_to, title, subtitle, public_work_url, equivalent_title, other_titles, volume_information, special_cases, priority:request_priorities(request_id), enrollment:academic_enrollments!cataloging_requests_academic_enrollment_id_fkey(program:academic_programs!academic_enrollments_academic_program_id_fkey(code, name, level, work_type, cataloging_program_tracing))`).eq("id", id).maybeSingle(),
     supabase.from("request_cataloging_people").select("role, transcribed_name, authorized_name_snapshot, position").eq("request_id", id).order("position"),
     supabase.from("request_people").select("birth_year, birth_year_validated_at").eq("request_id", id).eq("role", "author").order("position").limit(1).maybeSingle(),
     supabase.from("request_controlled_terms").select("label_pt_snapshot, label_en_snapshot, is_primary, position").eq("request_id", id).order("position"),
@@ -52,5 +54,5 @@ export default async function CatalogingCardPage({ params }: { params: Promise<{
   const snapshot = homologation?.snapshot ? homologation.snapshot as unknown as CatalogingCardSnapshot : draft;
   const ready = Boolean(metadata?.cdu_code && metadata?.cutter_code && details?.deposit_year && details?.defense_year && details?.extent_count && staff?.professional_name && staff?.crb && people?.some((person) => person.role === "author") && people?.some((person) => person.role === "advisor") && (subjects?.length ?? 0) >= 3 && subjects?.some((subject) => subject.is_primary));
   const citationReady = Boolean(analysis?.review_completed_at && analysis?.citation_validated_at && analysis.citation_source_signature === citationSourceSignature);
-  return <main className="dashboard-main dashboard-main--card"><Link className="back-link" href={`/painel/atendimento/${id}`}>← Voltar para a análise</Link>{hasPriority(request.priority) && <PriorityBadge />}{request.assigned_to === user.id && ["in_review", "changes_requested", "approved"].includes(request.status) && <SharedFileIntegrityControl requestId={id} />}{!ready && !homologation && <div className="notice notice--error">Complete autor, orientador, pelo menos três assuntos (com um principal), CDU e Cutter antes da homologação.</div>}{!citationReady && !homologation && <div className="notice notice--error">Valide a referência do trabalho na etapa de finalização da análise antes de homologar a ficha.</div>}<CatalogingCardReview requestId={id} snapshot={snapshot} homologatedAt={homologation?.homologated_at ?? null} canHomologate={ready && citationReady && request.assigned_to === user.id && request.status === "in_review"} /></main>;
+  return <main className="dashboard-main dashboard-main--card"><DashboardBreadcrumbProtocol protocol={request.protocol} /><Link className="back-link" href={`/painel/atendimento/${id}${origin ? "?origem=meus" : ""}`}>← Voltar para a análise</Link>{hasPriority(request.priority) && <PriorityBadge />}{request.assigned_to === user.id && ["in_review", "changes_requested", "approved"].includes(request.status) && <SharedFileIntegrityControl requestId={id} publicWorkUrl={request.public_work_url} />}{!ready && !homologation && <div className="notice notice--error">Complete autor, orientador, pelo menos três assuntos (com um principal), CDU e Cutter antes da homologação.</div>}{!citationReady && !homologation && <div className="notice notice--error">Valide a referência do trabalho na etapa de finalização da análise antes de homologar a ficha.</div>}<CatalogingCardReview requestId={id} snapshot={snapshot} homologatedAt={homologation?.homologated_at ?? null} canHomologate={ready && citationReady && request.assigned_to === user.id && request.status === "in_review"} /></main>;
 }

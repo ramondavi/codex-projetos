@@ -4,8 +4,9 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { BrandPixels } from "@/components/brand-pixels";
 import { logout } from "@/app/auth-actions";
-import { DashboardBreadcrumbs } from "./breadcrumbs";
+import { DashboardBreadcrumbProvider, DashboardBreadcrumbs } from "./breadcrumbs";
 import { AppIcon, type AppIconName } from "./app-icon";
 import { BackendHelpWidget } from "./backend-help-widget";
 import { ModalCloseButton } from "./modal-close-button";
@@ -33,7 +34,7 @@ const logoutDialogCopy = {
   it: { title: "Uscire?", description: "La sessione verrà terminata.", stay: "Resta nel pannello", exit: "Esci dall’account" },
 };
 
-const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "admin", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
+const navIcons: Record<string, AppIconName> = { overview: "home", queue: "queue", work: "work", admin: "hierarchy", account: "account", request: "request", deposit: "upload", panelCollapse: "panelCollapse", panelExpand: "panelExpand" };
 function SidebarIcon({ name }: { name: keyof typeof navIcons }) { return <AppIcon className="dashboard-nav__icon" name={navIcons[name]} />; }
 
 export function DashboardShell({ children, fullName, role, userId, avatarChoice, showNotifications = true, serviceStatus, serviceStatusIsExceptional }: { children: React.ReactNode; fullName: string; role: string; userId: string; avatarChoice?: number | null; showNotifications?: boolean; serviceStatus: string; serviceStatusIsExceptional: boolean }) {
@@ -67,7 +68,7 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
     const [targetPath, targetQuery] = href.split("?");
     if (targetPath === "/painel/fila" && pathname.startsWith("/painel/atendimento/")) return targetQuery ? undefined : "is-active";
     if (pathname !== targetPath && !(targetPath !== "/painel" && pathname.startsWith(`${targetPath}/`))) return undefined;
-    if (!targetQuery) return targetPath === "/painel/fila" && searchParams.get("responsavel") === "me" ? undefined : "is-active";
+    if (!targetQuery) return "is-active";
     const query = new URLSearchParams(targetQuery);
     return [...query.entries()].every(([key, value]) => searchParams.get(key) === value) ? "is-active" : undefined;
   };
@@ -77,14 +78,13 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
       {process.env.NODE_ENV === "development" && role === "administrator" && <LocalEmailOutboxDelivery />}
       <aside className={`dashboard-nav${expanded ? "" : " dashboard-nav--compact"}`} onMouseEnter={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(true); }} onMouseLeave={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(false); }} onFocusCapture={() => { if (window.matchMedia("(min-width: 1101px) and (hover: hover) and (pointer: fine) and (any-pointer: fine)").matches) setExpanded(true); }} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setExpanded(false); }}>
         <div className="dashboard-nav__top">
-          <Link href="/" className="dashboard-nav__logo-link" aria-label={t.public} title={t.public}><span className="dashboard-nav__favicon"><Image src="/icon.png" alt="" width={64} height={64} priority /></span><span className="dashboard-nav__brand-logo"><Image className="brand__image brand__image--light" src="/logo-pronto-light.png" alt="" width={1600} height={643} priority /><Image className="brand__image brand__image--dark" src="/logo-pronto-dark.png" alt="" width={1600} height={643} priority /></span></Link>
+          <Link href="/" className="dashboard-nav__logo-link" aria-label={t.public} title={t.public}><span className="dashboard-nav__favicon"><span className="dashboard-nav__symbol"><Image src="/logo-pronto-v3-symbol-dark.png" alt="" width={512} height={512} priority /><BrandPixels symbol /></span></span><span className="dashboard-nav__brand-logo"><Image className="brand__image brand__image--light" src="/logo-pronto-v3-light.png" alt="" width={1570} height={368} priority /><Image className="brand__image brand__image--dark" src="/logo-pronto-v3-dark.png" alt="" width={1570} height={368} priority /><BrandPixels /></span></Link>
           <button className="dashboard-nav__mobile-toggle" type="button" aria-label={mobileMenuOpen ? closeMenuLabel : openMenuLabel} aria-expanded={mobileMenuOpen} aria-controls="menu-painel" onClick={() => setMobileMenuOpen((open) => !open)}><span /><span /><span /></button>
         </div>
         {isStaff ? <nav className={`dashboard-nav__menu${mobileMenuOpen ? " is-open" : ""}`} id="menu-painel" aria-label={t.library}>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel")} href="/painel" aria-label={t.overview} title={t.overview}><SidebarIcon name="overview" /><span className="dashboard-nav__label">{t.overview}</span></Link>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/fila")} href="/painel/fila" aria-label={t.queue} title={t.queue}><SidebarIcon name="queue" /><span className="dashboard-nav__label">{t.queue}</span></Link>
-          <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/fila?responsavel=me")} href="/painel/fila?responsavel=me" aria-label={t.work} title={t.work}><SidebarIcon name="work" /><span className="dashboard-nav__label">{t.work}</span></Link>
-          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuVisible} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title={t.admin}><SidebarIcon name="admin" /><span className="dashboard-nav__label">{t.admin}</span></button><div className={`dashboard-nav__admin-menu${adminMenuVisible ? " is-visible" : ""}`} id="submenu-administracao" aria-label={t.adminSections}><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao">{t.operation}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo">{t.content}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle">{t.control}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin/avaliacoes")} href="/painel/admin/avaliacoes">Avaliações</Link></div></div>}
+          {role === "administrator" && <div className="dashboard-nav__admin"><button className={`dashboard-nav__admin-trigger${pathname.startsWith("/painel/admin") ? " is-active" : ""}`} type="button" onClick={() => setAdminMenuOpen((open) => !open)} aria-expanded={adminMenuVisible} aria-controls="submenu-administracao" aria-label="Abrir ou fechar subseções de Administração" title={t.admin}><SidebarIcon name="admin" /><span className="dashboard-nav__label">{t.admin}</span></button><div className={`dashboard-nav__admin-menu${adminMenuVisible ? " is-visible" : ""}`} id="submenu-administracao" aria-label={t.adminSections}><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=operacao")} href="/painel/admin?area=operacao"><AppIcon name="settings" />{t.operation}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=conteudo")} href="/painel/admin?area=conteudo"><AppIcon name="book" />{t.content}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin?area=controle")} href="/painel/admin?area=controle"><AppIcon name="shield" />{t.control}</Link><Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/admin/avaliacoes")} href="/painel/admin/avaliacoes"><AppIcon name="review" />Avaliações</Link></div></div>}
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel/conta")} href="/painel/conta" aria-label={t.account} title={t.account}><SidebarIcon name="account" /><span className="dashboard-nav__label">{t.account}</span></Link>
         </nav> : <nav className={`dashboard-nav__menu${mobileMenuOpen ? " is-open" : ""}`} id="menu-painel" aria-label={t.studentArea}>
           <Link onClick={() => setMobileMenuOpen(false)} className={activeClass("/painel")} href="/painel" aria-label={t.overview} title={t.overview}><SidebarIcon name="overview" /><span className="dashboard-nav__label">{t.overview}</span></Link>
@@ -95,16 +95,17 @@ export function DashboardShell({ children, fullName, role, userId, avatarChoice,
       </aside>
       <div className="dashboard-content">
         <header className={`dashboard-header${isStaff ? " dashboard-header--staff" : ""}`}>
+          <div className="dashboard-header__inner">
           {isStaff ? (showNotifications && <StaffCommunications userId={userId} />) : <div className={`dashboard-header__service-status${serviceStatusIsExceptional ? " is-exceptional" : ""}`}><span className={`status-dot${serviceStatusIsExceptional ? " status-dot--alert" : ""}`} /> {serviceStatus}</div>}
           <div className="dashboard-header__actions">
             <div className="user-identity">{isStaff && <LiteraryAvatar id={userId} label={fullName} choice={avatarChoice} small />}<span className="user-identity__copy"><Link className="user-greeting" href="/painel/conta" title={t.account}>{t.greeting}, {firstName}</Link><span className="user-chip" title={fullName}>{t[role as keyof typeof t] ?? role}</span></span></div>
             <form id="dashboard-logout-form" ref={logoutFormRef} action={logout}><button className="logout-icon" type="button" onClick={() => { if (window.matchMedia("(max-width: 1100px), (pointer: coarse), (any-pointer: coarse)").matches) setLogoutDialogOpen(true); else logoutFormRef.current?.requestSubmit(); }} aria-label={t.logout} title={t.logout}><AppIcon name="logout" /></button></form>
           </div>
+          </div>
         </header>
-        <DashboardBreadcrumbs />
-        {children}
+        <DashboardBreadcrumbProvider><DashboardBreadcrumbs />{children}</DashboardBreadcrumbProvider>
         <figure className="dashboard-daily-quote">
-          <blockquote><span>{dailyQuote.text}</span></blockquote>
+          <blockquote><span>“{dailyQuote.text}”</span></blockquote>
           <figcaption><a href={dailyQuote.source} target="_blank" rel="noopener noreferrer">{dailyQuote.author} em <cite>{dailyQuote.work}</cite> ({dailyQuote.year})<span className="sr-only"> (abre em nova aba)</span></a></figcaption>
         </figure>
         <BackendHelpWidget role={role} />

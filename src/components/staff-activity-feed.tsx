@@ -86,8 +86,7 @@ export function StaffActivityFeed({ initialEvents, userId, initialLoadError = fa
     return () => observer.disconnect();
   }, [hasMore, busy, error, events.length, loadMore]);
 
-  return <section className="staff-feed" aria-labelledby="staff-feed-title">
-    <header className="staff-feed__heading"><div><p className="eyebrow">Feed da equipe</p><h2 id="staff-feed-title">Novidades dos atendimentos</h2><p>Acompanhe, em tempo real, o que aconteceu nos protocolos.</p></div></header>
+  return <section className="staff-feed" aria-label="Novidades dos atendimentos">
     {error && <p className="notice notice--error" role="alert">Não foi possível carregar as atualizações. Nova tentativa automática em instantes.</p>}
     {events.length ? <div className="staff-feed__posts" ref={postsRef}>{events.map((event) => {
       const description = descriptions[event.action];

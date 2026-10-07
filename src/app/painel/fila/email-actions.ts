@@ -23,7 +23,7 @@ export async function processLocalEmailOutbox() {
     ...((accountEmails ?? []) as OutboxEmail[]).map((email) => [email, "complete_local_account_notification_delivery"] as const),
   ]) {
     try {
-      await transporter.sendMail({ from: "BIB/FAUFBA | Pronto! <pronto@localhost>", to: email.recipient, subject: email.subject, text: transactionalEmailText(email.subject, email.text_body, siteUrl), html: transactionalEmailHtml(email.subject, email.text_body, siteUrl), attachments: [{ filename: "logo-pronto.png", path: path.join(process.cwd(), "public", "logo-pronto-light.png"), cid: "pronto-logo" }] });
+      await transporter.sendMail({ from: "BIB/FAUFBA | Pronto! <pronto@localhost>", to: email.recipient, subject: email.subject, text: transactionalEmailText(email.subject, email.text_body, siteUrl), html: transactionalEmailHtml(email.subject, email.text_body, siteUrl), attachments: [{ filename: "logo-pronto.png", path: path.join(process.cwd(), "public", "logo-pronto-v2-light.png"), cid: "pronto-logo" }] });
       await supabase.rpc(completion, { target_email_id: email.email_id, succeeded: true, error_message: null });
     } catch (deliveryError) {
       failed = true;

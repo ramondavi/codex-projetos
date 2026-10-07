@@ -1,8 +1,9 @@
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata() { return panelMetadata("/painel/admin/avaliacoes"); }
+import { AppIcon } from "@/components/app-icon";
 import { redirect } from "next/navigation";
 import { FeedbackAdminDashboard } from "@/components/feedback-admin-dashboard";
 import { createClient } from "@/lib/supabase/server";
-import { panelPageMetadata } from "@/lib/panel-page-metadata";
-export const metadata = panelPageMetadata("Avaliações do Pronto!");
 
 
 export default async function FeedbackAdministrationPage() {
@@ -16,5 +17,5 @@ export default async function FeedbackAdministrationPage() {
     supabase.from("feedback_responses").select("id,answers"),
   ]);
   const counts = stats as { invited?: number; responded?: number } | null;
-  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Avaliações do Pronto!</h1><p>Acompanhe a pesquisa de lançamento e as respostas anônimas recebidas.</p></div></div><FeedbackAdminDashboard activatedAt={campaign?.activated_at ?? null} siteUrl={campaign?.site_url ?? null} invitedCount={counts?.invited ?? 0} respondedCount={counts?.responded ?? 0} responses={(responses ?? []) as { id: string; answers: Record<string, string> }[]} /></main>;
+  return <main className="dashboard-main"><div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="review" />Avaliações</h1></div></div><FeedbackAdminDashboard activatedAt={campaign?.activated_at ?? null} siteUrl={campaign?.site_url ?? null} invitedCount={counts?.invited ?? 0} respondedCount={counts?.responded ?? 0} responses={(responses ?? []) as { id: string; answers: Record<string, string> }[]} /></main>;
 }

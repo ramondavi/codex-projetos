@@ -1,10 +1,11 @@
+import { AppIcon } from "@/components/app-icon";
 import { redirect } from "next/navigation";
 import { AdminOperations } from "@/components/admin-operations";
 import { createClient } from "@/lib/supabase/server";
 import { initialKnowledgeEntries, type KnowledgeEntry } from "@/lib/knowledge-base";
 import { safeKnowledgeHtml } from "@/lib/knowledge-service";
-import { panelPageMetadata } from "@/lib/panel-page-metadata";
-export const metadata = panelPageMetadata("Administração e operação");
+import { panelMetadata } from "@/lib/panel-metadata";
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ area?: string }> }) { return panelMetadata("/painel/admin", { area: (await searchParams).area }); }
 
 
 export default async function AdminPage({ searchParams }: { searchParams: Promise<{ area?: string }> }) {
@@ -29,5 +30,5 @@ export default async function AdminPage({ searchParams }: { searchParams: Promis
   ]);
   const knowledgeEntries: KnowledgeEntry[] = (knowledge.data ? knowledge.data as KnowledgeEntry[] : initialKnowledgeEntries(faqs.data ?? []))
     .map((entry) => ({ ...entry, body_html: safeKnowledgeHtml(entry.body_html) }));
-  return <main className="dashboard-main"><div className="page-heading"><div><p className="eyebrow">Administração</p><h1>Administração e operação</h1><p>Configurações organizadas por assunto em um único espaço protegido.</p></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} cduEntries={cduDescriptions.data ?? []} /></main>;
+  return <main className="dashboard-main"><div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="hierarchy" />Administração</h1></div></div><AdminOperations area={area} users={users.data ?? []} staffCandidates={candidates.data ?? []} programs={programs.data ?? []} announcements={announcements.data ?? []} templates={templates.data ?? []} logs={logs.data ?? []} purgeDocuments={purge.data ?? []} knowledge={knowledgeEntries} cduEntries={cduDescriptions.data ?? []} /></main>;
 }

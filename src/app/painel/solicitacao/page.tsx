@@ -9,19 +9,12 @@ import { RequestTimelineDialog, type TimelineEvent } from "@/components/request-
 import { RelativeDateTime } from "@/components/relative-date-time";
 import { createClient } from "@/lib/supabase/server";
 import { LocalOpeningEmailDelivery } from "@/components/local-opening-email-delivery";
-import { ProtocolCopyButton } from "@/components/protocol-copy-button";
 import { RequestSlaEstimate } from "@/components/request-sla-estimate";
 import { AppIcon } from "@/components/app-icon";
 import { formatWorkTitle } from "@/lib/work-title";
-import { panelPageMetadata } from "@/lib/panel-page-metadata";
+import { panelMetadata } from "@/lib/panel-metadata";
 
-export async function generateMetadata() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return panelPageMetadata("Sua solicitação");
-  const { data: request } = await supabase.from("cataloging_requests").select("protocol").order("submitted_at", { ascending: false }).limit(1).maybeSingle();
-  return panelPageMetadata(request?.protocol ?? "Sua solicitação");
-}
+export async function generateMetadata() { return panelMetadata("/painel/solicitacao"); }
 
 const statusLabels: Record<string, string> = { submitted: "Solicitação enviada", in_review: "Em análise", changes_requested: "Correções solicitadas", approved: "Ficha homologada", completed: "Concluída", canceled: "Cancelada" };
 type Revision = { id: string; round_number: number; returned_at: string; responded_at: string | null; issues: { field_key: string; field_label: string; justification: string; original_value: unknown }[]; corrections: { field_key: string; corrected_value: unknown; submitted_at: string }[] };
@@ -34,7 +27,7 @@ export default async function StudentRequestPage({ searchParams }: { searchParam
   const params = await searchParams;
   const canStart = !request || ["completed", "canceled"].includes(request.status);
   const { data: programs } = canStart ? await supabase.from("academic_programs").select("id,code,name,level,work_type").eq("active", true) : { data: [] };
-  if (!request) return <main className="dashboard-main dashboard-main--narrow"><div className="page-heading"><div><p className="eyebrow">Minha solicitação</p><h1>Sua solicitação</h1></div></div><section className="panel student-draft-panel"><StudentDraftSummary key={user.id} userId={user.id} programs={programs ?? []} emptyMessage="Você ainda não enviou uma solicitação. Comece seu preenchimento abaixo." /><StudentRequestShortcut key={user.id} userId={user.id} className="button button--primary" programs={programs ?? []} /></section></main>;
+  if (!request) return <main className="dashboard-main dashboard-main--narrow"><div className="page-heading"><div><h1><AppIcon className="panel-heading-icon" name="request" />Minha solicitação</h1></div></div><section className="panel student-draft-panel"><StudentDraftSummary key={user.id} userId={user.id} programs={programs ?? []} emptyMessage="Você ainda não enviou uma solicitação. Comece seu preenchimento abaixo." /><StudentRequestShortcut key={user.id} userId={user.id} className="button button--primary" programs={programs ?? []} /></section></main>;
   const enrollment = Array.isArray(request.academic_enrollments) ? request.academic_enrollments[0] : request.academic_enrollments;
   const program = enrollment && (Array.isArray(enrollment.academic_programs) ? enrollment.academic_programs[0] : enrollment.academic_programs);
   const { data: closures } = await supabase.from("library_announcements").select("type,starts_at,ends_at").eq("active", true).in("type", ["holiday", "optional_day", "recess", "strike"]);
@@ -48,7 +41,7 @@ export default async function StudentRequestPage({ searchParams }: { searchParam
     {process.env.NODE_ENV === "development" && <LocalOpeningEmailDelivery requestId={request.id} />}
     {params.enviada === "1" && <div className="auth-feedback auth-feedback--success" role="status">Solicitação enviada com sucesso. Guarde seu protocolo.</div>}
     {params.corrigida === "1" && <div className="auth-feedback auth-feedback--success" role="status">Correções reenviadas. A biblioteca continuará a análise somente dos campos atualizados.</div>}
-    <div className="page-heading student-request-heading"><div><p className="eyebrow">Minha solicitação</p><h1><ProtocolCopyButton protocol={request.protocol} showLabel={false} /></h1></div><div className="student-request-heading__actions"><span className="request-status">{statusLabels[request.status] ?? request.status}</span><RequestTimelineDialog events={(timeline ?? []) as TimelineEvent[]} /></div></div>
+    <div className="page-heading student-request-heading"><div><h1><AppIcon className="panel-heading-icon" name="request" />Minha solicitação</h1></div><div className="student-request-heading__actions"><span className="request-status">{request.protocol} · {statusLabels[request.status] ?? request.status}</span><RequestTimelineDialog events={(timeline ?? []) as TimelineEvent[]} /></div></div>
     {request.status === "canceled" && request.cancellation_reason && <section className="panel request-cancellation-notice"><AppIcon name="close" /><div><p className="eyebrow">Declarações analisadas</p><h2>Protocolo cancelado</h2><p>A biblioteca constatou que {request.cancellation_reason.includes("; ") ? "estas declarações não foram cumpridas" : "esta declaração não foi cumprida"}:</p><ul>{request.cancellation_reason.split("; ").map((reason: string) => <li key={reason}>{reason}</li>)}</ul><p>Este protocolo não pode ser reaberto.</p></div></section>}
     {canStart && <section className="panel student-draft-panel"><p className="eyebrow">Nova solicitação</p><StudentDraftSummary key={user.id} userId={user.id} programs={programs ?? []} /><StudentRequestShortcut key={user.id} userId={user.id} className="button button--primary" programs={programs ?? []} /></section>}
     {request.status === "changes_requested" && <section className="pending-action"><div><p className="eyebrow">Sua ação necessária</p><h2>A biblioteca solicitou correções</h2><p>Somente os campos marcados estarão disponíveis para edição.</p></div><Link className="button button--primary" href="/painel/solicitacao/corrigir">Corrigir campos pendentes</Link></section>}
