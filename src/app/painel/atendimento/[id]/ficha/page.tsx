@@ -6,8 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { hasPriority, PriorityBadge } from "@/components/priority-badge";
 import { SharedFileIntegrityControl } from "@/components/shared-file-integrity-control";
 import { DashboardBreadcrumbProtocol } from "@/components/breadcrumbs";
-
-
+import { panelRequestMetadata } from "@/lib/panel-metadata";
 
 type RequestRow = {
   id: string; protocol: string; status: string; assigned_to: string | null; title: string; subtitle: string | null; public_work_url: string;
@@ -18,7 +17,10 @@ type RequestRow = {
 const first = <T,>(value: T | T[] | null | undefined): T | null => Array.isArray(value) ? value[0] ?? null : value ?? null;
 
 export async function generateMetadata({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) { return panelRequestMetadata((await params).id, true, (await searchParams).origem); }
+
+export default async function CatalogingCardPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ origem?: string }> }) {
   const { id } = await params;
+  const origin = (await searchParams).origem === "meus" ? "meus" : null;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const { data: profile } = user ? await supabase.from("profiles").select("role").eq("id", user.id).single() : { data: null };
